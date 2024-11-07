@@ -1,0 +1,52 @@
+
+
+.dashboardView{
+    width: 500px;
+    height: 500px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: auto;
+    
+ 
+}.dashboardView form{
+    display: flex;
+    width: 300px;
+ 
+    flex-direction: column;
+
+
+}.dashboardView input{
+    display: flex;
+    width: 300px;
+    background-color: white;
+    border: none;
+    border: 1px solid gray;
+    border-radius: 10px;
+    padding: 10px;
+    flex-direction: column;
+    margin-bottom: 10px;
+
+
+}
+.dashboardView button{
+
+
+    width: 200px;
+    height: 50px;
+    border: none;
+    border-radius: 15px;
+    background-color: #3a72bc;
+    color: white;
+    padding: 5px;
+    margin: auto;
+    margin-top: 10px;
+   
+
+}.dashboardView span{
+    color: #3a72bc;
+    font-size: 20px;
+    padding-bottom: 20px;
+    font-weight: 500;
+    font-family: "Roboto",sans-serif;
+}
