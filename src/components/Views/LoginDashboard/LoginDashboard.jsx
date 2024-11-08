@@ -23,8 +23,9 @@ function LoginDashboard() {
 
 
 
-  const registerSessionUser = (token)=>{
-		sessionStorage.setItem("JWT", JSON.stringify(token))
+  const registerSessionUser = async (token)=>{
+		await sessionStorage.setItem("JWT", token)
+
 	
 
 
@@ -43,6 +44,8 @@ function LoginDashboard() {
     try {
       const response = await axios.post(pathUrl, data);
       if (response.status == 200) {
+    
+
 		nofity();
 		registerSessionUser(response.data)
 		navigate("viewer")
@@ -57,7 +60,7 @@ function LoginDashboard() {
     }
   };
 
-console.log( sessionStorage.getItem("JWT"))
+
   return (
     <section className={styles.dashboardLogin}>
       <ToastContainer position="bottom-left" />
