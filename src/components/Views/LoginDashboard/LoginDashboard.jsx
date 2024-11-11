@@ -1,11 +1,13 @@
 import { useState } from "react";
 import styles from "./LoginDashboard.module.css";
 import axios from "axios";
-import { Bounce } from "react-activity";
+
 import "react-activity/dist/library.css";
-import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer, toast } from "react-toastify";
+import { Bounce } from "react-activity";
 import { useNavigate } from "react-router-dom";
+
 function LoginDashboard() {
   const [request, setRequest] = useState({ login: "", password: "" });
   const [loading, setLoading] = useState(false);
@@ -13,6 +15,7 @@ function LoginDashboard() {
   const navigate = useNavigate ()
   const nofity = () => toast.success("sucesso ao enviar requisção");
   const error = () => toast.error("Usuario ou senha invalidos");
+
   const handleRequest = (e) => {
     const { name, value } = e.target;
     setRequest((prevData) => ({
@@ -25,6 +28,7 @@ function LoginDashboard() {
 
   const registerSessionUser = async (token)=>{
 		await sessionStorage.setItem("JWT", token)
+    sessionStorage.setItem('user', request.login)
 
 	
 
@@ -32,6 +36,7 @@ function LoginDashboard() {
   }
 
   const sendRequest = async (e) => {
+
     setLoading(true);
     e.preventDefault();
     const data = {
@@ -39,7 +44,7 @@ function LoginDashboard() {
       password: request.password,
     };
 
-    let pathUrl = "http://10.2.128.20:8021/auth/login";
+    let pathUrl = "http://192.168.100.5:8021/auth/login";
 
     try {
       const response = await axios.post(pathUrl, data);
