@@ -8,9 +8,11 @@ import LayersIcon from "@mui/icons-material/Layers";
 import { AppProvider } from "@toolpad/core/AppProvider";
 import { DashboardLayout } from "@toolpad/core/DashboardLayout";
 import { useDemoRouter } from "@toolpad/core/internal";
-import Main from "./Dashboard_sections/Main";
+import General from "./Dashboard_sections/patrimonios/General";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer,toast } from "react-toastify";
+import Descripions from "./Dashboard_sections/patrimonios/Descriptions";
+import Projects from "./Dashboard_sections/patrimonios/Projects";
 
 
 const demoTheme = extendTheme({
@@ -37,12 +39,12 @@ export default function Dashboard(props) {
   const renderContent = () => {
     // Navegação condicional baseada no pathname atual
     switch (router.pathname) {
-      case "/patrimonio/dashboard":
-        return <Main />;
-      case "/orders":
-        return <div>Conteúdo de Orders</div>;
-      case "/reports/sales":
-        return <div>Conteúdo de Sales</div>;
+      case "/patrimonio/general":
+        return <General/>;
+      case "/patrimonio/descricoes":
+        return <Descripions/>
+      case "/patrimonio/projetos":
+        return <Projects/>
       case "/reports/traffic":
         return <div>Conteúdo de Traffic</div>;
       default:
@@ -52,7 +54,7 @@ export default function Dashboard(props) {
   const [session, setSession] = React.useState({
     user: {
       name: sessionStorage.getItem('user'),
-      email: "bharatkashyap@outlook.com",
+      email: `${sessionStorage.getItem('user')}@ltad.com`,
       image: "https://cdn-icons-png.flaticon.com/512/149/149071.png",
     },
   });
@@ -94,8 +96,18 @@ export default function Dashboard(props) {
           icon: <DashboardIcon />,
           children: [
             {
-              segment: "dashboard",
+              segment: "general",
               title: "Geral",
+              icon: <DescriptionIcon />,
+            },
+            {
+              segment: "descricoes",
+              title: "Descrições",
+              icon: <DescriptionIcon />,
+            },
+            {
+              segment: "projetos",
+              title: "projetos",
               icon: <DescriptionIcon />,
             },
           ],

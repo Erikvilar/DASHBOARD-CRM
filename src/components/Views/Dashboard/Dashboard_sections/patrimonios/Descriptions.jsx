@@ -14,12 +14,12 @@ import {
   DialogTitle,
 } from "@mui/material";
 
-export default function Main() {
+export default function Descripions() {
   const navigate = useNavigate();
   const [openDialog, setOpenDialog] = useState(false);
-  const [edit, setEdit] = useState(true)
+  const [edit, setEdit] = useState(true);
   const [data, setData] = useState([]);
-  const [editValue, setEditValue] = useState({new:"", old:""})
+  const [editValue, setEditValue] = useState({ new: "", old: "" });
 
   const handleEdit = (name, value) => {
     setEditValue((prevData) => ({
@@ -32,7 +32,7 @@ export default function Main() {
       const token = sessionStorage.getItem("JWT");
       console.log(token);
       try {
-        const urlPath = "http://192.168.100.5:8021/dashboard/showAll";
+        const urlPath = "http://10.2.128.20:8021/dashboard/descriptions";
         const response = await axios.get(urlPath, {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -57,7 +57,7 @@ export default function Main() {
         {openDialog && (
           <Dialog
             open={openDialog}
-            onClose={()=> setOpenDialog(false)}
+            onClose={() => setOpenDialog(false)}
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description"
           >
@@ -66,7 +66,8 @@ export default function Main() {
             </DialogTitle>
             <DialogContent>
               <DialogContentText id="alert-dialog-description">
-                Açoes feitas nessa linha serão capturadas e arquivadas, valor antigo ${editValue.old} pelo valor ${editValue.new}
+                Açoes feitas nessa linha serão capturadas e arquivadas, valor
+                antigo <b>{editValue.old} </b>pelo valor <b>{editValue.new}</b>
                 <DialogContentText>Deseja continuar?</DialogContentText>
               </DialogContentText>
             </DialogContent>
@@ -80,70 +81,54 @@ export default function Main() {
         )}
         <DataGrid
           getRowId={(row) => row.id}
-          onCellEditStart={(value)=> console.log(value.value)}
-          onCellClick={(value)=>console.log(value)}
-          onCellEditStop={() => setOpenDialog(true)}  
-          processRowUpdate={(async(updatedRow, originalRow)=>{
-          
-            const compare = {updatedRow,originalRow}
+          onCellEditStart={(value) => console.log(value.value)}
+          onCellClick={(value) => console.log(value)}
+          onCellEditStop={() => setOpenDialog(true)}
+          processRowUpdate={async (updatedRow, originalRow) => {
+            const compare = { updatedRow, originalRow };
 
-
-           
             Object.keys(compare.updatedRow).forEach((key) => {
-              
-              // Comparando o valor de cada chave
               if (compare.updatedRow[key] !== compare.originalRow[key]) {
                 const newValue = compare.updatedRow[key];
-                const oldValue = compare.originalRow[key]
-                handleEdit('old', oldValue)
-                handleEdit('new', newValue)
-                console.log(`O valor do campo '${key}' foi alterado: ${newValue}`);
-              }else{
-                return originalRow
+                const oldValue = compare.originalRow[key];
+                handleEdit("old", oldValue);
+                handleEdit("new", newValue);
+                console.log(
+                  `O valor do campo '${key}' foi alterado: ${newValue}`
+                );
+              } else {
+                return compare.originalRow;
               }
             });
-           
-          })}
+          }}
           columns={[
-            { field: "id", headerName: "ID", width: 90, editable:edit },
+            { field: "id", headerName: "ID", width: 90, editable: edit },
             {
-              field: "patrimonio",
-              headerName: "Patrimônio",
-              width: 150,
+              field: "modelo",
+              headerName: "modelo",
+              width: 200,
               editable: edit,
             },
             {
-              field: "observação",
-              headerName: "Observação",
+              field: "marca",
+              headerName: "marca",
               width: 250,
               editable: edit,
             },
             {
-              field: "imagem",
-              headerName: "Imagem",
+              field: "serie",
+              headerName: "serie",
               width: 180,
               editable: edit,
             },
-            { field: "SDE", headerName: "SDE", width: 100 },
+            { field: "descrição", headerName: "descrição", width: 200 },
             {
-              field: "NF_INVOICE",
-              headerName: "NF Invoice",
-              width: 150,
-              editable:edit,
-            },
-            {
-              field: "pedido",
-              headerName: "Pedido",
-              width: 150,
-              editable:edit,
-            },
-            {
-              field: "status",
-              headerName: "Status",
+              field: "localização",
+              headerName: "localização",
               width: 150,
               editable: edit,
-            },
-            { field: "valor", headerName: "Valor", width: 120, editable: true },
+            }
+     
           ]}
           rows={data}
           initialState={{
