@@ -1,7 +1,7 @@
 import Dashboard from "./Views/Dashboard/Dashboard";
-import LoginDashboard from "./Views/LoginDashboard/LoginDashboard";
+import Login from "./Views/Login/Login";
 
 export{
     Dashboard,
-    LoginDashboard
+    Login
 }

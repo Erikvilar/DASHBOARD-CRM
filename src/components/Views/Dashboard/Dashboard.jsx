@@ -17,7 +17,7 @@ import Projects from "./Dashboard_sections/patrimonios/Projects";
 
 const demoTheme = extendTheme({
   colorSchemes: { light: true, dark: true },
-  colorSchemeSelector: "class",
+  colorSchemeSelector: "data",
   breakpoints: {
     values: {
       xs: 0,
@@ -149,13 +149,15 @@ export default function Dashboard(props) {
       ]}
       router={router}
       branding={{
-        logo: <img src="src\images\logo.png" alt="MUI logo" />,
-        title: "Gerenciador de items",
+        logo: <img src="src\images\Logo\sm_icon_dataflux3.png" alt="MUI logo" />,
+        title: "DASHBOARD",
+        
       }}
       session={session}
       authentication={authentication}
       theme={demoTheme}
       window={demoWindow}
+    
     >
       <ToastContainer limit={1}   autoClose={3000} position="bottom-left" />
       

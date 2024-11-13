@@ -6,7 +6,6 @@ export default function Main(){
     return (
         <main>
             <section>
-                
             </section>
             <Outlet/>
         </main>

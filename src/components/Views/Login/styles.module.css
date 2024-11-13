@@ -1,0 +1,109 @@
+@import url("https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=League+Spartan:wght@100..900&display=swap");
+
+.background {
+  background-image: url("https://github.com/Erikvilar/PrototypeEmbrapii/blob/onBuilding/src/images/outlet/equippment/LTAD_Equipamento_BCS1.jpg?raw=true");
+  background-size: cover;
+  height: auto;
+}
+
+.dashboardLogin {
+  width: 100%;
+  height: 100vh;
+
+  background-image: linear-gradient(
+    125deg,
+    hsl(0, 0%, 100%) 6%,
+    hsl(60, 100%, 99%) 49%,
+    hsla(0, 0%, 100%, 0.538) 65%,
+    hsla(0, 0%, 100%, 0.641) 10%,
+    hsla(0, 0%, 100%, 0.404) 10%,
+    hsla(55, 93%, 36%, 0) 80%
+  );
+  display: flex;
+  flex-direction: column;
+  justify-self: center;
+}
+.dashboardImage {
+  width: 500px;
+  margin: auto;
+  height: 380px
+}
+.dashboardImage img {
+  margin-left: 50px;
+}
+.dashboardView form {
+  display: flex;
+  width: 300px;
+  margin: auto;
+  flex-direction: column;
+}
+.dashboardView input {
+  display: flex;
+  width: 300px;
+  background-color: white;
+  border: none;
+  font-weight: 500;
+  border: 3px solid gray;
+  border-radius: 10px;
+  padding: 10px;
+  flex-direction: column;
+  margin-bottom: 10px;
+  outline: none;
+  &:focus {
+    border: 2px solid rgb(243, 107, 44);
+  }
+}
+.dashboardView label {
+  font-weight: 600;
+  padding-top: 15px;
+  padding-bottom: 5px;
+  color: #0950ad;
+  font-family: "Geist", sans-serif;
+  text-align: start;
+}
+.dashboardView button {
+  width: 200px;
+  height: 50px;
+  border: none;
+  border-radius: 15px;
+  background-color: #3a72bc;
+  color: white;
+  padding: 5px;
+  margin: auto;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: 0.5s ease;
+  &:hover {
+    background-color: #023068;
+  }
+}
+
+.dashboardView div h2 {
+  font-size: 20px;
+  text-align: center;
+  padding-bottom: 20px;
+  font-weight: 500;
+
+  font-optical-sizing: auto;
+  font-style: normal;
+  color: #0950ad;
+  font-family: "Geist", sans-serif;
+}
+.about {
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+  background-color: transparent;
+  display: flex;
+  justify-content: start;
+  align-items: end;
+  padding-bottom: 50px;
+  padding-right: 100px;
+}
+.about a {
+  text-decoration: none;
+  color: #0950ad;
+  font-weight: 700;
+  font-family: "Roboto", sans-serif;
+  margin: 10px;
+}

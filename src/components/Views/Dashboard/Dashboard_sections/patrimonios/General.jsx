@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
 import Dialogs from "../../../../modals/Dialogs";
+import { useMediaQuery } from "@mui/material";
 
 export default function General() {
   const navigate = useNavigate();
@@ -15,14 +16,12 @@ export default function General() {
   const [data, setData] = useState([]);
   const [promiseArguments, setPromiseArguments] = useState(null);
 
- 
-
   useEffect(() => {
     const requestGet = async () => {
       const token = sessionStorage.getItem("JWT");
       console.log(token);
       try {
-        const urlPath = "http://10.2.128.20:8021/dashboard/showDTO";
+        const urlPath = "http://192.168.100.5:8021/general/";
         const response = await axios.get(urlPath, {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -43,20 +42,14 @@ export default function General() {
 
   const processRowUpdate = useCallback((newRow, oldRow) => {
     return new Promise((resolve, reject) => {
-
       if (newRow !== oldRow) {
-         
- 
-          setPromiseArguments({ resolve, reject, newRow, oldRow,});
-    
-     
+        setPromiseArguments({ resolve, reject, newRow, oldRow });
+
         // Se houve mudança, salva os argumentos para resolver ou rejeitar a promessa
       } else {
-        
         // Se não houve mudança, resolve com a linha original
         resolve(oldRow);
       }
-
     });
   }, []);
   const handleNo = () => {
@@ -71,14 +64,28 @@ export default function General() {
     setConfirmEdition(true);
     const { newRow, oldRow, reject, resolve } = promiseArguments;
     resolve(newRow);
-
+    console.log(newRow.id_usuario);
+    try {
+      const urlPath = "http://192.168.100.5:8021/general/save";
+      const response = await axios.put(urlPath, newRow);
+      if (response.status == 200) {
+        alert("dados atualizados");
+      }
+    } catch (e) {
+      alert("ocorreu um erro " + e);
+    }
   };
-
+  const isLargeScreen = useMediaQuery("(min-width:1540px)");
   return (
-    <PageContainer style={{ width: "100%", padding: 0, margin: 0 }}>
-      <Box sx={{ height: 700, width: 1500 }}>
-        {openDialog && (
 
+    
+    
+      <Box sx={{
+        height: isLargeScreen ? "90vh" : "80vh", // 90vh para telas grandes, 80vh para outras
+        width: isLargeScreen ? "100%" : "85%", // largura diferente conforme o tamanho da tela
+        maxWidth: 1400,   
+        }}component={"section"}>
+        {openDialog && (
           <Dialogs
             open={openDialog}
             close={handleNo}
@@ -89,6 +96,7 @@ export default function General() {
           />
         )}
         <DataGrid
+          style={{ width: "100%", height: "100%" }}
           getRowId={(row) => row.id_usuario}
           onCellEditStart={(value) => console.log(value.value)}
           onCellClick={(value) => console.log(value)}
@@ -101,7 +109,7 @@ export default function General() {
               field: "id_usuario",
               headerName: "ID Usuário",
               width: 90,
-              editable: true,
+              editable: false,
             },
             {
               field: "nome_usuario",
@@ -119,7 +127,7 @@ export default function General() {
               field: "id_item",
               headerName: "ID Item",
               width: 180,
-              editable: true,
+              editable: false,
             },
             { field: "nf_invoice_item", headerName: "NF/INVOICE", width: 100 },
             {
@@ -162,7 +170,7 @@ export default function General() {
               field: "id_descricao",
               headerName: "ID descrição",
               width: 120,
-              editable: true,
+              editable: false,
             },
             {
               field: "marca_descricao",
@@ -256,6 +264,6 @@ export default function General() {
           disableRowSelectionOnClick
         />
       </Box>
-    </PageContainer>
+   
   );
 }
