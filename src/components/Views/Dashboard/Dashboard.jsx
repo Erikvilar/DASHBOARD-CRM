@@ -8,7 +8,7 @@ import LayersIcon from "@mui/icons-material/Layers";
 import { AppProvider } from "@toolpad/core/AppProvider";
 import { DashboardLayout } from "@toolpad/core/DashboardLayout";
 import { useDemoRouter } from "@toolpad/core/internal";
-import General from "./Dashboard_sections/patrimonios/General";
+import General from "./Dashboard_sections/patrimonios/General_data/General";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer,toast } from "react-toastify";
 import Descripions from "./Dashboard_sections/patrimonios/Descriptions";
