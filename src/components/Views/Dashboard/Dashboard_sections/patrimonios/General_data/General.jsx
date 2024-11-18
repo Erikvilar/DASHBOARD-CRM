@@ -78,7 +78,7 @@ export default function General() {
           sde_item: newRow.sde_item,
           status_item: newRow.status_item,
           valor_item: newRow.valor_item,
-          lastModify:newRow.lastModify,
+          lastModify:sessionStorage.getItem("user"),
           updateIn:newRow.updateIn
         },
         usersDTO: {
@@ -161,9 +161,23 @@ export default function General() {
             width: 90,
             editable: false,
           },
+
+          {
+            field: "codigo_item",
+            headerName: "Código",
+            width: 150,
+            editable: true,
+          },
+
+          {
+            field: "descricao_item",
+            headerName: "Descrição",
+            width: 180,
+            editable: true,
+          },
           {
             field: "nome_usuario",
-            headerName: "Patrimônio",
+            headerName: "Responsavel",
             width: 150,
             editable: true,
           },
@@ -174,19 +188,9 @@ export default function General() {
             editable: true,
           },
           //tb_items
-          {
-            field: "id_item",
-            headerName: "ID Item",
-            width: 180,
-            editable: false,
-          },
+         
           { field: "nf_invoice_item", headerName: "NF/INVOICE", width: 100 },
-          {
-            field: "codigo_item",
-            headerName: "Código",
-            width: 150,
-            editable: true,
-          },
+         
           {
             field: "observacao_item",
             headerName: "Observação",
@@ -217,24 +221,14 @@ export default function General() {
             width: 120,
             editable: true,
           },
-          {
-            field: "id_descricao",
-            headerName: "ID descrição",
-            width: 120,
-            editable: false,
-          },
+       
           {
             field: "marca_descricao",
             headerName: "Marca",
             width: 120,
             editable: true,
           },
-          {
-            field: "descricao_item",
-            headerName: "Descrição",
-            width: 120,
-            editable: true,
-          },
+         
           {
             field: "localizacao_descricao",
             headerName: "Local",
@@ -247,12 +241,7 @@ export default function General() {
             width: 120,
             editable: true,
           },
-          {
-            field: "id_centro_custo",
-            headerName: "ID Projeto",
-            width: 120,
-            editable: true,
-          },
+         
           {
             field: "nome_centro_custo",
             headerName: "Nome Projeto",

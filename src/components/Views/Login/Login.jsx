@@ -25,7 +25,7 @@ function Login() {
   };
 
   const registerSessionUser = async (token) => {
-    await sessionStorage.setItem("JWT", token);
+     sessionStorage.setItem("JWT", token);
     sessionStorage.setItem("user", request.login);
   };
 

@@ -32,7 +32,7 @@ export default function Projects() {
       const token = sessionStorage.getItem("JWT");
       console.log(token);
       try {
-        const urlPath = "http://10.2.128.20:8021/dashboard/costCenter";
+        const urlPath = "http://10.2.128.20:8021/general/costCenter";
         const response = await axios.get(urlPath, {
           headers: {
             Authorization: `Bearer ${token}`,
