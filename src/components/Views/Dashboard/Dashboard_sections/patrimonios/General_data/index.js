@@ -2,12 +2,12 @@ import { useCallback, useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import { DataGrid } from "@mui/x-data-grid";
 import axios from "axios";
-
+import GeneralFormModal from "../../../../../modals/GeneralFormModal/GeneralFormModal";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
 import Dialogs from "../../../../../modals/Dialogs";
-import { useMediaQuery } from "@mui/material";
+import { useMediaQuery,Button } from "@mui/material";
 import axiosGeneralRequest from "../../../../../services/ApiServiceRequests";
 export{
     useCallback,
@@ -16,9 +16,11 @@ export{
     Box,
     DataGrid,
     axios,
+    Button,
     toast,
     useNavigate,
     Dialogs,
+    GeneralFormModal,
     useMediaQuery,
     axiosGeneralRequest
 

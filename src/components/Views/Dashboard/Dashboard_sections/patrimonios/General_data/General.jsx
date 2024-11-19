@@ -1,3 +1,4 @@
+
 import {
   useCallback,
   useEffect,
@@ -9,14 +10,20 @@ import {
   useNavigate,
   Dialogs,
   useMediaQuery,
+  Button,
+  GeneralFormModal,
   axiosGeneralRequest,
 } from "./index.js";
 
 export default function General() {
   const navigate = useNavigate();
-  const [openDialog, setOpenDialog] = useState(false);
+  const [openDialog, setOpenDialog] = useState(null);
   const [data, setData] = useState([]);
   const [promiseArguments, setPromiseArguments] = useState(null);
+
+  const [openModalForm, setOpenModalForm] = useState(null);
+  const handleOpenModalForm = () => setOpenModalForm(true);
+  const handleCloseModalForm = () => setOpenModalForm(false);
 
   let token = sessionStorage.getItem("JWT");
 
@@ -37,35 +44,38 @@ export default function General() {
     requestGet();
     const interval = setInterval(() => {
       requestGet();
-    }, 5000); 
+    }, 5000);
 
-    
     return () => clearInterval(interval);
   }, []);
 
   const processRowUpdate = useCallback((newRow, oldRow) => {
     return new Promise((resolve, reject) => {
       if (newRow !== oldRow) {
+        setOpenDialog(true);
         setPromiseArguments({ resolve, reject, newRow, oldRow });
 
         // Se houve mudança, salva os argumentos para resolver ou rejeitar a promessa
       } else {
         // Se não houve mudança, resolve com a linha original
+        setOpenDialog(false);
         resolve(oldRow);
       }
     });
   }, []);
+
   const handleNo = () => {
     setOpenDialog(false);
     const { oldRow, resolve } = promiseArguments;
     resolve(oldRow);
     setPromiseArguments(null);
   };
+
   const handleYes = async () => {
     setOpenDialog(false);
     const { newRow, resolve } = promiseArguments;
     await resolve(newRow);
-   
+
     try {
       const data = {
         itemsDTO: {
@@ -78,8 +88,8 @@ export default function General() {
           sde_item: newRow.sde_item,
           status_item: newRow.status_item,
           valor_item: newRow.valor_item,
-          lastModify:sessionStorage.getItem("user"),
-          updateIn:newRow.updateIn
+          lastModify: sessionStorage.getItem("user"),
+          updateIn: newRow.updateIn,
         },
         usersDTO: {
           id_usuario: newRow.id_usuario,
@@ -107,7 +117,6 @@ export default function General() {
           ocupacao_contato: newRow.ocupacao_contato,
           telefone_contato: newRow.telefone_contato,
         },
-
       };
 
       const urlPath = "http://10.2.128.20:8021/general/save";
@@ -123,14 +132,17 @@ export default function General() {
       console.error(e);
     }
   };
+
+
+
+
   const isLargeScreen = useMediaQuery("(min-width:1540px)");
   return (
     <Box
       sx={{
-        height: isLargeScreen ? "90vh" : "80vh", 
-        width: isLargeScreen ? 1780 : 1000, 
-        maxWidth:"90%"
-        
+        height: isLargeScreen ? "90vh" : "80vh",
+        width: isLargeScreen ? 1780 : 1000,
+        maxWidth: "90%",
       }}
       component={"section"}
     >
@@ -144,16 +156,21 @@ export default function General() {
           handleN={handleNo}
         />
       )}
+      {openModalForm && (
+        <GeneralFormModal
+          open={openModalForm}
+          close={handleCloseModalForm}
+          handleClose={handleCloseModalForm}
+        />
+      )}
+
       <DataGrid
-        
         style={{ width: "100%", height: "100%" }}
         getRowId={(row) => row.id_usuario}
         onCellEditStart={(value) => console.log(value.value)}
         onCellClick={(value) => console.log(value)}
-        onCellEditStop={() => setOpenDialog(true)}
+        onCellEditStop={() => openDialog && setOpenDialog(true)}
         processRowUpdate={(newRow, oldRow) => processRowUpdate(newRow, oldRow)}
-        onCellKeyDown={()=> console.log("Alert") }
-
         columns={[
           {
             field: "id_usuario",
@@ -188,9 +205,14 @@ export default function General() {
             editable: true,
           },
           //tb_items
-         
-          { field: "nf_invoice_item", headerName: "NF/INVOICE", width: 100 },
-         
+
+          { 
+          field: "nf_invoice_item",
+           headerName: "NF/INVOICE", 
+           width: 100 
+
+          },
+
           {
             field: "observacao_item",
             headerName: "Observação",
@@ -221,14 +243,14 @@ export default function General() {
             width: 120,
             editable: true,
           },
-       
+
           {
             field: "marca_descricao",
             headerName: "Marca",
             width: 120,
             editable: true,
           },
-         
+
           {
             field: "localizacao_descricao",
             headerName: "Local",
@@ -241,7 +263,7 @@ export default function General() {
             width: 120,
             editable: true,
           },
-         
+
           {
             field: "nome_centro_custo",
             headerName: "Nome Projeto",
@@ -315,6 +337,25 @@ export default function General() {
         checkboxSelection
         disableRowSelectionOnClick
       />
+      <Button
+        variant="text"
+        style={{
+          width: 60,
+          borderRadius: 360,
+          height: 60,
+          backgroundColor: "#40A2E3",
+          position: "relative",
+          left: "90%",
+          top: -150,
+          cursor: "pointer",
+          border: "none",
+          fontSize: 25,
+          color: "white",
+        }}
+        onClick={handleOpenModalForm}
+      >
+        +
+      </Button>
     </Box>
   );
 }
