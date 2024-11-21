@@ -51,6 +51,7 @@ export default function GeneralFormModal({ open, close, handleClose }) {
         >
           <div style={{display:"flex",alignItems:"center",paddingTop:10, paddingBottom:10}}>Dados dos usuarios <Label/></div>
           <Input placeholder="Responsavel" />
+         
           <Input placeholder="Ocupação ou cargo" />
           <Input placeholder="Telefone" />
           <Input placeholder="Email" />

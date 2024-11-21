@@ -39,7 +39,21 @@ export const axiosGeneralRequest = {
     } catch (error) {
       throw error;
     }
+  },
+  delete:async(data,token)=>{
+    try {
+      const response = await axios.delete(apiUrlBase.general.delete+`${data}`,{
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response;
+    } catch (error) {
+      throw error;
+    }
   }
+  
 }
+
 export default axiosGeneralRequest
 

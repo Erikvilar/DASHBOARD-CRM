@@ -1,4 +1,3 @@
-
 import {
   useCallback,
   useEffect,
@@ -119,7 +118,7 @@ export default function General() {
         },
       };
 
-      const urlPath = "http://10.2.128.20:8021/general/save";
+      const urlPath = "http://10.2.128.20:8021/general/update";
       const response = await axios.put(urlPath, data, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -133,9 +132,11 @@ export default function General() {
     }
   };
 
-
-
-
+  const handleSelectRow = async (event) => {
+    const { key } = event;
+    if (key === "Enter") console.log("enter pressionado");
+    console.log("nada capturado");
+  };
   const isLargeScreen = useMediaQuery("(min-width:1540px)");
   return (
     <Box
@@ -168,13 +169,14 @@ export default function General() {
         style={{ width: "100%", height: "100%" }}
         getRowId={(row) => row.id_usuario}
         onCellEditStart={(value) => console.log(value.value)}
-        onCellClick={(value) => console.log(value)}
+        onRowSelectionModelChange={(value) => console.log(value)}
         onCellEditStop={() => openDialog && setOpenDialog(true)}
+        onKeyDown={handleSelectRow}
         processRowUpdate={(newRow, oldRow) => processRowUpdate(newRow, oldRow)}
         columns={[
           {
-            field: "id_usuario",
-            headerName: "ID Usuário",
+            field: "id_item",
+            headerName: "Line",
             width: 90,
             editable: false,
           },
@@ -206,11 +208,10 @@ export default function General() {
           },
           //tb_items
 
-          { 
-          field: "nf_invoice_item",
-           headerName: "NF/INVOICE", 
-           width: 100 
-
+          {
+            field: "nf_invoice_item",
+            headerName: "NF/INVOICE",
+            width: 100,
           },
 
           {
