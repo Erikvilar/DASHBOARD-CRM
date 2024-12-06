@@ -4,7 +4,6 @@ import {
   useState,
   Box,
   DataGrid,
-  axios,
   toast,
   useNavigate,
   Dialogs,
@@ -74,9 +73,10 @@ export default function General() {
     setOpenDialog(false);
     const { newRow, resolve } = promiseArguments;
     await resolve(newRow);
+    console.log(newRow)
 
     try {
-      const data = {
+      const dataUpdate= {
         itemsDTO: {
           id_item: newRow.id_item,
           nf_invoice_item: newRow.nf_invoice_item,
@@ -95,7 +95,7 @@ export default function General() {
           nome_usuario: newRow.nome_usuario,
           tipo_usuario: newRow.tipo_usuario,
         },
-        descriptionsDTO: {
+        detailsDTO: {
           id_descricao: newRow.id_descricao,
           marca_descricao: newRow.marca_descricao,
           descricao_item: newRow.descricao_item,
@@ -118,23 +118,32 @@ export default function General() {
         },
       };
 
-      const urlPath = "http://10.2.128.20:8021/general/update";
-      const response = await axios.put(urlPath, data, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+ 
+      const response = await axiosGeneralRequest.put(dataUpdate,token);
       if (response.status == 200) {
         toast.success("Dados atualizados");
+      }else{
+        console.log("ocorrreu um erro" + response.statusText)
       }
     } catch (e) {
       console.error(e);
     }
   };
 
-  const handleSelectRow = async (event) => {
-    const { key } = event;
-    if (key === "Enter") console.log("enter pressionado");
+
+
+
+
+  const [line, setLine ] = useState()
+  const handleLine = (value) => setLine(value)
+  const handleSelectRow = async (params,event) => {
+
+    if (event.key === "Delete"){
+    const response = await axiosGeneralRequest.delete(line, token)
+    if(response.status == 200){
+      alert("item deletado "+line)
+    }
+    }
     console.log("nada capturado");
   };
   const isLargeScreen = useMediaQuery("(min-width:1540px)");
@@ -169,9 +178,9 @@ export default function General() {
         style={{ width: "100%", height: "100%" }}
         getRowId={(row) => row.id_usuario}
         onCellEditStart={(value) => console.log(value.value)}
-        onRowSelectionModelChange={(value) => console.log(value)}
+        onRowSelectionModelChange={handleLine}
         onCellEditStop={() => openDialog && setOpenDialog(true)}
-        onKeyDown={handleSelectRow}
+        onCellKeyDown={handleSelectRow}
         processRowUpdate={(newRow, oldRow) => processRowUpdate(newRow, oldRow)}
         columns={[
           {

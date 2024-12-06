@@ -1,12 +1,13 @@
 import { useState } from "react";
 import styles from "./styles.module.css";
-import axios from "axios";
+
 
 import "react-activity/dist/library.css";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer, toast } from "react-toastify";
 import { Bounce } from "react-activity";
 import { useNavigate } from "react-router-dom";
+import axiosGeneralRequest from "../../services/ApiServiceRequests";
 
 function Login() {
   const [request, setRequest] = useState({ login: "", password: "" });
@@ -36,11 +37,11 @@ function Login() {
       password: request.password,
     };
 
-    let pathUrl = "http://10.2.128.20:8021/auth/login";
+  
 
     try {
       setLoading(true);
-      const response = await axios.post(pathUrl, data, { timeout: 5000 });
+      const response = await axiosGeneralRequest.login(data, { timeout: 5000 });
       if (response.status == 200) {
         nofity();
         registerSessionUser(response.data);

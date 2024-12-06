@@ -1,9 +1,20 @@
 const apiUrlBase  ={
+
     general:{
-        baseUrl:"http://10.2.128.20:8021/general",
+        baseUrl:"/general",
         update:"/update",
         create:"/create",
-        delete:"http://10.2.128.20:8021/general/"
+    },
+
+
+    network:{
+        IPconnection:"10.15.96.27",
+        PORTconnection:"6680"
+    },
+
+    authentication:{
+        auth:"/auth",
+        login:"/login"
     }
 }
 
