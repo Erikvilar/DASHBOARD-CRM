@@ -88,6 +88,13 @@ export default function GeneralFormModal({ open, close, handleClose }) {
         ocupacao_contato: data.ocupacao_contato,
         telefone_contatos: data.telefone_contato,
       },
+      receivingDTO: {
+        id_recebimento: null,
+        local: null,
+        lotação: null,
+        empSIAFI: null,
+        termo:null,
+      },
     };
     try {
       const response = await axiosGeneralRequest.post(
@@ -105,8 +112,8 @@ export default function GeneralFormModal({ open, close, handleClose }) {
     top: "50%",
     left: "50%",
     transform: "translate(-50%, -50%)",
-    width: "90%",
-    height:"100%",
+    width: "80%",
+    height:"85%",
     borderRadius: 10,
     display: "flex",
     flexDirection: "column",
@@ -137,7 +144,7 @@ export default function GeneralFormModal({ open, close, handleClose }) {
           />
         </Box>
 
-        <Form style={{ width: "100%" ,margin:"auto", overflowY:"scroll", scrollbarWidth:"none"}}>
+        <Form style={{ width: "80%" ,margin:"auto", overflowY:"scroll", scrollbarWidth:"none",padding:10}}>
           <Row style={{ width: 120, padding: 10, margin: "auto" }}>
             <img
               width={20}
@@ -152,21 +159,28 @@ export default function GeneralFormModal({ open, close, handleClose }) {
           <Row className="mb-2">
           <Form.Label style={{textAlign:"start", fontWeight:700}}>Dados do recebimento</Form.Label>
             <Form.Group as={Col} controlId="formGridTermo">
+              <div style={{display:"flex"}}>
               <Form.Label>Termo</Form.Label>
               <Form.Control type="number" placeholder="Termo" />
-            </Form.Group>
-            <Form.Group as={Col} controlId="formGridEmail">
+              </div>
+              <div style={{display:"flex"}}>
               <Form.Label>Lotação</Form.Label>
               <Form.Control type="email" placeholder="Lotação" />
+              </div>
+            
             </Form.Group>
-            <Form.Group as={Col} controlId="formGridEmail">
+            <Form.Group as={Col} controlId="formGridTermo">
+              <div style={{display:"flex"}}>
               <Form.Label>Local</Form.Label>
-              <Form.Control type="email" placeholder="Localização" />
-            </Form.Group>
-            <Form.Group as={Col} controlId="formGridEmail">
+              <Form.Control type="number" placeholder="Termo" />
+              </div>
+              <div style={{display:"flex"}}>
               <Form.Label>Emp SIAFI</Form.Label>
-              <Form.Control type="email" placeholder="EMP SIAFI" />
+              <Form.Control type="email" placeholder="Lotação" />
+              </div>
+            
             </Form.Group>
+           
           </Row>
           <Row className="mb-5">
           <Form.Label style={{textAlign:"start", fontWeight:700}}>Dados do centro de custo</Form.Label>
@@ -195,10 +209,6 @@ export default function GeneralFormModal({ open, close, handleClose }) {
             <Form.Group as={Col} className="mb-3" controlId="formGridAddress1">
               <Form.Label>Patrimonio</Form.Label>
               <Form.Control placeholder="Número patrimonio" />
-            </Form.Group>
-            <Form.Group as={Col} className="mb-3" controlId="formGridAddress1">
-              <Form.Label>Codigo de barras</Form.Label>
-              <Form.Control placeholder="Código de barras" />
             </Form.Group>
             <Form.Group as={Col} className="mb-3" controlId="formGridAddress1">
               <Form.Label>Sufixo</Form.Label>
@@ -231,6 +241,10 @@ export default function GeneralFormModal({ open, close, handleClose }) {
               <Form.Control placeholder="R$ valor " />
             </Form.Group>
             <Form.Group as={Col} className="mb-3" controlId="formGridAddress1">
+              <Form.Label>Imagem do produto</Form.Label>
+              <Form.Control placeholder="Link da imagem 🗀" />
+            </Form.Group>
+            <Form.Group as={Col} className="mb-3" controlId="formGridAddress1">
               <Form.Label>Co-Responsavel</Form.Label>
               <Form.Control placeholder="Coordenação responsável" />
             </Form.Group>
@@ -246,19 +260,9 @@ export default function GeneralFormModal({ open, close, handleClose }) {
 
           <Row>
           <Form.Label style={{textAlign:"start", fontWeight:700}}>Dados do processo</Form.Label>
-            <Form.Group as={Col} lassName="mb-3" controlId="formGridEmpresa">
-              <Form.Label>Empresa</Form.Label>
-              <Form.Control placeholder="Apartment, studio, or floor" />
-            </Form.Group>
+          
 
-            <Form.Group as={Col} className="mb-3" controlId="formGridEmpresa">
-              <Form.Label>Processo</Form.Label>
-              <Form.Control placeholder="Apartment, studio, or floor" />
-            </Form.Group>
-            <Form.Group as={Col} lassName="mb-3" controlId="formGridEmpresa">
-              <Form.Label>Tipo</Form.Label>
-              <Form.Control placeholder="Apartment, studio, or floor" />
-            </Form.Group>
+     
 
             <Form.Group as={Col} className="mb-3" controlId="formGridEmpresa">
               <Form.Label>Nota Fiscal</Form.Label>

@@ -55,7 +55,7 @@ export default function Dashboard(props) {
     user: {
       name: sessionStorage.getItem('user'),
       email: `${sessionStorage.getItem('user')}@ltad.com`,
-      image: "https://cdn-icons-png.flaticon.com/512/149/149071.png",
+      image: "https://media.licdn.com/dms/image/v2/D5603AQFiU_mTQWEFMw/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1721414491441?e=1739404800&v=beta&t=6lXLZtp9dHlEdF4FBfJ5bKSSHiTilpimRr2ydMjQxLM",
     },
   });
 

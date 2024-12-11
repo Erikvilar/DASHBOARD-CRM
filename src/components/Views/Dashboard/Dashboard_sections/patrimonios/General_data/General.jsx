@@ -13,6 +13,13 @@ import {
   axiosGeneralRequest,
 } from "./index.js";
 
+import { FaImages } from "react-icons/fa";
+import { GrStatusGood } from "react-icons/gr";
+import { GiCardDiscard,GiMagnifyingGlass } from "react-icons/gi";
+import { GoAlert } from "react-icons/go";
+import { IoAlertCircle } from "react-icons/io5";
+import { Link } from "react-router-dom";
+
 export default function General() {
   const navigate = useNavigate();
   const [openDialog, setOpenDialog] = useState(null);
@@ -32,6 +39,7 @@ export default function General() {
         if (response.status == 200) {
           console.log("registro OK");
           setData(response.data);
+          console.log(data)
         }
       } catch (e) {
         toast.error("Identificado acesso não autorizado");
@@ -73,10 +81,10 @@ export default function General() {
     setOpenDialog(false);
     const { newRow, resolve } = promiseArguments;
     await resolve(newRow);
-    console.log(newRow)
+    console.log(newRow);
 
     try {
-      const dataUpdate= {
+      const dataUpdate = {
         itemsDTO: {
           id_item: newRow.id_item,
           nf_invoice_item: newRow.nf_invoice_item,
@@ -116,35 +124,32 @@ export default function General() {
           ocupacao_contato: newRow.ocupacao_contato,
           telefone_contato: newRow.telefone_contato,
         },
-      };
+};
 
- 
-      const response = await axiosGeneralRequest.put(dataUpdate,token);
+      const response = await axiosGeneralRequest.put(dataUpdate, token);
       if (response.status == 200) {
         toast.success("Dados atualizados");
-      }else{
-        console.log("ocorrreu um erro" + response.statusText)
+      } else {
+        console.log("ocorrreu um erro" + response.statusText);
       }
     } catch (e) {
       console.error(e);
     }
   };
 
-
-
-
-
-  const [line, setLine ] = useState()
-  const handleLine = (value) => setLine(value)
-  const handleSelectRow = async (params,event) => {
-
-    if (event.key === "Delete"){
-    const response = await axiosGeneralRequest.delete(line, token)
-    if(response.status == 200){
-      alert("item deletado "+line)
+  const [line, setLine] = useState();
+  const handleLine = (value) => setLine(value);
+  const handleSelectRow = async (params, event) => {
+    if (event.key === 'Delete') {
+      try {
+        const response = await axiosGeneralRequest.delete(line, sessionStorage.getItem("JWT"));
+        if (response.status == 200) {
+          alert("item deletado " + line);
+        }
+      } catch (error) {
+        console.log(error);
+      }
     }
-    }
-    console.log("nada capturado");
   };
   const isLargeScreen = useMediaQuery("(min-width:1540px)");
   return (
@@ -162,6 +167,7 @@ export default function General() {
           close={handleNo}
           newValue={""}
           oldValue={""}
+         
           handleY={handleYes}
           handleN={handleNo}
         />
@@ -184,9 +190,11 @@ export default function General() {
         processRowUpdate={(newRow, oldRow) => processRowUpdate(newRow, oldRow)}
         columns={[
           {
+            
             field: "id_item",
             headerName: "Line",
             width: 90,
+            
             editable: false,
           },
 
@@ -201,7 +209,8 @@ export default function General() {
             field: "descricao_item",
             headerName: "Descrição",
             width: 180,
-            editable: true,
+            editable: true
+           
           },
           {
             field: "nome_usuario",
@@ -234,6 +243,12 @@ export default function General() {
             headerName: "Imagem",
             width: 150,
             editable: true,
+            renderCell:(params)=>{
+              return(
+                <Button disabled={params.value == "" ? true : false}><Link target="_blank" style={{display:"flex", justifyContent:"center", alignItems:"center", margin:"auto"}} to={params.value}><FaImages size={28} color={params.value == ""? "gray" : "darkgreen"}/></Link> </Button>
+                
+              )
+          }
           },
           {
             field: "sde_item",
@@ -244,8 +259,23 @@ export default function General() {
           {
             field: "status_item",
             headerName: "Status",
-            width: 120,
+            width: 140,
             editable: true,
+            renderCell:(params)=>{
+              switch(params.value){
+                case "bom":
+                   return <span><GrStatusGood size={20} color="green"/> Estado regular</span>
+                case "ruim":
+                   return <span><GoAlert size={20} color="orange"/> Estado ruim</span>
+                case "analise":
+                   return <span><GiMagnifyingGlass size={20} color="blue"/> Em análise</span>
+                case "baixa":
+                   return <span><GiCardDiscard size={20} color="gray"/> Baixa solicitada</span>
+                default:
+                   return <span><IoAlertCircle  size={20} color="red"/> undefined!</span>
+              }
+            
+          }
           },
           {
             field: "valor_item",

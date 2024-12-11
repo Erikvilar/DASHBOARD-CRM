@@ -1,9 +1,17 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
 
 export default function Dialogs({open,close, newValue, oldValue, handleY, handleN}){
+
+      const handleKey = (e)=>{
+        if(e.key === "Enter"){
+          handleY()
+        }
+      }
+
     return (
         <Dialog
         open={open}
+        onKeyDown={handleKey}
         onClose={close}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
