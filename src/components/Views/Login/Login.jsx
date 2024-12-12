@@ -10,7 +10,7 @@ import { useNavigate } from "react-router-dom";
 import axiosGeneralRequest from "../../services/ApiServiceRequests";
 
 function Login() {
-  const [request, setRequest] = useState({ login: "", password: "" });
+  const [request, setRequest] = useState({ login: "", password: ""});
   const [loading, setLoading] = useState(false);
   const [isLogin, setIsLogin] = useState(false);
   const navigate = useNavigate();
@@ -25,9 +25,14 @@ function Login() {
     }));
   };
 
-  const registerSessionUser = async (token) => {
+  const registerSessionUser = async (data) => {
+ 
+    const {token, avatar, login} = data;
+    console.log(data)
      sessionStorage.setItem("JWT", token);
-    sessionStorage.setItem("user", request.login);
+    sessionStorage.setItem("user", login);
+    sessionStorage.setItem("avatar", avatar)
+
   };
 
   const sendRequest = async (e) => {
@@ -45,6 +50,7 @@ function Login() {
       if (response.status == 200) {
         nofity();
         registerSessionUser(response.data);
+        
         navigate("viewer");
       }
     } catch (e) {

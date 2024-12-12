@@ -32,6 +32,7 @@ export default function General() {
 
   let token = sessionStorage.getItem("JWT");
 
+
   useEffect(() => {
     const requestGet = async () => {
       try {

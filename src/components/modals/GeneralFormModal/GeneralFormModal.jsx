@@ -2,7 +2,6 @@ import { Box, Button, Modal } from "@mui/material";
 import { ToastContainer } from "react-toastify";
 import { useState } from "react";
 import axiosGeneralRequest from "../../services/ApiServiceRequests";
-import { Col, Form, Row } from "react-bootstrap";
 import module from "./GeneralFormModal.module.css"
 export default function GeneralFormModal({ open, close, handleClose }) {
   const [data, setData] = useState({
@@ -107,24 +106,7 @@ export default function GeneralFormModal({ open, close, handleClose }) {
     } catch {}
   };
 
-  const style = {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    width: "80%",
-    height:"85%",
-    borderRadius: 10,
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "center",
-    textAlign: "center",
-    bgcolor: "background.paper",
-    border: "2px solid #DEAA79",
-    boxShadow: 24,
-
-    p: 5,
-  };
+  
 
   return (
     <Modal
@@ -134,7 +116,9 @@ export default function GeneralFormModal({ open, close, handleClose }) {
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
-      <Box sx={style}>
+
+  
+      <Box classname={module.boxTest}>
         <Box >
           <img
             src="src\images\Logo\DATAFLUX.png"
@@ -143,150 +127,11 @@ export default function GeneralFormModal({ open, close, handleClose }) {
             style={{ position: "fixed", top: -60, left: 0, padding: 5, }}
           />
         </Box>
+        <div className={module.boxTest}></div>
 
-        <Form style={{ width: "80%" ,margin:"auto", overflowY:"scroll", scrollbarWidth:"none",padding:10}}>
-          <Row style={{ width: 120, padding: 10, margin: "auto" }}>
-            <img
-              width={20}
-              src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Ufu_logo.svg/2048px-Ufu_logo.svg.png"
-              alt="logo"
-            />
-          </Row>
-          <Row>
-            <h4>Termo de responsabilidade - Secretaria</h4>
-          </Row>
-         
-          <Row className="mb-2">
-          <Form.Label style={{textAlign:"start", fontWeight:700}}>Dados do recebimento</Form.Label>
-            <Form.Group as={Col} controlId="formGridTermo">
-              <div style={{display:"flex"}}>
-              <Form.Label>Termo</Form.Label>
-              <Form.Control type="number" placeholder="Termo" />
-              </div>
-              <div style={{display:"flex"}}>
-              <Form.Label>Lotação</Form.Label>
-              <Form.Control type="email" placeholder="Lotação" />
-              </div>
-            
-            </Form.Group>
-            <Form.Group as={Col} controlId="formGridTermo">
-              <div style={{display:"flex"}}>
-              <Form.Label>Local</Form.Label>
-              <Form.Control type="number" placeholder="Termo" />
-              </div>
-              <div style={{display:"flex"}}>
-              <Form.Label>Emp SIAFI</Form.Label>
-              <Form.Control type="email" placeholder="Lotação" />
-              </div>
-            
-            </Form.Group>
-           
-          </Row>
-          <Row className="mb-5">
-          <Form.Label style={{textAlign:"start", fontWeight:700}}>Dados do centro de custo</Form.Label>
-            <Form.Group as={Col} controlId="formGridCity">
-              <Form.Label>Nome centro de custo</Form.Label>
-              <Form.Control />
-            </Form.Group>
-            <Form.Group as={Col} controlId="formGridCity">
-              <Form.Label>Sigla</Form.Label>
-              <Form.Control />
-            </Form.Group>
-            <Form.Group as={Col} controlId="formGridCity">
-              <Form.Label>Inicio do projeto</Form.Label>
-              <Form.Control type="date"/>
-            </Form.Group>
-            <Form.Group as={Col} controlId="formGridCity">
-              <Form.Label>Fim do projeto</Form.Label>
-              <Form.Control type="date" />
-            </Form.Group>
 
-     
-          </Row>
-          <Row className={module.forms}>
-      
-          <Form.Label style={{textAlign:"start", fontWeight:700}}>Dados dos items</Form.Label>
-            <Form.Group as={Col} className="mb-3" controlId="formGridAddress1">
-              <Form.Label>Patrimonio</Form.Label>
-              <Form.Control placeholder="Número patrimonio" />
-            </Form.Group>
-            <Form.Group as={Col} className="mb-3" controlId="formGridAddress1">
-              <Form.Label>Sufixo</Form.Label>
-              <Form.Control placeholder="Sufixo" />
-            </Form.Group>
-            <Form.Group as={Col} className="mb-3" controlId="formGridAddress1">
-              <Form.Label>Conta</Form.Label>
-              <Form.Control placeholder="Conta" />
-            </Form.Group>
-            <Form.Group as={Col} className="mb-3" controlId="formGridAddress1">
-              <Form.Label>Pedido</Form.Label>
-              <Form.Control placeholder="Pedido" />
-            </Form.Group>
-            <Form.Group as={Col} className="mb-3" controlId="formGridAddress1">
-              <Form.Label>Processo SEI</Form.Label>
-              <Form.Control placeholder="Número SEI" />
-            </Form.Group>
-          <Row>
-          <Form.Group as={Col} className="mb-3" controlId="formGridAddress1">
-            <Form.Label>Especificação</Form.Label>
-            <Form.Control placeholder="Especificação detalhada" />
-          </Form.Group>
-          </Row>
-          <Form.Group as={Col} className="mb-3" controlId="formGridAddress1">
-              <Form.Label>Serie Fabrica</Form.Label>
-              <Form.Control placeholder="Serie" />
-            </Form.Group>
-            <Form.Group as={Col} className="mb-3" controlId="formGridAddress1">
-              <Form.Label>Valor unitario</Form.Label>
-              <Form.Control placeholder="R$ valor " />
-            </Form.Group>
-            <Form.Group as={Col} className="mb-3" controlId="formGridAddress1">
-              <Form.Label>Imagem do produto</Form.Label>
-              <Form.Control placeholder="Link da imagem 🗀" />
-            </Form.Group>
-            <Form.Group as={Col} className="mb-3" controlId="formGridAddress1">
-              <Form.Label>Co-Responsavel</Form.Label>
-              <Form.Control placeholder="Coordenação responsável" />
-            </Form.Group>
-            <Form.Group as={Col} className="mb-3" controlId="formGridAddress1">
-              <Form.Label>Solicitante</Form.Label>
-              <Form.Control placeholder="Solicitante ou demandante" />
-            </Form.Group>
-          </Row>
-          
-        
-       
-      
-
-          <Row>
-          <Form.Label style={{textAlign:"start", fontWeight:700}}>Dados do processo</Form.Label>
-          
-
-     
-
-            <Form.Group as={Col} className="mb-3" controlId="formGridEmpresa">
-              <Form.Label>Nota Fiscal</Form.Label>
-              <Form.Control placeholder="Apartment, studio, or floor" />
-            </Form.Group>
-            <Form.Group as={Col} lassName="mb-3" controlId="formGridEmpresa">
-              <Form.Label>Fornecedor</Form.Label>
-              <Form.Control placeholder="Apartment, studio, or floor" />
-            </Form.Group>
-
-            <Form.Group as={Col} className="mb-3" controlId="formGridEmpresa">
-              <Form.Label>Garantia</Form.Label>
-              <Form.Control placeholder="Apartment, studio, or floor" />
-            </Form.Group>
-            <Form.Group as={Col} className="mb-3" controlId="formGridEmpresa">
-              <Form.Label>Assinatura Recepção</Form.Label>
-              <Form.Control placeholder="Apartment, studio, or floor" />
-            </Form.Group>
-          </Row>
 
       
-
-      
-        </Form>
 
         <div className={module.boxButtons}>
           <Button
@@ -307,6 +152,9 @@ export default function GeneralFormModal({ open, close, handleClose }) {
 
         <ToastContainer position="bottom-left" />
       </Box>
+
+
+
     </Modal>
   );
 }

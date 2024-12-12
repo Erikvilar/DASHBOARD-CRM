@@ -15,6 +15,7 @@ import Descripions from "./Dashboard_sections/patrimonios/Descriptions";
 import Projects from "./Dashboard_sections/patrimonios/Projects";
 
 
+
 const demoTheme = extendTheme({
   colorSchemes: { light: true, dark: true },
   colorSchemeSelector: "data",
@@ -51,11 +52,15 @@ export default function Dashboard(props) {
         return <div>Conteúdo Padrão</div>;
     }
   };
+
+
+
   const [session, setSession] = React.useState({
+    
     user: {
       name: sessionStorage.getItem('user'),
       email: `${sessionStorage.getItem('user')}@ltad.com`,
-      image: "https://media.licdn.com/dms/image/v2/D5603AQFiU_mTQWEFMw/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1721414491441?e=1739404800&v=beta&t=6lXLZtp9dHlEdF4FBfJ5bKSSHiTilpimRr2ydMjQxLM",
+      image: sessionStorage.getItem("avatar"),
     },
   });
 
