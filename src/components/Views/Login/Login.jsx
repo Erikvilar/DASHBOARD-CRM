@@ -47,7 +47,8 @@ function Login() {
     try {
       setLoading(true);
       const response = await axiosGeneralRequest.login(data, { timeout: 5000 });
-      if (response.status == 200) {
+      if (response.status == 202) {
+        console.log(response.data)
         nofity();
         registerSessionUser(response.data);
         
