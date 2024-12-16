@@ -28,32 +28,47 @@
     background-color: white;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 70%;
-    height:70%;
+    width: 90%; 
+    padding-top: 500px;
+    max-height: 80%;
+    min-height: 80%;
     border-radius: 20px;
     display: flex;
     flex-direction: column;
     justify-content:center ;
+    overflow-y: scroll;
+    scrollbar-width:none;
+  
 }
 
 .boxSide{
     border: 2px solid orange;
+    height: 90%;
+   
     
-
-    height: 200px;
     
 }
 .boxWindow{
-    width: 100%;
-    padding: 10px;
+
+    
+   
     
     
+}.boxWindow span{
+    color: orange;
+    font-size: 20px;
+    font-weight: 600;
+    font-family: "Roboto",sans-serif;
+
+}.boxWindow fieldset{
+  border: 2px solid rgb(190, 190, 190);
+  transition: 0.3s ease-in-out;
+  margin: 5px;
+ 
 }
+
 .boxPage{
     height: 800px;
-
-
-    
 }
 .buttons button{
     border: none;
@@ -63,5 +78,8 @@
     font-weight: 600;
     margin-top: 5px;
     margin-bottom: 5px;
+
+}
+.formGroup{
 
 }

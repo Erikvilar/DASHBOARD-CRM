@@ -1,8 +1,8 @@
 @import url("https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=League+Spartan:wght@100..900&display=swap");
 
 .background {
-  /* background-image: url("https://github.com/Erikvilar/PrototypeEmbrapii/blob/onBuilding/src/images/outlet/equippment/LTAD_Equipamento_BCS1.jpg?raw=true"); */
-  background-image: url("https://c.wallhere.com/photos/7e/3b/ge_es44c4_bnsf8272_bnsf7998_csx_railroad_railway_train-801899.jpg!d");
+  background-image: url("https://github.com/Erikvilar/PrototypeEmbrapii/blob/onBuilding/src/images/outlet/equippment/LTAD_Equipamento_BCS1.jpg?raw=true");
+  /* background-image: url("https://c.wallhere.com/photos/7e/3b/ge_es44c4_bnsf8272_bnsf7998_csx_railroad_railway_train-801899.jpg!d"); */
   background-position:120% 50%;
   background-size: cover;
   height: auto;

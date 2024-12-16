@@ -40,14 +40,14 @@ export default function General() {
         if (response.status == 200) {
           console.log("registro OK");
           setData(response.data);
-          console.log(data)
+      
         }
       } catch (e) {
         toast.error("Identificado acesso não autorizado");
         setTimeout(() => navigate("/"), 5500);
       }
     };
-
+    console.log(data)
     requestGet();
     const interval = setInterval(() => {
       requestGet();
@@ -123,6 +123,7 @@ export default function General() {
           id_contato: newRow.id_contato,
           email_contato: newRow.email_contato,
           ocupacao_contato: newRow.ocupacao_contato,
+          responsavel_geral:newRow.responsavel_geral,
           telefone_contato: newRow.telefone_contato,
         },
 };
@@ -299,6 +300,34 @@ export default function General() {
             editable: true,
           },
           {
+            field: "termo",
+            headerName: "Termo",
+            width: 120,
+            editable: true
+          },
+          
+          {
+            field: "lotação",
+            headerName: "Lotação",
+            width: 120,
+            editable: true
+          },
+          {
+            field:"local",
+            headerName:"local",
+            width: 120,
+            editable: true
+
+          },
+          {
+            field:"empSIAFI",
+            headerName:"empSIAFI",
+            width: 120,
+            editable: true
+
+          },
+
+          {
             field: "serie_descricao",
             headerName: "Serie",
             width: 120,
@@ -345,6 +374,12 @@ export default function General() {
             field: "ocupacao_contato",
             headerName: "Contato ocupacional",
             width: 120,
+            editable: true,
+          },
+          {
+            field: "responsavel_geral",
+            headerName: "Responsavel Geral",
+            width: 150,
             editable: true,
           },
           {

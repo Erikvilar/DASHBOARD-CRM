@@ -1,5 +1,6 @@
 const baseResponse = (response)=>{
   const data ={
+
         itemsDTO: {
           nf_invoice_item: response.itemsDTO.nfInvoice,
           codigo_item: response.itemsDTO.codigo_item,
@@ -17,7 +18,6 @@ const baseResponse = (response)=>{
           tipo_usuario: response.tipo_usuario,
         },
         detailsDTO: {
-          id_descricao: response.id_descricao,
           marca_descricao: response.marca_descricao,
           descricao_item: response.descricao_item,
           localizacao_descricao: response.localizacao_descricao,
@@ -25,24 +25,22 @@ const baseResponse = (response)=>{
           serie_descricao: response.serie_descricao,
         },
         costCenterDTO: {
-          id_centro_custo: response.id_centro_custo,
           nome_centro_custo: response.nome_centro_custo,
           identificacao_centro_custo: response.identificacao_centro_custo,
           data_inicio_centro_custo: response.data_inicio_centro_custo,
           data_fim_centro_custo: response.data_fim_centro_custo,
         },
         contactsDTO: {
-          id_contato: response.id_contato,
           email_contato: response.email_contato,
           ocupacao_contato: response.ocupacao_contato,
           telefone_contatos: response.telefone_contato,
         },
         receivingDTO: {
-          id_recebimento: null,
-          local: null,
-          lotação: null,
-          empSIAFI: null,
-          termo: null,
+          termo:response.receivingDTO.termo,
+          local: response.receivingDTO.local,
+          lotação: response.receivingDTO.lotação,
+          empSIAFI: response.receivingDTO.empSIAFI,
+        
         },
     }
     return data;

@@ -1,4 +1,4 @@
-const apiUrlBase  ={
+const apiUrlBase = {
 
     general:{
         baseUrl:"/general",
@@ -8,7 +8,7 @@ const apiUrlBase  ={
 
 
     network:{
-        IPconnection:"192.168.100.5",
+        IPconnection:"10.15.96.27",
         PORTconnection:"6680"
     },
 
