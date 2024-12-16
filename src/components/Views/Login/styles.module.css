@@ -1,7 +1,9 @@
 @import url("https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=League+Spartan:wght@100..900&display=swap");
 
 .background {
-  background-image: url("https://github.com/Erikvilar/PrototypeEmbrapii/blob/onBuilding/src/images/outlet/equippment/LTAD_Equipamento_BCS1.jpg?raw=true");
+  /* background-image: url("https://github.com/Erikvilar/PrototypeEmbrapii/blob/onBuilding/src/images/outlet/equippment/LTAD_Equipamento_BCS1.jpg?raw=true"); */
+  background-image: url("https://c.wallhere.com/photos/7e/3b/ge_es44c4_bnsf8272_bnsf7998_csx_railroad_railway_train-801899.jpg!d");
+  background-position:120% 50%;
   background-size: cover;
   height: auto;
 }
@@ -40,18 +42,20 @@
 .dashboardView input {
   display: flex;
   width: 300px;
-  background-color: white;
+  background-color: transparent;
   border: none;
   font-weight: 500;
-  border: 3px solid gray;
+  color: #2c99f3;
+  border: 1px solid gray;
   border-radius: 10px;
   padding: 10px;
   flex-direction: column;
   margin-bottom: 10px;
   outline: none;
   &:focus {
-    border: 2px solid rgb(243, 107, 44);
-  }
+    border: 2px solid #2c99f3;
+    background-color: rgba(128, 128, 128, 0.151);
+    }
 }
 .dashboardView label {
   font-weight: 600;

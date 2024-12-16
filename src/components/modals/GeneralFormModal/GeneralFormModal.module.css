@@ -11,6 +11,7 @@
 .boxButtons button{
    margin: 10px;
 
+
   
 }
 .boxTitleLogo{
@@ -23,15 +24,44 @@
 
     position: absolute;
     top: 50%;
+    padding: 10px;
+    background-color: white;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 50%;
-    height:85%;
+    width: 70%;
+    height:70%;
+    border-radius: 20px;
     display: flex;
     flex-direction: column;
     justify-content:center ;
-    border: 2px solid #DEAA79,
 }
 
+.boxSide{
+    border: 2px solid orange;
+    
+
+    height: 200px;
+    
+}
+.boxWindow{
+    width: 100%;
+    padding: 10px;
+    
+    
+}
+.boxPage{
+    height: 800px;
 
 
+    
+}
+.buttons button{
+    border: none;
+    width: 100%;
+    background-color: orange;
+    color: white;
+    font-weight: 600;
+    margin-top: 5px;
+    margin-bottom: 5px;
+
+}

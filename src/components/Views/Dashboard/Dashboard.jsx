@@ -97,12 +97,12 @@ export default function Dashboard(props) {
         },
         {
           segment: "patrimonio",
-          title: "Patrimonios",
+          title: "Gerenciamento",
           icon: <DashboardIcon />,
           children: [
             {
               segment: "general",
-              title: "Geral",
+              title: "Produtos",
               icon: <DescriptionIcon />,
             },
             {

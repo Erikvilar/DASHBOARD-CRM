@@ -1,17 +1,17 @@
 import { useState } from "react";
 import styles from "./styles.module.css";
-
-
+import { GrStatusGood } from "react-icons/gr";
+import { FaUser } from "react-icons/fa6";
 import "react-activity/dist/library.css";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer, toast } from "react-toastify";
 import { Bounce } from "react-activity";
 import { useNavigate } from "react-router-dom";
-import axiosGeneralRequest from "../../services/ApiServiceRequests";
+import axiosGeneralRequest from "../../../services/ApiServiceRequests";
+
 
 function Login() {
   const [request, setRequest] = useState({ login: "", password: ""});
-  const [loading, setLoading] = useState(false);
   const [isLogin, setIsLogin] = useState(false);
   const navigate = useNavigate();
   const nofity = () => toast.success("sucesso ao enviar requisção");
@@ -45,19 +45,20 @@ function Login() {
   
 
     try {
-      setLoading(true);
+   
       const response = await axiosGeneralRequest.login(data, { timeout: 5000 });
       if (response.status == 202) {
         console.log(response.data)
+        setIsLogin(true)
         nofity();
         registerSessionUser(response.data);
-        
-        navigate("viewer");
+        setTimeout(()=> navigate("viewer"), 2000)
+      
       }
     } catch (e) {
       error();
     } finally {
-      setLoading(false);
+     
     }
   };
 
@@ -71,22 +72,23 @@ function Login() {
           </div>
           <form action="" onSubmit={sendRequest}>
             <div>
-              <h2>{!isLogin ? "Àrea de login" : "Usuario logado"}</h2>
+              <h2>{!isLogin ? (<span>Fazer Login <FaUser/></span>) : (<span>Usuario logado  <GrStatusGood/></span>)}</h2>
             </div>
 
             <label htmlFor="">Login:</label>
-            <input type="text" name="login" onChange={handleRequest} required />
+            <input type="text" name="login" onChange={handleRequest} placeholder="example" required />
             <label htmlFor="">Senha</label>
             <input
               type="password"
               name="password"
+              placeholder="********"
               value={request.password}
               onChange={handleRequest}
               required
             />
-            <button>
-              {!loading ? (
-                <p>Entrar</p>
+            <button style={{display:"flex", alignItems:"center", justifyContent:"center"}}>
+              {!isLogin ? (
+               <span>Entrar</span>
               ) : (
                 <Bounce color="#727981" size={12} speed={1} animating={true} />
               )}
