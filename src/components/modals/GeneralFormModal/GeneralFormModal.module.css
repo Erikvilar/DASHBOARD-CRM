@@ -1,85 +1,56 @@
+.boxButtons {
+  display: flex;
 
-.boxButtons{
-    display: flex;
-    margin-top: 50px;
-    justify-content: end;
-    align-items: end;
-
-    
-  
+  justify-content: end;
+  align-items: end;
 }
-.boxButtons button{
-   margin: 10px;
-
-
-  
-}
-.boxTitleLogo{
-    padding-bottom: 50px;
-    color: gray;
+.boxButtons button {
+  margin: 10px;
 }
 
 
-.boxTest{
+.boxTest {
+  position: absolute;
+  top: 50%;
+  padding: 10px;
 
-    position: absolute;
-    top: 50%;
-    padding: 10px;
-    background-color: white;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 90%; 
-    padding-top: 500px;
-    max-height: 80%;
-    min-height: 80%;
-    border-radius: 20px;
-    display: flex;
-    flex-direction: column;
-    justify-content:center ;
-    overflow-y: scroll;
-    scrollbar-width:none;
-  
-}
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80%;
 
-.boxSide{
-    border: 2px solid orange;
-    height: 90%;
-   
-    
-    
-}
-.boxWindow{
-
-    
-   
-    
-    
-}.boxWindow span{
-    color: orange;
-    font-size: 20px;
-    font-weight: 600;
-    font-family: "Roboto",sans-serif;
-
-}.boxWindow fieldset{
-  border: 2px solid rgb(190, 190, 190);
-  transition: 0.3s ease-in-out;
-  margin: 5px;
+  padding-top: 50px;
+  max-height: 95%;
+  background-color: rgba(255, 255, 255, 0.884);
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
  
+  scrollbar-width: none;
 }
 
-.boxPage{
-    height: 800px;
+.boxSide {
+  border: 2px solid orange;
 }
-.buttons button{
-    border: none;
-    width: 100%;
-    background-color: orange;
-    color: white;
-    font-weight: 600;
-    margin-top: 5px;
-    margin-bottom: 5px;
+.boxWindow span {
+  color: orange;
 
+  font-size: 20px;
+  font-weight: 600;
+  font-family: "Roboto", sans-serif;
 }
-.formGroup{
+.boxWindow fieldset {
+  background-color: rgba(105, 105, 105, 0);
+border: 1px solid gray;
+  transition:500ms ease-out;
+  margin: 5px;
+  border-radius: 10px;
+  &:hover {
+    transform: scale(1.01);
+    background-color: white;
+    border: 2px solid rgb(27, 27, 27);
+    cursor: pointer;
+  }
+}
 
-}
+

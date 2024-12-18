@@ -28,7 +28,6 @@ function Login() {
   const registerSessionUser = async (data) => {
  
     const {token, avatar, login} = data;
-    console.log(data)
      sessionStorage.setItem("JWT", token);
     sessionStorage.setItem("user", login);
     sessionStorage.setItem("avatar", avatar)
@@ -48,7 +47,7 @@ function Login() {
    
       const response = await axiosGeneralRequest.login(data, { timeout: 5000 });
       if (response.status == 202) {
-        console.log(response.data)
+     
         setIsLogin(true)
         nofity();
         registerSessionUser(response.data);

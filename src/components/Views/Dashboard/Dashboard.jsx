@@ -105,14 +105,11 @@ export default function Dashboard(props) {
               title: "Produtos",
               icon: <DescriptionIcon />,
             },
+        
+         
             {
-              segment: "descricoes",
-              title: "Descrições",
-              icon: <DescriptionIcon />,
-            },
-            {
-              segment: "projetos",
-              title: "projetos",
+              segment: "Relatorios",
+              title: "Relatorios",
               icon: <DescriptionIcon />,
             },
           ],

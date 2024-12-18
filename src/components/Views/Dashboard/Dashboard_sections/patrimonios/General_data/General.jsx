@@ -13,22 +13,32 @@ import {
   axiosGeneralRequest,
 } from "./index.js";
 
+import { PDFDownloadLink } from "@react-pdf/renderer";
 import { FaImages } from "react-icons/fa";
 import { GrStatusGood } from "react-icons/gr";
 import { GiCardDiscard,GiMagnifyingGlass } from "react-icons/gi";
 import { GoAlert } from "react-icons/go";
 import { IoAlertCircle } from "react-icons/io5";
 import { Link } from "react-router-dom";
+import DocumentToPrint from "../../../../toPrint/DocumentToPrint.jsx";
+
+
 
 export default function General() {
   const navigate = useNavigate();
   const [openDialog, setOpenDialog] = useState(null);
   const [data, setData] = useState([]);
   const [promiseArguments, setPromiseArguments] = useState(null);
-
+  const [dataRow, setDataRow] = useState(null)
   const [openModalForm, setOpenModalForm] = useState(null);
   const handleOpenModalForm = () => setOpenModalForm(true);
   const handleCloseModalForm = () => setOpenModalForm(false);
+
+  const [line, setLine] = useState();
+  const handleLine = (value) => setLine(value);
+ 
+
+
 
   let token = sessionStorage.getItem("JWT");
 
@@ -57,6 +67,7 @@ export default function General() {
   }, []);
 
   const processRowUpdate = useCallback((newRow, oldRow) => {
+
     return new Promise((resolve, reject) => {
       if (newRow !== oldRow) {
         setOpenDialog(true);
@@ -81,8 +92,9 @@ export default function General() {
   const handleYes = async () => {
     setOpenDialog(false);
     const { newRow, resolve } = promiseArguments;
+  
     await resolve(newRow);
-    console.log(newRow);
+   
 
     try {
       const dataUpdate = {
@@ -139,8 +151,9 @@ export default function General() {
     }
   };
 
-  const [line, setLine] = useState();
-  const handleLine = (value) => setLine(value);
+
+
+
   const handleSelectRow = async (params, event) => {
     if (event.key === 'Delete') {
       try {
@@ -153,7 +166,13 @@ export default function General() {
       }
     }
   };
+
+
+ 
+
+
   const isLargeScreen = useMediaQuery("(min-width:1540px)");
+
   return (
     <Box
       sx={{
@@ -163,6 +182,7 @@ export default function General() {
       }}
       component={"section"}
     >
+     
       {openDialog && (
         <Dialogs
           open={openDialog}
@@ -174,6 +194,7 @@ export default function General() {
           handleN={handleNo}
         />
       )}
+   
       {openModalForm && (
         <GeneralFormModal
           open={openModalForm}
@@ -181,12 +202,16 @@ export default function General() {
           handleClose={handleCloseModalForm}
         />
       )}
-
+ <PDFDownloadLink document={<DocumentToPrint data={dataRow} />} fileName= "C:/Users/Erik Alves/Documents/Pessoa/example.pdf">Baixar</PDFDownloadLink>;
       <DataGrid
+
         style={{ width: "100%", height: "100%" }}
         getRowId={(row) => row.id_usuario}
         onCellEditStart={(value) => console.log(value.value)}
         onRowSelectionModelChange={handleLine}
+        onRowClick={(params)=> setDataRow(params.row)}
+      
+        checkboxSelection
         onCellEditStop={() => openDialog && setOpenDialog(true)}
         onCellKeyDown={handleSelectRow}
         processRowUpdate={(newRow, oldRow) => processRowUpdate(newRow, oldRow)}
@@ -410,8 +435,7 @@ export default function General() {
           },
         }}
         pageSizeOptions={[1]}
-        checkboxSelection
-        disableRowSelectionOnClick
+    
       />
       <Button
         variant="text"
