@@ -1,4 +1,4 @@
-import Dashboard from "./Views/Dashboard/Dashboard";
+import Dashboard from "./Views/Dashboard/principal/Dashboard";
 import Login from "./Views/Login/Login";
 
 export{

@@ -1,3 +1,4 @@
+
 import {
   useCallback,
   useEffect,
@@ -11,37 +12,33 @@ import {
   Button,
   GeneralFormModal,
   axiosGeneralRequest,
+  PDFDownloadLink,
+  FaImages,
+  GrStatusGood,
+  GiCardDiscard,
+  GiMagnifyingGlass,
+  GoAlert,
+  IoAlertCircle,
+  Link,
+  DocumentToPrint,
+  PrintIcon,
+  Spinner
 } from "./index.js";
-
-import { PDFDownloadLink } from "@react-pdf/renderer";
-import { FaImages } from "react-icons/fa";
-import { GrStatusGood } from "react-icons/gr";
-import { GiCardDiscard,GiMagnifyingGlass } from "react-icons/gi";
-import { GoAlert } from "react-icons/go";
-import { IoAlertCircle } from "react-icons/io5";
-import { Link } from "react-router-dom";
-import DocumentToPrint from "../../../../toPrint/DocumentToPrint.jsx";
-
-
 
 export default function General() {
   const navigate = useNavigate();
   const [openDialog, setOpenDialog] = useState(null);
   const [data, setData] = useState([]);
   const [promiseArguments, setPromiseArguments] = useState(null);
-  const [dataRow, setDataRow] = useState(null)
+ 
   const [openModalForm, setOpenModalForm] = useState(null);
   const handleOpenModalForm = () => setOpenModalForm(true);
   const handleCloseModalForm = () => setOpenModalForm(false);
 
   const [line, setLine] = useState();
   const handleLine = (value) => setLine(value);
- 
-
-
 
   let token = sessionStorage.getItem("JWT");
-
 
   useEffect(() => {
     const requestGet = async () => {
@@ -50,14 +47,13 @@ export default function General() {
         if (response.status == 200) {
           console.log("registro OK");
           setData(response.data);
-      
         }
       } catch (e) {
         toast.error("Identificado acesso não autorizado");
         setTimeout(() => navigate("/"), 5500);
       }
     };
-    console.log(data)
+    console.log(data);
     requestGet();
     const interval = setInterval(() => {
       requestGet();
@@ -67,7 +63,6 @@ export default function General() {
   }, []);
 
   const processRowUpdate = useCallback((newRow, oldRow) => {
-
     return new Promise((resolve, reject) => {
       if (newRow !== oldRow) {
         setOpenDialog(true);
@@ -92,9 +87,8 @@ export default function General() {
   const handleYes = async () => {
     setOpenDialog(false);
     const { newRow, resolve } = promiseArguments;
-  
+
     await resolve(newRow);
-   
 
     try {
       const dataUpdate = {
@@ -135,10 +129,10 @@ export default function General() {
           id_contato: newRow.id_contato,
           email_contato: newRow.email_contato,
           ocupacao_contato: newRow.ocupacao_contato,
-          responsavel_geral:newRow.responsavel_geral,
+          responsavel_geral: newRow.responsavel_geral,
           telefone_contato: newRow.telefone_contato,
         },
-};
+      };
 
       const response = await axiosGeneralRequest.put(dataUpdate, token);
       if (response.status == 200) {
@@ -151,13 +145,13 @@ export default function General() {
     }
   };
 
-
-
-
   const handleSelectRow = async (params, event) => {
-    if (event.key === 'Delete') {
+    if (event.key === "Delete") {
       try {
-        const response = await axiosGeneralRequest.delete(line, sessionStorage.getItem("JWT"));
+        const response = await axiosGeneralRequest.delete(
+          line,
+          sessionStorage.getItem("JWT")
+        );
         if (response.status == 200) {
           alert("item deletado " + line);
         }
@@ -167,34 +161,28 @@ export default function General() {
     }
   };
 
-
- 
-
-
   const isLargeScreen = useMediaQuery("(min-width:1540px)");
 
   return (
     <Box
       sx={{
-        height: isLargeScreen ? "90vh" : "80vh",
+        height: isLargeScreen ? "80vh" : "80vh",
         width: isLargeScreen ? 1780 : 1000,
         maxWidth: "90%",
       }}
       component={"section"}
     >
-     
       {openDialog && (
         <Dialogs
           open={openDialog}
           close={handleNo}
           newValue={""}
           oldValue={""}
-         
           handleY={handleYes}
           handleN={handleNo}
         />
       )}
-   
+
       {openModalForm && (
         <GeneralFormModal
           open={openModalForm}
@@ -202,26 +190,38 @@ export default function General() {
           handleClose={handleCloseModalForm}
         />
       )}
- <PDFDownloadLink document={<DocumentToPrint data={dataRow} />} fileName= "C:/Users/Erik Alves/Documents/Pessoa/example.pdf">Baixar</PDFDownloadLink>;
-      <DataGrid
 
+      <DataGrid
         style={{ width: "100%", height: "100%" }}
         getRowId={(row) => row.id_usuario}
         onCellEditStart={(value) => console.log(value.value)}
-        onRowSelectionModelChange={handleLine}
-        onRowClick={(params)=> setDataRow(params.row)}
-      
-        checkboxSelection
+        onRowSelectionModelChange={handleLine}    
         onCellEditStop={() => openDialog && setOpenDialog(true)}
-        onCellKeyDown={handleSelectRow}
+        // onCellKeyDown={handleSelectRow}
         processRowUpdate={(newRow, oldRow) => processRowUpdate(newRow, oldRow)}
         columns={[
           {
-            
             field: "id_item",
-            headerName: "Line",
-            width: 90,
-            
+            headerName: "ID",
+            width: 50,
+            editable: false,
+          },
+          {
+            field: "imprimir",
+            headerName: "imprimir",
+            width: 100,
+            renderCell: (param) => {
+              return (
+                <Button>
+                  <PDFDownloadLink 
+                    document={<DocumentToPrint data={param.row} />}
+                    fileName={"relatorio"+param.row.descricao_item}
+                  >
+                    {({ loading }) => (loading ? <Spinner color="#727981" size={12} speed={1} animating={true} /> : <PrintIcon  />)}
+                  </PDFDownloadLink>
+                </Button>
+              );
+            },
             editable: false,
           },
 
@@ -236,8 +236,7 @@ export default function General() {
             field: "descricao_item",
             headerName: "Descrição",
             width: 180,
-            editable: true
-           
+            editable: true,
           },
           {
             field: "nome_usuario",
@@ -270,12 +269,27 @@ export default function General() {
             headerName: "Imagem",
             width: 150,
             editable: true,
-            renderCell:(params)=>{
-              return(
-                <Button disabled={params.value == "" ? true : false}><Link target="_blank" style={{display:"flex", justifyContent:"center", alignItems:"center", margin:"auto"}} to={params.value}><FaImages size={28} color={params.value == ""? "gray" : "darkgreen"}/></Link> </Button>
-                
-              )
-          }
+            renderCell: (params) => {
+              return (
+                <Button disabled={params.value == "" ? true : false}>
+                  <Link
+                    target="_blank"
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      margin: "auto",
+                    }}
+                    to={params.value}
+                  >
+                    <FaImages
+                      size={28}
+                      color={params.value == "" ? "gray" : "darkgreen"}
+                    />
+                  </Link>{" "}
+                </Button>
+              );
+            },
           },
           {
             field: "sde_item",
@@ -288,21 +302,40 @@ export default function General() {
             headerName: "Status",
             width: 140,
             editable: true,
-            renderCell:(params)=>{
-              switch(params.value){
+            renderCell: (params) => {
+              switch (params.value) {
                 case "bom":
-                   return <span><GrStatusGood size={20} color="green"/> Estado regular</span>
+                  return (
+                    <span>
+                      <GrStatusGood size={20} color="green" /> Estado regular
+                    </span>
+                  );
                 case "ruim":
-                   return <span><GoAlert size={20} color="orange"/> Estado ruim</span>
+                  return (
+                    <span>
+                      <GoAlert size={20} color="orange" /> Estado ruim
+                    </span>
+                  );
                 case "analise":
-                   return <span><GiMagnifyingGlass size={20} color="blue"/> Em análise</span>
+                  return (
+                    <span>
+                      <GiMagnifyingGlass size={20} color="blue" /> Em análise
+                    </span>
+                  );
                 case "baixa":
-                   return <span><GiCardDiscard size={20} color="gray"/> Baixa solicitada</span>
+                  return (
+                    <span>
+                      <GiCardDiscard size={20} color="gray" /> Baixa solicitada
+                    </span>
+                  );
                 default:
-                   return <span><IoAlertCircle  size={20} color="red"/> undefined!</span>
+                  return (
+                    <span>
+                      <IoAlertCircle size={20} color="red" /> undefined!
+                    </span>
+                  );
               }
-            
-          }
+            },
           },
           {
             field: "valor_item",
@@ -328,28 +361,26 @@ export default function General() {
             field: "termo",
             headerName: "Termo",
             width: 120,
-            editable: true
+            editable: true,
           },
-          
+
           {
             field: "lotação",
             headerName: "Lotação",
             width: 120,
-            editable: true
+            editable: true,
           },
           {
-            field:"local",
-            headerName:"local",
+            field: "local",
+            headerName: "local",
             width: 120,
-            editable: true
-
+            editable: true,
           },
           {
-            field:"empSIAFI",
-            headerName:"empSIAFI",
+            field: "empSIAFI",
+            headerName: "empSIAFI",
             width: 120,
-            editable: true
-
+            editable: true,
           },
 
           {
@@ -435,8 +466,8 @@ export default function General() {
           },
         }}
         pageSizeOptions={[1]}
-    
       />
+
       <Button
         variant="text"
         style={{
