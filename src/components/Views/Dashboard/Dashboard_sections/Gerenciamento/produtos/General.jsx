@@ -12,7 +12,6 @@ import {
   Button,
   GeneralFormModal,
   axiosGeneralRequest,
-  PDFDownloadLink,
   FaImages,
   GrStatusGood,
   GiCardDiscard,
@@ -160,26 +159,34 @@ export default function General() {
       }
     }
   };
-
+  const [loading, setLoading] = useState(false);
   const handlePrint = async (row) => {
-    const print = {
-      image: row.caminho_imagem_item ? row.caminho_imagem_item : "",
-      descricao: row.descricao_item,
-      valor: row.valor_item,
-      status: row.status_item,
-      SDE: row.sde_item,
-      local: row.localizacao_descricao,
-      responsavel: row.nome_usuario,
-      ocupacao: row.tipo_usuario,
-      modelo: row.modelo_descricao,
-      serial: row.serie_descricao,
-      termo: row.termo,
-    };
+    try {
+      setLoading(true);
+      const print = {
+        image: row.caminho_imagem_item ? row.caminho_imagem_item : "",
+        descricao: row.descricao_item,
+        valor: row.valor_item,
+        status: row.status_item,
+        SDE: row.sde_item,
+        local: row.localizacao_descricao,
+        responsavel: row.nome_usuario,
+        ocupacao: row.tipo_usuario,
+        modelo: row.modelo_descricao,
+        serial: row.serie_descricao,
+        termo: row.termo,
+      };
 
-    const blob = await pdf(<DocumentToPrint data={print} />).toBlob();
-    const url = URL.createObjectURL(blob);
-    window.open(url, "_blank");
-    setTimeout(() => URL.revokeObjectURL(url), 10000);
+      const blob = await pdf(<DocumentToPrint data={print} />).toBlob();
+      const url = URL.createObjectURL(blob);
+
+      setTimeout(()=> window.open(url, "_blank"),1500)
+      setTimeout(() => URL.revokeObjectURL(url), 10000);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const isLargeScreen = useMediaQuery("(min-width:1540px)");
@@ -233,10 +240,10 @@ export default function General() {
             width: 100,
             renderCell: (param) => {
               return (
-                <Button
-                  onClick={() => setTimeout(handlePrint(param.row), 2000)}
-                >
-                  <PrintIcon />
+                <Button onClick={() => handlePrint(param.row)}>
+                  {
+                    loading ? <Spinner size={12}/>:<PrintIcon/>
+                  }
                 </Button>
               );
             },

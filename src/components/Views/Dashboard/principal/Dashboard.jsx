@@ -10,8 +10,9 @@ import LayersIcon from "@mui/icons-material/Layers";
 import { AppProvider } from "@toolpad/core/AppProvider";
 import { DashboardLayout } from "@toolpad/core/DashboardLayout";
 import { useDemoRouter } from "@toolpad/core/internal";
-import General from "../Dashboard_sections/Gerenciamento/produtos/General";
+import General from "../Dashboard_sections/Gerenciamento/Produtos/General";
 import { useNavigate } from "react-router-dom";
+import AssignmentIcon from '@mui/icons-material/Assignment';
 import { ToastContainer,toast } from "react-toastify";
 
 
@@ -101,32 +102,42 @@ export default function Dashboard(props) {
             {
               segment: "produtos",
               title: "Produtos",
-              icon: <InventoryIcon />,
+              icon: <InventoryIcon  />,
             },
             {
               segment: "projetos",
               title: "Projetos",
-              icon: <ContentPasteIcon />,
+              icon: <AssignmentIcon style={{color:"#FFB26F"}}/>,
               children:[
                 {
                   segment:"MFLD",
                   title:"MFLD",
-                  icon: <DescriptionIcon />
+                  icon: <DescriptionIcon style={{color:"#DE8F5F"}} />
                 },
                 {
                   segment:"LIGAS",
                   title:"LIGAS",
-                  icon: <DescriptionIcon />
+                  icon: <DescriptionIcon style={{color:"#DE8F5F"}}/>
                 },
                 {
                   segment:"TECHNIP",
                   title:"TECHNIP",
-                  icon: <DescriptionIcon />
+                  icon: <DescriptionIcon  style={{color:"#DE8F5F"}}/>
                 },
                 {
                   segment:"LZENERGIA",
                   title:"LZ ENERGIA",
-                  icon: <DescriptionIcon />
+                  icon: <DescriptionIcon style={{color:"#DE8F5F"}} />
+                },
+                {
+                  segment:"POLIVETRO",
+                  title:"POLIVETRO",
+                  icon: <DescriptionIcon style={{color:"#DE8F5F"}}/>
+                },
+                {
+                  segment:"SMART",
+                  title:"SMART",
+                  icon: <DescriptionIcon style={{color:"#DE8F5F"}}/>
                 },
                
               ]
