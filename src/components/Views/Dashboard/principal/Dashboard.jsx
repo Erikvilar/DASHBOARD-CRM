@@ -171,7 +171,7 @@ export default function Dashboard(props) {
       router={router}
       branding={{
         logo: <img src="src\images\Logo\sm_icon_dataflux3.png" alt="MUI logo" />,
-        title: "DASHBOARD",
+        title: "Dashboard",
         
       }}
       session={session}

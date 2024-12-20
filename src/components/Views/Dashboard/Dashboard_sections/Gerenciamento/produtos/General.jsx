@@ -1,4 +1,4 @@
-
+import { pdf } from "@react-pdf/renderer";
 import {
   useCallback,
   useEffect,
@@ -22,7 +22,7 @@ import {
   Link,
   DocumentToPrint,
   PrintIcon,
-  Spinner
+  Spinner,
 } from "./index.js";
 
 export default function General() {
@@ -30,7 +30,7 @@ export default function General() {
   const [openDialog, setOpenDialog] = useState(null);
   const [data, setData] = useState([]);
   const [promiseArguments, setPromiseArguments] = useState(null);
- 
+
   const [openModalForm, setOpenModalForm] = useState(null);
   const handleOpenModalForm = () => setOpenModalForm(true);
   const handleCloseModalForm = () => setOpenModalForm(false);
@@ -161,6 +161,27 @@ export default function General() {
     }
   };
 
+  const handlePrint = async (row) => {
+    const print = {
+      image: row.caminho_imagem_item ? row.caminho_imagem_item : "",
+      descricao: row.descricao_item,
+      valor: row.valor_item,
+      status: row.status_item,
+      SDE: row.sde_item,
+      local: row.localizacao_descricao,
+      responsavel: row.nome_usuario,
+      ocupacao: row.tipo_usuario,
+      modelo: row.modelo_descricao,
+      serial: row.serie_descricao,
+      termo: row.termo,
+    };
+
+    const blob = await pdf(<DocumentToPrint data={print} />).toBlob();
+    const url = URL.createObjectURL(blob);
+    window.open(url, "_blank");
+    setTimeout(() => URL.revokeObjectURL(url), 10000);
+  };
+
   const isLargeScreen = useMediaQuery("(min-width:1540px)");
 
   return (
@@ -195,7 +216,7 @@ export default function General() {
         style={{ width: "100%", height: "100%" }}
         getRowId={(row) => row.id_usuario}
         onCellEditStart={(value) => console.log(value.value)}
-        onRowSelectionModelChange={handleLine}    
+        onRowSelectionModelChange={handleLine}
         onCellEditStop={() => openDialog && setOpenDialog(true)}
         // onCellKeyDown={handleSelectRow}
         processRowUpdate={(newRow, oldRow) => processRowUpdate(newRow, oldRow)}
@@ -212,13 +233,10 @@ export default function General() {
             width: 100,
             renderCell: (param) => {
               return (
-                <Button>
-                  <PDFDownloadLink 
-                    document={<DocumentToPrint data={param.row} />}
-                    fileName={"relatorio"+param.row.descricao_item}
-                  >
-                    {({ loading }) => (loading ? <Spinner color="#727981" size={12} speed={1} animating={true} /> : <PrintIcon  />)}
-                  </PDFDownloadLink>
+                <Button
+                  onClick={() => setTimeout(handlePrint(param.row), 2000)}
+                >
+                  <PrintIcon />
                 </Button>
               );
             },
@@ -261,7 +279,7 @@ export default function General() {
           {
             field: "observacao_item",
             headerName: "Observação",
-            width: 150,
+            width: 200,
             editable: true,
           },
           {
@@ -291,12 +309,7 @@ export default function General() {
               );
             },
           },
-          {
-            field: "sde_item",
-            headerName: "SDE",
-            width: 120,
-            editable: true,
-          },
+
           {
             field: "status_item",
             headerName: "Status",
@@ -373,6 +386,12 @@ export default function General() {
           {
             field: "local",
             headerName: "local",
+            width: 120,
+            editable: true,
+          },
+          {
+            field: "sde_item",
+            headerName: "SDE",
             width: 120,
             editable: true,
           },
