@@ -2,6 +2,7 @@ const apiUrlBase = {
 
     general:{
         baseUrl:"/general",
+        project:"/general/costcenter/",
         update:"/update",
         create:"/create",
     },

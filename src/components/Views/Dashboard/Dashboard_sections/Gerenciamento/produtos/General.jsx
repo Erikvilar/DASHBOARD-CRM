@@ -12,7 +12,6 @@ import {
   Button,
   GeneralFormModal,
   axiosGeneralRequest,
-  PDFDownloadLink,
   FaImages,
   GrStatusGood,
   GiCardDiscard,
@@ -22,7 +21,6 @@ import {
   Link,
   DocumentToPrint,
   PrintIcon,
-  Spinner,
 } from "./index.js";
 
 export default function General() {

@@ -3,7 +3,7 @@ import apiUrlBase from "./ApiUrlBase";
 
 const {IPconnection, PORTconnection} = apiUrlBase.network;
 
-const {update, create, baseUrl } = apiUrlBase.general;
+const {update, create, baseUrl,project } = apiUrlBase.general;
 
 const {login, auth} = apiUrlBase.authentication;
 
@@ -21,6 +21,18 @@ export const axiosGeneralRequest = {
   get: async (token) => {
     try {
       const response = await axios.get(`http://${IPconnection}:${PORTconnection}${baseUrl}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response; 
+    } catch (error) {
+      throw error; 
+    }
+  },
+  project: async (projectName,token) => {
+    try {
+      const response = await axios.get(`http://${IPconnection}:${PORTconnection}${project}${projectName}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
