@@ -10,10 +10,12 @@ import LayersIcon from "@mui/icons-material/Layers";
 import { AppProvider } from "@toolpad/core/AppProvider";
 import { DashboardLayout } from "@toolpad/core/DashboardLayout";
 import { useDemoRouter } from "@toolpad/core/internal";
-import General from "../Dashboard_sections/Gerenciamento/produtos/General";
+import General from "../Dashboard_sections/Gerenciamento/Produtos/General";
 import { useNavigate } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify";
-import ProjetosView from "../Dashboard_sections/Gerenciamento/projetos/ProjetosView";
+import { ToastContainer,toast } from "react-toastify";
+
+
+
 
 const demoTheme = extendTheme({
   colorSchemes: { light: true, dark: true },
@@ -102,32 +104,32 @@ export default function Dashboard(props) {
             {
               segment: "produtos",
               title: "Produtos",
-              icon: <InventoryIcon />,
+              icon: <InventoryIcon  />,
             },
             {
               segment: "projetos",
               title: "Projetos",
               icon: <ContentPasteIcon />,
-              children: [
+              children:[
                 {
-                  segment: "MFLD",
-                  title: "MFLD",
-                  icon: <DescriptionIcon />,
+                  segment:"MFLD",
+                  title:"MFLD",
+                  icon: <DescriptionIcon />
                 },
                 {
-                  segment: "LIGAS",
-                  title: "LIGAS",
-                  icon: <DescriptionIcon />,
+                  segment:"LIGAS",
+                  title:"LIGAS",
+                  icon: <DescriptionIcon />
                 },
                 {
-                  segment: "TECHNIP",
-                  title: "TECHNIP",
-                  icon: <DescriptionIcon />,
+                  segment:"TECHNIP",
+                  title:"TECHNIP",
+                  icon: <DescriptionIcon />
                 },
                 {
-                  segment: "LZENERGIA",
-                  title: "LZ ENERGIA",
-                  icon: <DescriptionIcon />,
+                  segment:"LZENERGIA",
+                  title:"LZ ENERGIA",
+                  icon: <DescriptionIcon />
                 },
               ],
             },
