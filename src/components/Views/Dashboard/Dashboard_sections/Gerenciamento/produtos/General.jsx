@@ -19,9 +19,14 @@ import {
   GoAlert,
   IoAlertCircle,
   Link,
+  format,
   DocumentToPrint,
   PrintIcon,
 } from "./index.js";
+import {
+  GridToolbarContainer,
+  GridToolbarQuickFilter,
+} from "@mui/x-data-grid";
 
 export default function General() {
   const navigate = useNavigate();
@@ -55,7 +60,7 @@ export default function General() {
     requestGet();
     const interval = setInterval(() => {
       requestGet();
-    }, 5000);
+    }, 50000);
 
     return () => clearInterval(interval);
   }, []);
@@ -159,6 +164,7 @@ export default function General() {
     }
   };
   const [loading, setLoading] = useState(false);
+
   const handlePrint = async (row) => {
     try {
       setLoading(true);
@@ -179,7 +185,7 @@ export default function General() {
       const blob = await pdf(<DocumentToPrint data={print} />).toBlob();
       const url = URL.createObjectURL(blob);
 
-      setTimeout(()=> window.open(url, "_blank"),1500)
+      setTimeout(() => window.open(url, "_blank"), 1500);
       setTimeout(() => URL.revokeObjectURL(url), 10000);
     } catch (error) {
       console.log(error);
@@ -189,6 +195,18 @@ export default function General() {
   };
 
   const isLargeScreen = useMediaQuery("(min-width:1540px)");
+
+  const parseFilters = (input) => input.split(" ").filter(Boolean);
+  const CustomToolbar = () => (
+    <GridToolbarContainer>
+      <GridToolbarQuickFilter
+        debounceMs={800}
+        placeholder="Buscar..."
+        quickFilterParser={parseFilters}
+        variant="outlined"
+      />
+    </GridToolbarContainer>
+  );
 
   return (
     <Box
@@ -226,23 +244,29 @@ export default function General() {
         onCellEditStop={() => openDialog && setOpenDialog(true)}
         // onCellKeyDown={handleSelectRow}
         processRowUpdate={(newRow, oldRow) => processRowUpdate(newRow, oldRow)}
+      
+      slots={{
+        toolbar: CustomToolbar
+      }}
         columns={[
           {
             field: "id_item",
             headerName: "ID",
+            align: "center",
+            headerAlign: "center",
             width: 50,
             editable: false,
           },
           {
             field: "imprimir",
             headerName: "imprimir",
+            align: "center",
+            headerAlign: "center",
             width: 100,
             renderCell: (param) => {
               return (
                 <Button onClick={() => handlePrint(param.row)}>
-                  {
-                    loading ? <Spinner size={12}/>:<PrintIcon/>
-                  }
+                  <PrintIcon />
                 </Button>
               );
             },
@@ -252,6 +276,8 @@ export default function General() {
           {
             field: "codigo_item",
             headerName: "Código",
+            align: "center",
+            headerAlign: "center",
             width: 150,
             editable: true,
           },
@@ -259,18 +285,24 @@ export default function General() {
           {
             field: "descricao_item",
             headerName: "Descrição",
+            align: "center",
+            headerAlign: "center",
             width: 180,
             editable: true,
           },
           {
             field: "nome_usuario",
             headerName: "Responsavel",
+            align: "center",
+            headerAlign: "center",
             width: 150,
             editable: true,
           },
           {
             field: "tipo_usuario",
             headerName: "Ocupação",
+            align: "center",
+            headerAlign: "center",
             width: 250,
             editable: true,
           },
@@ -279,18 +311,24 @@ export default function General() {
           {
             field: "nf_invoice_item",
             headerName: "NF/INVOICE",
+            align: "center",
+            headerAlign: "center",
             width: 100,
           },
 
           {
             field: "observacao_item",
             headerName: "Observação",
+            align: "center",
+            headerAlign: "center",
             width: 200,
             editable: true,
           },
           {
             field: "caminho_imagem_item",
             headerName: "Imagem",
+            align: "center",
+            headerAlign: "center",
             width: 150,
             editable: true,
             renderCell: (params) => {
@@ -319,6 +357,8 @@ export default function General() {
           {
             field: "status_item",
             headerName: "Status",
+            align: "center",
+            headerAlign: "center",
             width: 140,
             editable: true,
             renderCell: (params) => {
@@ -359,6 +399,8 @@ export default function General() {
           {
             field: "valor_item",
             headerName: "Valor",
+            align: "center",
+            headerAlign: "center",
             width: 120,
             editable: true,
           },
@@ -366,6 +408,8 @@ export default function General() {
           {
             field: "marca_descricao",
             headerName: "Marca",
+            align: "center",
+            headerAlign: "center",
             width: 120,
             editable: true,
           },
@@ -373,12 +417,16 @@ export default function General() {
           {
             field: "localizacao_descricao",
             headerName: "Local",
+            align: "center",
+            headerAlign: "center",
             width: 120,
             editable: true,
           },
           {
             field: "termo",
             headerName: "Termo",
+            align: "center",
+            headerAlign: "center",
             width: 120,
             editable: true,
           },
@@ -386,24 +434,32 @@ export default function General() {
           {
             field: "lotação",
             headerName: "Lotação",
+            align: "center",
+            headerAlign: "center",
             width: 120,
             editable: true,
           },
           {
             field: "local",
             headerName: "local",
+            align: "center",
+            headerAlign: "center",
             width: 120,
             editable: true,
           },
           {
             field: "sde_item",
             headerName: "SDE",
+            align: "center",
+            headerAlign: "center",
             width: 120,
             editable: true,
           },
           {
             field: "empSIAFI",
             headerName: "empSIAFI",
+            align: "center",
+            headerAlign: "center",
             width: 120,
             editable: true,
           },
@@ -411,6 +467,8 @@ export default function General() {
           {
             field: "serie_descricao",
             headerName: "Serie",
+            align: "center",
+            headerAlign: "center",
             width: 120,
             editable: true,
           },
@@ -418,67 +476,97 @@ export default function General() {
           {
             field: "nome_centro_custo",
             headerName: "Nome Projeto",
+            align: "center",
+            headerAlign: "center",
             width: 120,
             editable: true,
           },
           {
             field: "identificacao_centro_custo",
             headerName: "SIGLA",
+            align: "center",
+            headerAlign: "center",
+
             width: 120,
             editable: true,
           },
           {
             field: "data_inicio_centro_custo",
             headerName: "Inicio",
+            align: "center",
+            headerAlign: "center",
             width: 120,
             editable: true,
           },
           {
             field: "data_fim_centro_custo",
             headerName: "Fim",
+            align: "center",
+            headerAlign: "center",
             width: 120,
             editable: true,
           },
           {
             field: "modelo_descricao",
             headerName: "Modelo",
+            align: "center",
+            headerAlign: "center",
             width: 120,
             editable: true,
           },
           {
             field: "email_contato",
             headerName: "Email",
+            align: "center",
+            headerAlign: "center",
             width: 120,
             editable: true,
           },
           {
             field: "ocupacao_contato",
+
             headerName: "Contato ocupacional",
+            align: "center",
+            headerAlign: "center",
             width: 120,
             editable: true,
           },
           {
             field: "responsavel_geral",
             headerName: "Responsavel Geral",
+            align: "center",
+            headerAlign: "center",
             width: 150,
             editable: true,
           },
           {
             field: "telefone_contato",
             headerName: "Telefone",
+            align: "center",
+            headerAlign: "center",
             width: 120,
             editable: true,
           },
           {
             field: "lastModify",
-            headerName: "Atualizado por",
-            width: 120,
+            headerName: "Alteração",
+            align: "center",
+            headerAlign: "center",
+            width: 80,
             editable: true,
           },
           {
             field: "updateIn",
-            headerName: "Atualizado em",
-            width: 180,
+            headerName: "Alteração",
+
+            headerAlign: "center",
+            width: 200,
+            renderCell: (params) => {
+              const date = new Date(params.value);
+
+              const formattedDate = format(date, "dd-MM-yyyy HH:mm");
+              return <span>{formattedDate}</span>;
+            },
             editable: true,
           },
         ]}

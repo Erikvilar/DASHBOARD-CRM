@@ -125,7 +125,7 @@ export default function DocumentToPrint({ data }) {
             </Text>
           </View>
           <View style={{ display: "flex", alignItems: "start" }}>
-            <Image source="src/images/assinatura.jpg" />
+            <Image style={{width:100, height:100}} source="src/images/assinatura.jpg" />
           </View>
         </View>
       </Page>

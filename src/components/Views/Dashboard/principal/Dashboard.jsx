@@ -13,7 +13,7 @@ import { useDemoRouter } from "@toolpad/core/internal";
 import General from "../Dashboard_sections/Gerenciamento/Produtos/General";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer,toast } from "react-toastify";
-import ProjetosView from "../Dashboard_sections/Gerenciamento/projetos/ProjetosView";
+import ProjetosView from "../Dashboard_sections/Gerenciamento/Projetos/ProjetosView";
 
 
 

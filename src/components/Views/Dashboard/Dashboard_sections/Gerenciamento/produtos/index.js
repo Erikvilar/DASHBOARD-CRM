@@ -17,7 +17,7 @@ import { IoAlertCircle } from "react-icons/io5";
 import PrintIcon from '@mui/icons-material/Print';
 import DocumentToPrint from "../../../../toPrint/DocumentToPrint.jsx";
 import { Spinner } from "react-activity";
-
+import {format} from "date-fns";
 export{
     useCallback,
     useEffect,
@@ -42,6 +42,7 @@ export{
     Link,
     DocumentToPrint,
     PrintIcon,
+    format,
     Spinner 
 
 

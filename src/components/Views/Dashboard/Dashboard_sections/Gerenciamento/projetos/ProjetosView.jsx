@@ -2,9 +2,10 @@
 import { useEffect, useState } from "react";
 import {useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { axiosGeneralRequest, Box, DataGrid } from "../produtos";
+import { axiosGeneralRequest } from "../Produtos"; 
 import { MdAttachMoney } from "react-icons/md";
 import { PageContainer,  } from "@toolpad/core";
+import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 export default function ProjetosView({ projectName }) {
   const navigate = useNavigate();
 
@@ -41,7 +42,9 @@ export default function ProjetosView({ projectName }) {
         {(<MdAttachMoney size={24} color="green"/>)}{data.total}
     </div>
   <DataGrid
-        
+          slots={{
+            toolbar: GridToolbar,
+          }}
           style={{ width: "100%", height: "100%" }}
           getRowId={(row) => row.id}
           onCellEditStart={(value) => console.log(value.value)}
