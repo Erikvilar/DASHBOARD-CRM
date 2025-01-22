@@ -23,57 +23,93 @@ import {
   DocumentToPrint,
   PrintIcon,
 } from "./index.js";
-import {
-  GridToolbarContainer,
-  GridToolbarQuickFilter,
-} from "@mui/x-data-grid";
+import { GridToolbarQuickFilter } from "@mui/x-data-grid";
+import SockJS from "sockjs-client";
 
+import { Client } from '@stomp/stompjs';
 export default function General() {
   const navigate = useNavigate();
   const [openDialog, setOpenDialog] = useState(null);
-  const [data, setData] = useState([]);
+  const [data, setData] = useState();
   const [promiseArguments, setPromiseArguments] = useState(null);
 
   const [openModalForm, setOpenModalForm] = useState(null);
   const handleOpenModalForm = () => setOpenModalForm(true);
   const handleCloseModalForm = () => setOpenModalForm(false);
-
+  const [filterValue, setFilterValue] = useState("");
   const [line, setLine] = useState();
   const handleLine = (value) => setLine(value);
 
   let token = sessionStorage.getItem("JWT");
 
-  useEffect(() => {
-    const requestGet = async () => {
-      try {
-        const response = await axiosGeneralRequest.get(token);
-        if (response.status == 200) {
-          console.log("registro OK");
-          setData(response.data);
-        }
-      } catch (e) {
-        toast.error("Identificado acesso não autorizado");
-        setTimeout(() => navigate("/"), 5500);
+  const requestGet = async () => {
+    try {
+      const response = await axiosGeneralRequest.get(token);
+      if (response.status === 200) {
+        console.log("Dados iniciais carregados com sucesso.");
+        setData(response.data);
       }
-    };
-    console.log(data);
-    requestGet();
-    const interval = setInterval(() => {
-      requestGet();
-    }, 50000);
+    } catch (e) {
+      console.error("Erro ao buscar os dados iniciais:", e);
+      toast.error("Identificado acesso não autorizado.");
+      setTimeout(() => navigate("/"), 5500);
+    }
+  };
 
-    return () => clearInterval(interval);
-  }, []);
+
+  useEffect(() => {
+   
+    const client = new Client({
+      webSocketFactory:()=> new SockJS("http://10.15.116.39:6680/ws"),
+      connectHeaders: {
+        Authorization: `Bearer ${token}`, // Envia o token como cabeçalho
+      },
+      reconnectDelay: 5000, // Reconexão automática após 5 segundos
+      heartbeatIncoming: 4000, // Envia heartbeat ao servidor a cada 4 segundos
+      heartbeatOutgoing: 4000, // Recebe heartbeat do servidor a cada 4 segundos
+      debug: (str) => console.log(str), // Log para depuração
+      onConnect: () => {
+        console.log("Conectado ao WebSocket");
+
+       
+        client.subscribe("/topic/updates", (message) => {
+          try {
+            const updatedData = JSON.parse(message.body); 
+            console.log("Dados recebidos via WebSocket:", updatedData);
+
+      
+            setData((prevData) => [...prevData, updatedData]);
+          } catch (error) {
+            console.error("Erro ao processar a mensagem do WebSocket:", error);
+          }
+        });
+      },
+      onStompError: (frame) => {
+        console.error("Erro no WebSocket:", frame.headers["message"]);
+        console.error("Detalhes:", frame.body);
+      },
+    });
+
+
+    client.activate();
+
+  
+    return () => {
+      client.deactivate();
+    };
+  }, [token]);
+
+ 
+  useEffect(() => {
+    requestGet();
+  }, [token]);
 
   const processRowUpdate = useCallback((newRow, oldRow) => {
     return new Promise((resolve, reject) => {
       if (newRow !== oldRow) {
         setOpenDialog(true);
         setPromiseArguments({ resolve, reject, newRow, oldRow });
-
-        // Se houve mudança, salva os argumentos para resolver ou rejeitar a promessa
       } else {
-        // Se não houve mudança, resolve com a linha original
         setOpenDialog(false);
         resolve(oldRow);
       }
@@ -197,16 +233,11 @@ export default function General() {
   const isLargeScreen = useMediaQuery("(min-width:1540px)");
 
   const parseFilters = (input) => input.split(" ").filter(Boolean);
-  const CustomToolbar = () => (
-    <GridToolbarContainer>
-      <GridToolbarQuickFilter
-        debounceMs={800}
-        placeholder="Buscar..."
-        quickFilterParser={parseFilters}
-        variant="outlined"
-      />
-    </GridToolbarContainer>
-  );
+
+  const handleQuickFilterChange = (event) => {
+    setFilterValue(event.target.value);
+  };
+
 
   return (
     <Box
@@ -244,10 +275,17 @@ export default function General() {
         onCellEditStop={() => openDialog && setOpenDialog(true)}
         // onCellKeyDown={handleSelectRow}
         processRowUpdate={(newRow, oldRow) => processRowUpdate(newRow, oldRow)}
-      
-      slots={{
-        toolbar: CustomToolbar
-      }}
+        slots={{
+          toolbar: () => (
+            <div style={{ padding: "10px" }}>
+              <GridToolbarQuickFilter
+                quickFilterParser={parseFilters}
+                value={filterValue}
+                onChange={handleQuickFilterChange}
+              />
+            </div>
+          ),
+        }}
         columns={[
           {
             field: "id_item",

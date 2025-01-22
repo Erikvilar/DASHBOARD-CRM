@@ -81,8 +81,20 @@ export const axiosGeneralRequest = {
     } catch (error) {
       throw error;
     }
+  },
+  websocket:async()=>{
+    try{
+      const response = await axios.get("http://10.15.116.39:6680/ws",{
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      return response
+    }catch(error){
+
+    }
   }
-  
+ 
 }
 
 export default axiosGeneralRequest
