@@ -9,9 +9,9 @@ import { Bounce } from "react-activity";
 import { useNavigate } from "react-router-dom";
 import axiosGeneralRequest from "../../../services/ApiServiceRequests";
 
-
+import { initializeWebSocket } from "../../../services/ConnectionWebsocket";
 function Login() {
-  const [request, setRequest] = useState({ login: "", password: ""});
+  const [request, setRequest] = useState({ login: "", password: "" });
   const [isLogin, setIsLogin] = useState(false);
   const navigate = useNavigate();
   const nofity = () => toast.success("sucesso ao enviar requisção");
@@ -25,13 +25,16 @@ function Login() {
     }));
   };
 
-  const registerSessionUser = async (data) => {
- 
-    const {token, avatar, login} = data;
-     sessionStorage.setItem("JWT", token);
-    sessionStorage.setItem("user", login);
-    sessionStorage.setItem("avatar", avatar)
 
+
+
+
+
+  const registerSessionUser = async (data) => {
+    const { token, avatar, login } = data;
+    sessionStorage.setItem("JWT", token);
+    sessionStorage.setItem("user", login);
+    sessionStorage.setItem("avatar", avatar);
   };
 
   const sendRequest = async (e) => {
@@ -41,23 +44,20 @@ function Login() {
       password: request.password,
     };
 
-  
-
     try {
-   
       const response = await axiosGeneralRequest.login(data, { timeout: 5000 });
       if (response.status == 202) {
-     
-        setIsLogin(true)
+    
+        setIsLogin(true);
         nofity();
         registerSessionUser(response.data);
-        setTimeout(()=> navigate("viewer"), 2000)
-      
+        initializeWebSocket( { token:response.data });
+        setTimeout(() => navigate("viewer"), 2000);
+       
       }
     } catch (e) {
       error();
     } finally {
-     
     }
   };
 
@@ -71,11 +71,27 @@ function Login() {
           </div>
           <form action="" onSubmit={sendRequest}>
             <div>
-              <h2>{!isLogin ? (<span>Fazer Login <FaUser/></span>) : (<span>Usuario logado  <GrStatusGood/></span>)}</h2>
+              <h2>
+                {!isLogin ? (
+                  <span>
+                    Fazer Login <FaUser />
+                  </span>
+                ) : (
+                  <span>
+                    Usuario logado <GrStatusGood />
+                  </span>
+                )}
+              </h2>
             </div>
 
             <label htmlFor="">Login:</label>
-            <input type="text" name="login" onChange={handleRequest} placeholder="example" required />
+            <input
+              type="text"
+              name="login"
+              onChange={handleRequest}
+              placeholder="example"
+              required
+            />
             <label htmlFor="">Senha</label>
             <input
               type="password"
@@ -85,9 +101,15 @@ function Login() {
               onChange={handleRequest}
               required
             />
-            <button style={{display:"flex", alignItems:"center", justifyContent:"center"}}>
+            <button
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
               {!isLogin ? (
-               <span>Entrar</span>
+                <span>Entrar</span>
               ) : (
                 <Bounce color="#727981" size={12} speed={1} animating={true} />
               )}
