@@ -1,5 +1,5 @@
 import axios from "axios";
-import apiUrlBase from "./ApiUrlBase";
+import apiUrlBase from "./apiUrlBase";
 
 const {IPconnection, PORTconnection} = apiUrlBase.network;
 

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./styles.module.css";
 import { GrStatusGood } from "react-icons/gr";
 import { FaUser } from "react-icons/fa6";
@@ -51,7 +51,10 @@ function Login() {
         setIsLogin(true);
         nofity();
         registerSessionUser(response.data);
-        initializeWebSocket( { token:response.data });
+ 
+          initializeWebSocket( { token:response.data });
+
+
         setTimeout(() => navigate("viewer"), 2000);
        
       }
