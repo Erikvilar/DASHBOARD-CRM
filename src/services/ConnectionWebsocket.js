@@ -32,7 +32,7 @@ export const initializeWebSocket = (token) => {
       client.subscribe("/topic/response", (message) => {
         console.log("Mensagem recebida:", message.body);
         alert("Uma linha foi atualizada");
-        setMessage(message.body)
+    
       });
       isConnected = true;
       console.log("Conexão WebSocket estabelecida.");
