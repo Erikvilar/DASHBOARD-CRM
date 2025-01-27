@@ -1,38 +1,37 @@
-import { Client} from "@stomp/stompjs";
+import { Client } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
-import { useWebSocket } from "./WebSocketContext";
-
+import eventEmitter from "./events/Emitter";
 
 
 let client;
 let isConnected = false;
 
-
 export const initializeWebSocket = (token) => {
+
+
   if (client && isConnected) {
     console.log("WebSocket já está conectado.");
-    return client;
+   
+    return;
   }
 
-
-  
   const socket = new SockJS("/ws");
   client = new Client({
     webSocketFactory: () => socket,
     connectHeaders: {
       Authorization: `Bearer ${token}`,
     },
-    reconnectDelay: 5000,
-    heartbeatIncoming: 4000,
-    heartbeatOutgoing: 4000,
+    reconnectDelay: 2000,
+    heartbeatIncoming: 2000,
+    heartbeatOutgoing: 2000,
+    
     debug: (str) => console.log(str),
 
     onConnect: () => {
-
       client.subscribe("/topic/response", (message) => {
-        console.log("Mensagem recebida:", message.body);
-        alert("Uma linha foi atualizada");
-    
+
+        eventEmitter.emit("messageReceived", JSON.parse(message.body));
+       
       });
       isConnected = true;
       console.log("Conexão WebSocket estabelecida.");
@@ -44,17 +43,24 @@ export const initializeWebSocket = (token) => {
     onDisconnect: () => {
       isConnected = false;
       console.log("Conexão WebSocket encerrada.");
+      handleReconnect(token);
     },
-   
-    
-
-
   });
 
   client.activate();
-  return client;
+
 };
 
+const handleReconnect = (token) => {
+  if (!client || client.connected) {
+    return;
+  }
+
+  setTimeout(() => {
+    console.log("Tentando reconectar ao WebSocket...");
+    initializeWebSocket(token);
+  }, 5000);
+};
 export const sendWebSocketMessage = (destination, message) => {
   if (client && isConnected) {
     try {
@@ -62,8 +68,7 @@ export const sendWebSocketMessage = (destination, message) => {
         destination,
         body: JSON.stringify(message),
       });
-      
-    
+
       console.log("Mensagem enviada:", message);
     } catch (error) {
       console.error("Erro ao enviar mensagem pelo WebSocket:", error);
