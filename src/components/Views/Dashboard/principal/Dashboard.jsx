@@ -10,7 +10,7 @@ import LayersIcon from "@mui/icons-material/Layers";
 import { AppProvider } from "@toolpad/core/AppProvider";
 import { DashboardLayout } from "@toolpad/core/DashboardLayout";
 import { useDemoRouter } from "@toolpad/core/internal";
-import General from "../Dashboard_sections/Gerenciamento/Produtos/General";
+import General from "../Dashboard_sections/Gerenciamento/produtos/General";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer,toast } from "react-toastify";
 import ProjetosView from "../Dashboard_sections/Gerenciamento/Projetos/ProjetosView";
