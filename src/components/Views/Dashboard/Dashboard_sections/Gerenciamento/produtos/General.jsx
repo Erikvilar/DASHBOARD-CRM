@@ -23,25 +23,377 @@ import {
   DocumentToPrint,
   PrintIcon,
 } from "./index.js";
-import { GridToolbarQuickFilter } from "@mui/x-data-grid";
+import {
+  GridToolbarColumnsButton,
+  GridToolbarContainer,
+  GridToolbarDensitySelector,
+  GridToolbarExport,
+  GridToolbarFilterButton,
+  GridToolbarQuickFilter,
+} from "@mui/x-data-grid";
 import {
   initializeWebSocket,
   sendWebSocketMessage,
 } from "../../../../../../services/ConnectionWebsocket.js";
 import eventEmitter from "../../../../../../services/events/Emitter.js";
+import { subHours } from "date-fns";
+import { GrProjects } from "react-icons/gr";
+import { MdAttachMoney } from "react-icons/md";
 export default function General() {
   const navigate = useNavigate();
   const [openDialog, setOpenDialog] = useState(null);
   const [data, setData] = useState();
   const [promiseArguments, setPromiseArguments] = useState(null);
   const [controlEdit, setControlEdit] = useState(true);
+  const [affectedLines, setAffectedLines]  = useState({oldRow:"", newRow:""})
   const [openModalForm, setOpenModalForm] = useState(null);
   const handleOpenModalForm = () => setOpenModalForm(true);
   const handleCloseModalForm = () => setOpenModalForm(false);
-  const [filterValue, setFilterValue] = useState("");
   const [line, setLine] = useState();
   const [message, setMessage] = useState(null);
   const handleLine = (value) => setLine(value);
+
+  const columns = [
+    {
+      field: "id_item",
+      headerName: "ID",
+      align: "center",
+      headerAlign: "center",
+      width: 50,
+      editable: false,
+    },
+    {
+      field: "imprimir",
+      headerName: "imprimir",
+      align: "center",
+      headerAlign: "center",
+      width: 100,
+      renderCell: (param) => {
+        return (
+          <Button onClick={() => handlePrint(param.row)}>
+            <PrintIcon />
+          </Button>
+        );
+      },
+      editable: false,
+    },
+
+    {
+      field: "codigo_item",
+      headerName: "Código",
+      align: "center",
+      headerAlign: "center",
+      width: 150,
+      editable: controlEdit,
+    },
+
+    {
+      field: "descricao_item",
+      headerName: "Descrição",
+      align: "center",
+      headerAlign: "center",
+      width: 180,
+      editable: controlEdit,
+    },
+    {
+      field: "nome_usuario",
+      headerName: "Responsavel",
+      align: "center",
+      headerAlign: "center",
+      width: 150,
+      editable: true,
+    },
+    {
+      field: "tipo_usuario",
+      headerName: "Ocupação",
+      align: "center",
+      headerAlign: "center",
+      width: 250,
+      editable: controlEdit,
+    },
+    //tb_items
+
+    {
+      field: "nf_invoice_item",
+      headerName: "NF/INVOICE",
+      align: "center",
+      headerAlign: "center",
+      width: 100,
+    },
+
+    {
+      field: "observacao_item",
+      headerName: "Observação",
+      align: "center",
+      headerAlign: "center",
+      width: 200,
+      editable: controlEdit,
+    },
+    {
+      field: "caminho_imagem_item",
+      headerName: "Imagem",
+      align: "center",
+      headerAlign: "center",
+      width: 150,
+      editable: true,
+      renderCell: (params) => {
+        return (
+          <Button disabled={params.value == "" ? true : false}>
+            <Link
+              target="_blank"
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                margin: "auto",
+              }}
+              to={params.value}
+            >
+              <FaImages
+                size={28}
+                color={params.value == "" ? "gray" : "darkgreen"}
+              />
+            </Link>{" "}
+          </Button>
+        );
+      },
+    },
+
+    {
+      field: "status_item",
+      headerName: "Status",
+      align: "center",
+      headerAlign: "center",
+      width: 140,
+      editable: true,
+      renderCell: (params) => {
+        switch (params.value) {
+          case "bom":
+            return (
+              <span>
+                <GrStatusGood size={20} color="green" /> Estado regular
+              </span>
+            );
+          case "ruim":
+            return (
+              <span>
+                <GoAlert size={20} color="orange" /> Estado ruim
+              </span>
+            );
+          case "analise":
+            return (
+              <span>
+                <GiMagnifyingGlass size={20} color="blue" /> Em análise
+              </span>
+            );
+          case "baixa":
+            return (
+              <span>
+                <GiCardDiscard size={20} color="gray" /> Baixa solicitada
+              </span>
+            );
+          default:
+            return (
+              <span>
+                <IoAlertCircle size={20} color="red" /> undefined!
+              </span>
+            );
+        }
+      },
+    },
+    {
+      field: "valor_item",
+      headerName: "Valor",
+      align: "center",
+      type:"number",
+      headerAlign: "center",
+      width: 200,
+      renderCell: (params) => {
+        return <span>
+        <MdAttachMoney color="green" size={20}/> {params.value}</span>
+      },
+      editable: true,
+    },
+
+    {
+      field: "marca_descricao",
+      headerName: "Marca",
+      align: "center",
+      headerAlign: "center",
+      width: 120,
+      editable: true,
+    },
+
+    {
+      field: "localizacao_descricao",
+      headerName: "Local",
+      align: "center",
+      headerAlign: "center",
+      width: 120,
+      editable: true,
+    },
+    {
+      field: "termo",
+      headerName: "Termo",
+      type: "number",
+      align: "center",
+      headerAlign: "center",
+      width: 120,
+      editable: true,
+    },
+
+    {
+      field: "lotação",
+      headerName: "Lotação",
+      align: "center",
+      headerAlign: "center",
+      width: 120,
+      editable: true,
+    },
+    {
+      field: "local",
+      headerName: "local",
+      align: "center",
+      headerAlign: "center",
+      width: 120,
+      editable: true,
+    },
+    {
+      field: "sde_item",
+      headerName: "SDE",
+      align: "center",
+      headerAlign: "center",
+      width: 120,
+      editable: true,
+    },
+    {
+      field: "empSIAFI",
+      headerName: "empSIAFI",
+      align: "center",
+      headerAlign: "center",
+      width: 120,
+      editable: true,
+    },
+
+    {
+      field: "serie_descricao",
+      headerName: "Serie",
+      align: "center",
+      headerAlign: "center",
+      width: 120,
+      editable: true,
+    },
+
+    {
+      field: "nome_centro_custo",
+      headerName: "Nome Projeto",
+      align: "center",
+      headerAlign: "center",
+      width: 120,
+      renderCell: (params)=>{
+        const valor = params.value;
+        
+        
+        return <span style={{cursor:"pointer"}}><GrProjects color="gray"  size={15}/>{valor}</span>
+      },
+      editable: true,
+    },
+    {
+      field: "identificacao_centro_custo",
+      headerName: "SIGLA",
+      align: "center",
+      headerAlign: "center",
+
+      width: 120,
+      editable: true,
+    },
+    {
+      field: "data_inicio_centro_custo",
+      headerName: "Inicio",
+      align: "center",
+      headerAlign: "center",
+      width: 120,
+      editable: true,
+    },
+    {
+      field: "data_fim_centro_custo",
+      headerName: "Fim",
+      align: "center",
+      headerAlign: "center",
+      width: 120,
+      editable: true,
+    },
+    {
+      field: "modelo_descricao",
+      headerName: "Modelo",
+      align: "center",
+      headerAlign: "center",
+      width: 120,
+      editable: true,
+    },
+    {
+      field: "email_contato",
+      headerName: "Email",
+      align: "center",
+      headerAlign: "center",
+      width: 120,
+      editable: true,
+    },
+    {
+      field: "ocupacao_contato",
+
+      headerName: "Contato ocupacional",
+      align: "center",
+      headerAlign: "center",
+      width: 120,
+      editable: true,
+    },
+    {
+      field: "responsavel_geral",
+      headerName: "Responsavel Geral",
+      align: "center",
+      headerAlign: "center",
+      width: 150,
+      editable: true,
+    },
+    {
+      field: "telefone_contato",
+      headerName: "Telefone",
+      align: "center",
+      headerAlign: "center",
+      width: 120,
+      editable: true,
+    },
+    {
+      field: "lastModify",
+      headerName: "Alteração",
+      align: "center",
+      headerAlign: "center",
+      width: 80,
+      editable: true,
+    },
+    {
+      field: "updateIn",
+      headerName: "Alteração",
+      editable: true,
+      headerAlign: "center",
+      width: 200,
+      renderCell: (params) => {
+        const date = new Date(params.value);
+        const dateInGMT3 = subHours(date, 3);
+        const formattedDate = format(dateInGMT3, "dd-MM-yyyy HH:mm");
+        return <span>{formattedDate}</span>;
+      },
+    
+    },
+  ];
+
+  const [columnsVisibility, setColumnsVisibility] = useState(() => {
+    const savedColumns = localStorage.getItem("ColumnsVisibility");
+    return savedColumns
+      ? JSON.parse(savedColumns)
+      : Object.fromEntries(columns.map((col) => [col.field, true]));
+  });
 
   let token = sessionStorage.getItem("JWT");
 
@@ -82,14 +434,15 @@ export default function General() {
     resolve(oldRow);
     setPromiseArguments(null);
   };
+
   const handleMessage = (newMessage) => {
-    initializeWebSocket(token);
     const convertedData = {
       ...newMessage.body.contactsDTO,
       ...newMessage.body.costCenterDTO,
       ...newMessage.body.detailsDTO,
       ...newMessage.body.usersDTO,
       ...newMessage.body.itemsDTO,
+      ...newMessage.body.receivingDTO,
     };
 
     const updatedItem = {
@@ -105,6 +458,14 @@ export default function General() {
     });
   };
 
+  useEffect(() => {
+    initializeWebSocket(token);
+  }, []);
+
+  useEffect(() => {
+    eventEmitter.on("messageReceived", handleMessage);
+  }, [message]);
+
   const handleYes = async () => {
     setOpenDialog(false);
     const { newRow, resolve } = promiseArguments;
@@ -112,6 +473,7 @@ export default function General() {
     await resolve(newRow);
 
     try {
+      const dateGMT3 = new Date();
       const dataUpdate = {
         itemsDTO: {
           id_item: newRow.id_item,
@@ -124,7 +486,7 @@ export default function General() {
           status_item: newRow.status_item,
           valor_item: newRow.valor_item,
           lastModify: sessionStorage.getItem("user"),
-          updateIn: newRow.updateIn,
+          updateIn: dateGMT3,
         },
         usersDTO: {
           id_usuario: newRow.id_usuario,
@@ -153,13 +515,18 @@ export default function General() {
           responsavel_geral: newRow.responsavel_geral,
           telefone_contato: newRow.telefone_contato,
         },
+        receivingDTO: {
+          id_recebimento: newRow.id_recebimento,
+          termo: newRow.termo,
+          lotação: newRow.lotação,
+          local: newRow.local,
+          empSIAFI: newRow.empSIAFI,
+        },
       };
 
       const response = await axiosGeneralRequest.put(dataUpdate, token);
       if (response.status == 200) {
         sendWebSocketMessage("/app/join", dataUpdate);
-
-        eventEmitter.on("messageReceived", handleMessage);
         toast.success("Dados atualizados");
       } else {
         console.log("ocorrreu um erro" + response.statusText);
@@ -217,6 +584,13 @@ export default function General() {
 
   const isLargeScreen = useMediaQuery("(min-width:1540px)");
 
+  useEffect(() => {
+    localStorage.setItem(
+      "ColumnsVisibility",
+      JSON.stringify(columnsVisibility)
+    );
+  }, [columnsVisibility]);
+
   return (
     <Box
       sx={{
@@ -230,8 +604,8 @@ export default function General() {
         <Dialogs
           open={openDialog}
           close={handleNo}
-          newValue={""}
-          oldValue={""}
+          newValue={"affectedLines.newRow"}
+          oldValue={"affectedLines.oldRow"}
           handleY={handleYes}
           handleN={handleNo}
         />
@@ -250,338 +624,34 @@ export default function General() {
         getRowId={(row) => row.id_usuario}
         onCellEditStart={(value) => console.log(value.value)}
         onRowSelectionModelChange={handleLine}
+        columnVisibilityModel={columnsVisibility}
+        onColumnVisibilityModelChange={(newModel) =>
+          setColumnsVisibility(newModel)
+        }
         onCellEditStop={() => openDialog && setOpenDialog(true)}
-        // onCellKeyDown={handleSelectRow}
         processRowUpdate={(newRow, oldRow) => processRowUpdate(newRow, oldRow)}
+        localeText={{
+          toolbarColumns: "Definir Colunas",
+          toolbarDensity: "Densidade",
+          toolbarFilters: "Filtrar",
+        }}
         slots={{
           toolbar: () => (
-            <div style={{ padding: "10px" }}>
-              <GridToolbarQuickFilter />
+            <div style={{ padding: 0 }}>
+              <GridToolbarQuickFilter
+                style={{ padding: 10, width: 500 }}
+                placeholder="Buscar items"
+              />
+              <GridToolbarContainer>
+                <GridToolbarColumnsButton />
+                <GridToolbarDensitySelector />
+                <GridToolbarFilterButton />
+                <GridToolbarExport/>
+              </GridToolbarContainer>
             </div>
           ),
         }}
-        columns={[
-          {
-            field: "id_item",
-            headerName: "ID",
-            align: "center",
-            headerAlign: "center",
-            width: 50,
-            editable: false,
-          },
-          {
-            field: "imprimir",
-            headerName: "imprimir",
-            align: "center",
-            headerAlign: "center",
-            width: 100,
-            renderCell: (param) => {
-              return (
-                <Button onClick={() => handlePrint(param.row)}>
-                  <PrintIcon />
-                </Button>
-              );
-            },
-            editable: false,
-          },
-
-          {
-            field: "codigo_item",
-            headerName: "Código",
-            align: "center",
-            headerAlign: "center",
-            width: 150,
-            editable: controlEdit,
-          },
-
-          {
-            field: "descricao_item",
-            headerName: "Descrição",
-            align: "center",
-            headerAlign: "center",
-            width: 180,
-            editable: controlEdit,
-          },
-          {
-            field: "nome_usuario",
-            headerName: "Responsavel",
-            align: "center",
-            headerAlign: "center",
-            width: 150,
-            editable: true,
-          },
-          {
-            field: "tipo_usuario",
-            headerName: "Ocupação",
-            align: "center",
-            headerAlign: "center",
-            width: 250,
-            editable: controlEdit,
-          },
-          //tb_items
-
-          {
-            field: "nf_invoice_item",
-            headerName: "NF/INVOICE",
-            align: "center",
-            headerAlign: "center",
-            width: 100,
-          },
-
-          {
-            field: "observacao_item",
-            headerName: "Observação",
-            align: "center",
-            headerAlign: "center",
-            width: 200,
-            editable: controlEdit,
-          },
-          {
-            field: "caminho_imagem_item",
-            headerName: "Imagem",
-            align: "center",
-            headerAlign: "center",
-            width: 150,
-            editable: true,
-            renderCell: (params) => {
-              return (
-                <Button disabled={params.value == "" ? true : false}>
-                  <Link
-                    target="_blank"
-                    style={{
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      margin: "auto",
-                    }}
-                    to={params.value}
-                  >
-                    <FaImages
-                      size={28}
-                      color={params.value == "" ? "gray" : "darkgreen"}
-                    />
-                  </Link>{" "}
-                </Button>
-              );
-            },
-          },
-
-          {
-            field: "status_item",
-            headerName: "Status",
-            align: "center",
-            headerAlign: "center",
-            width: 140,
-            editable: true,
-            renderCell: (params) => {
-              switch (params.value) {
-                case "bom":
-                  return (
-                    <span>
-                      <GrStatusGood size={20} color="green" /> Estado regular
-                    </span>
-                  );
-                case "ruim":
-                  return (
-                    <span>
-                      <GoAlert size={20} color="orange" /> Estado ruim
-                    </span>
-                  );
-                case "analise":
-                  return (
-                    <span>
-                      <GiMagnifyingGlass size={20} color="blue" /> Em análise
-                    </span>
-                  );
-                case "baixa":
-                  return (
-                    <span>
-                      <GiCardDiscard size={20} color="gray" /> Baixa solicitada
-                    </span>
-                  );
-                default:
-                  return (
-                    <span>
-                      <IoAlertCircle size={20} color="red" /> undefined!
-                    </span>
-                  );
-              }
-            },
-          },
-          {
-            field: "valor_item",
-            headerName: "Valor",
-            align: "center",
-            headerAlign: "center",
-            width: 120,
-            editable: true,
-          },
-
-          {
-            field: "marca_descricao",
-            headerName: "Marca",
-            align: "center",
-            headerAlign: "center",
-            width: 120,
-            editable: true,
-          },
-
-          {
-            field: "localizacao_descricao",
-            headerName: "Local",
-            align: "center",
-            headerAlign: "center",
-            width: 120,
-            editable: true,
-          },
-          {
-            field: "termo",
-            headerName: "Termo",
-            align: "center",
-            headerAlign: "center",
-            width: 120,
-            editable: true,
-          },
-
-          {
-            field: "lotação",
-            headerName: "Lotação",
-            align: "center",
-            headerAlign: "center",
-            width: 120,
-            editable: true,
-          },
-          {
-            field: "local",
-            headerName: "local",
-            align: "center",
-            headerAlign: "center",
-            width: 120,
-            editable: true,
-          },
-          {
-            field: "sde_item",
-            headerName: "SDE",
-            align: "center",
-            headerAlign: "center",
-            width: 120,
-            editable: true,
-          },
-          {
-            field: "empSIAFI",
-            headerName: "empSIAFI",
-            align: "center",
-            headerAlign: "center",
-            width: 120,
-            editable: true,
-          },
-
-          {
-            field: "serie_descricao",
-            headerName: "Serie",
-            align: "center",
-            headerAlign: "center",
-            width: 120,
-            editable: true,
-          },
-
-          {
-            field: "nome_centro_custo",
-            headerName: "Nome Projeto",
-            align: "center",
-            headerAlign: "center",
-            width: 120,
-            editable: true,
-          },
-          {
-            field: "identificacao_centro_custo",
-            headerName: "SIGLA",
-            align: "center",
-            headerAlign: "center",
-
-            width: 120,
-            editable: true,
-          },
-          {
-            field: "data_inicio_centro_custo",
-            headerName: "Inicio",
-            align: "center",
-            headerAlign: "center",
-            width: 120,
-            editable: true,
-          },
-          {
-            field: "data_fim_centro_custo",
-            headerName: "Fim",
-            align: "center",
-            headerAlign: "center",
-            width: 120,
-            editable: true,
-          },
-          {
-            field: "modelo_descricao",
-            headerName: "Modelo",
-            align: "center",
-            headerAlign: "center",
-            width: 120,
-            editable: true,
-          },
-          {
-            field: "email_contato",
-            headerName: "Email",
-            align: "center",
-            headerAlign: "center",
-            width: 120,
-            editable: true,
-          },
-          {
-            field: "ocupacao_contato",
-
-            headerName: "Contato ocupacional",
-            align: "center",
-            headerAlign: "center",
-            width: 120,
-            editable: true,
-          },
-          {
-            field: "responsavel_geral",
-            headerName: "Responsavel Geral",
-            align: "center",
-            headerAlign: "center",
-            width: 150,
-            editable: true,
-          },
-          {
-            field: "telefone_contato",
-            headerName: "Telefone",
-            align: "center",
-            headerAlign: "center",
-            width: 120,
-            editable: true,
-          },
-          {
-            field: "lastModify",
-            headerName: "Alteração",
-            align: "center",
-            headerAlign: "center",
-            width: 80,
-            editable: true,
-          },
-          {
-            field: "updateIn",
-            headerName: "Alteração",
-
-            headerAlign: "center",
-            width: 200,
-            renderCell: (params) => {
-              const date = new Date(params.value);
-
-              const formattedDate = format(date, "dd-MM-yyyy HH:mm");
-              return <span>{formattedDate}</span>;
-            },
-            editable: true,
-          },
-        ]}
+        columns={columns}
         rows={data}
         initialState={{
           pagination: {
@@ -593,7 +663,7 @@ export default function General() {
         pageSizeOptions={[1]}
       />
 
-      <Button
+      {/* <Button
         variant="text"
         style={{
           width: 60,
@@ -611,7 +681,7 @@ export default function General() {
         onClick={handleOpenModalForm}
       >
         +
-      </Button>
+      </Button> */}
     </Box>
   );
 }

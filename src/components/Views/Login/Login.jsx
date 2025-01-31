@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import styles from "./styles.module.css";
 import { GrStatusGood } from "react-icons/gr";
 import { FaUser } from "react-icons/fa6";
@@ -9,7 +9,6 @@ import { Bounce } from "react-activity";
 import { useNavigate } from "react-router-dom";
 import axiosGeneralRequest from "../../../services/ApiServiceRequests";
 
-import { initializeWebSocket } from "../../../services/ConnectionWebsocket";
 function Login() {
   const [request, setRequest] = useState({ login: "", password: "" });
   const [isLogin, setIsLogin] = useState(false);
@@ -24,11 +23,6 @@ function Login() {
       [name]: value,
     }));
   };
-
-
-
-
-
 
   const registerSessionUser = async (data) => {
     const { token, avatar, login } = data;
@@ -47,20 +41,15 @@ function Login() {
     try {
       const response = await axiosGeneralRequest.login(data, { timeout: 5000 });
       if (response.status == 202) {
-    
         setIsLogin(true);
         nofity();
         registerSessionUser(response.data);
- 
-          initializeWebSocket( { token:response.data });
-
-
         setTimeout(() => navigate("viewer"), 2000);
-       
+      }else if(response.status == 401){
+        error();
       }
     } catch (e) {
-      error();
-    } finally {
+      toast.error("Erro na conexão com serviço.");
     }
   };
 

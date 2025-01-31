@@ -61,6 +61,18 @@ const handleReconnect = (token) => {
     initializeWebSocket(token);
   }, 5000);
 };
+
+
+export const desconectWebSocket = ()=>{
+  if (client && isConnected) {
+    console.log("Encerrando a conexão WebSocket...");
+    client.deactivate();
+    isConnected = false; 
+  } else {
+    console.log("Nenhuma conexão WebSocket ativa para encerrar.");
+  }
+}
+
 export const sendWebSocketMessage = (destination, message) => {
   if (client && isConnected) {
     try {

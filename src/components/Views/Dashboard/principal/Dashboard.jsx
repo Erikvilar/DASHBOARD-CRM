@@ -1,4 +1,5 @@
 import * as React from "react";
+import { Button } from "react-bootstrap";
 import { extendTheme } from "@mui/material/styles";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
@@ -6,15 +7,18 @@ import BarChartIcon from "@mui/icons-material/BarChart";
 import DescriptionIcon from "@mui/icons-material/Description";
 import ContentPasteIcon from "@mui/icons-material/ContentPaste";
 import InventoryIcon from "@mui/icons-material/Inventory";
+import AddCircleIcon from '@mui/icons-material/AddCircle';
 import LayersIcon from "@mui/icons-material/Layers";
 import { AppProvider } from "@toolpad/core/AppProvider";
 import { DashboardLayout } from "@toolpad/core/DashboardLayout";
 import { useDemoRouter } from "@toolpad/core/internal";
-import General from "../Dashboard_sections/Gerenciamento/produtos/General";
+import General from "../Dashboard_sections/Gerenciamento/Produtos/General";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer,toast } from "react-toastify";
 import ProjetosView from "../Dashboard_sections/Gerenciamento/Projetos/ProjetosView";
-
+import { desconectWebSocket } from "../../../../services/ConnectionWebsocket";
+import { IoIosPeople } from "react-icons/io";
+import { AiFillProduct } from "react-icons/ai";
 
 
 
@@ -85,12 +89,17 @@ export default function Dashboard(props) {
     };
   }, []);
 
+
+
+
   if (sessionStorage.getItem("JWT") == "") {
     logout();
+    desconectWebSocket();
     setTimeout(() => navigate("/"), 2000);
   }
 
   return (
+
     <AppProvider
       navigation={[
         {
@@ -101,12 +110,35 @@ export default function Dashboard(props) {
           segment: "gerenciamento",
           title: "Gerenciamento",
           icon: <DashboardIcon />,
+
           children: [
             {
+              segment: "Cadastro",
+              title: "Cadastros",
+              icon: <AddCircleIcon size={24} />,
+              children: [
+                {
+                  segment: "CadastroItens",
+                  title: "Adicionar itens",
+                  icon: <AiFillProduct size={24} />,
+                },
+                {
+                  segment: "CadastroResponsaveis",
+                  title: "Registrar responsáveis",
+                  icon: <IoIosPeople size={24} style={{color:"gray"}}/>,
+                  
+              
+                },
+              ]
+          
+            },
+           
+            {
               segment: "produtos",
-              title: "Produtos",
+              title: "Patrimonios",
               icon: <InventoryIcon  />,
             },
+          
             {
               segment: "projetos",
               title: "Projetos",
@@ -137,10 +169,18 @@ export default function Dashboard(props) {
           ],
         },
         {
-          segment: "orders",
-          title: "Orders",
+          kind: "divider",
+        },
+        {
+          kind: "header",
+          title: "Compras",
+        },
+        {
+          segment: "SDE",
+          title: "SDE",
           icon: <ShoppingCartIcon />,
         },
+     
         {
           kind: "divider",
         },
@@ -183,9 +223,13 @@ export default function Dashboard(props) {
       theme={demoTheme}
       window={demoWindow}
     >
+     
       <ToastContainer limit={1} autoClose={3000} position="bottom-left" />
 
       <DashboardLayout>{renderBasePathName()}</DashboardLayout>
+      
     </AppProvider>
+
+   
   );
 }

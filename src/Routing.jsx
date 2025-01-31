@@ -10,9 +10,6 @@ const Routing = () => {
         <Route path="/" element={<App />}>
           <Route path="/" element={<Login />} />
           <Route path="viewer" element={<Dashboard />} />
-         
-         
-     
         </Route>
       </Routes>
     </HashRouter>
