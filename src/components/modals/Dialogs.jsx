@@ -7,7 +7,8 @@ export default function Dialogs({open,close, newValue, oldValue, handleY, handle
           handleY()
         }
       }
-
+      console.log("teste"+newValue)
+      console.log("teste"+oldValue)
     return (
         <Dialog
         open={open}
@@ -22,7 +23,7 @@ export default function Dialogs({open,close, newValue, oldValue, handleY, handle
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
             Açoes feitas nessa linha serão capturadas e arquivadas, valor
-            antigo <b>{newValue} </b>pelo valor <b>{oldValue}</b>
+            antigo <b>{oldValue} </b>pelo valor <b>{newValue}</b>
             <DialogContentText>Deseja continuar?</DialogContentText>
           </DialogContentText>
         </DialogContent>

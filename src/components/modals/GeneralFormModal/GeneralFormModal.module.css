@@ -1,8 +1,5 @@
 .boxButtons {
   display: flex;
-
-  justify-content: end;
-  align-items: end;
 }
 .boxButtons button {
   margin: 10px;
@@ -10,16 +7,7 @@
 
 
 .boxTest {
-  position: absolute;
-  top: 50%;
-  padding: 10px;
 
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 80%;
-
-  padding-top: 50px;
-  max-height: 95%;
   background-color: rgba(255, 255, 255, 0.884);
   border-radius: 20px;
   display: flex;
@@ -33,7 +21,7 @@
   border: 2px solid orange;
 }
 .boxWindow span {
-  color: orange;
+
 
   font-size: 20px;
   font-weight: 600;
@@ -41,16 +29,10 @@
 }
 .boxWindow fieldset {
   background-color: rgba(105, 105, 105, 0);
-border: 1px solid gray;
-  transition:500ms ease-out;
+
   margin: 5px;
+  padding: 8px;
   border-radius: 10px;
-  &:hover {
-    transform: scale(1.01);
-    background-color: white;
-    border: 2px solid rgb(27, 27, 27);
-    cursor: pointer;
-  }
 }
 
 

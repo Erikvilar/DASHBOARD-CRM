@@ -1,5 +1,4 @@
 import * as React from "react";
-import { Button } from "react-bootstrap";
 import { extendTheme } from "@mui/material/styles";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
@@ -15,10 +14,12 @@ import { useDemoRouter } from "@toolpad/core/internal";
 import General from "../Dashboard_sections/Gerenciamento/Produtos/General";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer,toast } from "react-toastify";
-import ProjetosView from "../Dashboard_sections/Gerenciamento/Projetos/ProjetosView";
+import ProjetosView from "../Dashboard_sections/Gerenciamento/projetos/ProjetosView";
 import { desconectWebSocket } from "../../../../services/ConnectionWebsocket";
 import { IoIosPeople } from "react-icons/io";
 import { AiFillProduct } from "react-icons/ai";
+import { GeneralFormModal } from "../Dashboard_sections/Gerenciamento/Produtos";
+import CadResponsaveis from "../../../modals/GeneralFormModal/CadResponsaveis";
 
 
 
@@ -47,6 +48,10 @@ export default function Dashboard(props) {
     switch (router.pathname) {
       case "/gerenciamento/produtos":
         return <General />;
+      case "/cadastro/cadastroItens":
+        return <GeneralFormModal/>
+      case "/cadastro/CadastroResponsaveis":
+        return sessionStorage.getItem("role") == "USER" ?toast.error("nao autorizado") : <CadResponsaveis/>
       case "/gerenciamento/projetos/MFLD":
         return  <ProjetosView projectName={"MFLD"} />;
       case "/gerenciamento/projetos/LIGAS":
@@ -106,33 +111,13 @@ export default function Dashboard(props) {
           kind: "header",
           title: "Gerenciamento",
         },
+      
         {
           segment: "gerenciamento",
           title: "Gerenciamento",
           icon: <DashboardIcon />,
 
           children: [
-            {
-              segment: "Cadastro",
-              title: "Cadastros",
-              icon: <AddCircleIcon size={24} />,
-              children: [
-                {
-                  segment: "CadastroItens",
-                  title: "Adicionar itens",
-                  icon: <AiFillProduct size={24} />,
-                },
-                {
-                  segment: "CadastroResponsaveis",
-                  title: "Registrar responsáveis",
-                  icon: <IoIosPeople size={24} style={{color:"gray"}}/>,
-                  
-              
-                },
-              ]
-          
-            },
-           
             {
               segment: "produtos",
               title: "Patrimonios",
@@ -141,7 +126,7 @@ export default function Dashboard(props) {
           
             {
               segment: "projetos",
-              title: "Projetos",
+              title: "Relatório de projetos",
               icon: <ContentPasteIcon />,
               children:[
                 {
@@ -168,6 +153,29 @@ export default function Dashboard(props) {
             },
           ],
         },
+        {
+          kind: "header",
+          title: "Cadastros",
+        },
+        {
+        segment: "cadastro",
+        title: "Cadastros",
+        icon: <AddCircleIcon size={24} />,
+        children: [
+          {
+            segment: "cadastroItens",
+            title: "Adicionar itens",
+            icon: <AiFillProduct size={24} />,
+          },
+          {
+            segment: "CadastroResponsaveis",
+            title: "Registrar responsáveis",
+            icon: <IoIosPeople size={24} style={{color:"gray"}}/>,
+            
+        
+          },
+        ]
+      },
         {
           kind: "divider",
         },

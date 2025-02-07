@@ -13,15 +13,10 @@ import {
   GeneralFormModal,
   axiosGeneralRequest,
   FaImages,
-  GrStatusGood,
-  GiCardDiscard,
-  GiMagnifyingGlass,
-  GoAlert,
-  IoAlertCircle,
-  Link,
   format,
   DocumentToPrint,
   PrintIcon,
+  Link,
 } from "./index.js";
 import {
   GridToolbarColumnsButton,
@@ -35,23 +30,29 @@ import {
   initializeWebSocket,
   sendWebSocketMessage,
 } from "../../../../../../services/ConnectionWebsocket.js";
+
 import eventEmitter from "../../../../../../services/events/Emitter.js";
+import { FaRegFilePdf } from "react-icons/fa";
 import { subHours } from "date-fns";
-import { GrProjects } from "react-icons/gr";
 import { MdAttachMoney } from "react-icons/md";
+
+
+
 export default function General() {
   const navigate = useNavigate();
   const [openDialog, setOpenDialog] = useState(null);
   const [data, setData] = useState();
   const [promiseArguments, setPromiseArguments] = useState(null);
-  const [controlEdit, setControlEdit] = useState(true);
-  const [affectedLines, setAffectedLines]  = useState({oldRow:"", newRow:""})
   const [openModalForm, setOpenModalForm] = useState(null);
-  const handleOpenModalForm = () => setOpenModalForm(true);
   const handleCloseModalForm = () => setOpenModalForm(false);
   const [line, setLine] = useState();
   const [message, setMessage] = useState(null);
   const handleLine = (value) => setLine(value);
+  const [affectedLines, setAffectedLines] = useState({old:"", new:""})
+const role = sessionStorage.getItem("role");
+const controlEdit =()=>{
+  return role == "USER" ? false:true;
+}
 
   const columns = [
     {
@@ -84,7 +85,7 @@ export default function General() {
       align: "center",
       headerAlign: "center",
       width: 150,
-      editable: controlEdit,
+      editable: controlEdit(),
     },
 
     {
@@ -93,7 +94,7 @@ export default function General() {
       align: "center",
       headerAlign: "center",
       width: 180,
-      editable: controlEdit,
+      editable: controlEdit(),
     },
     {
       field: "nome_usuario",
@@ -101,7 +102,7 @@ export default function General() {
       align: "center",
       headerAlign: "center",
       width: 150,
-      editable: true,
+      editable: controlEdit(),
     },
     {
       field: "tipo_usuario",
@@ -109,7 +110,7 @@ export default function General() {
       align: "center",
       headerAlign: "center",
       width: 250,
-      editable: controlEdit,
+      editable: controlEdit(),
     },
     //tb_items
 
@@ -119,6 +120,7 @@ export default function General() {
       align: "center",
       headerAlign: "center",
       width: 100,
+      editable: controlEdit(),
     },
 
     {
@@ -126,8 +128,9 @@ export default function General() {
       headerName: "Observação",
       align: "center",
       headerAlign: "center",
-      width: 200,
-      editable: controlEdit,
+      width: 300,
+    
+      editable: controlEdit(),
     },
     {
       field: "caminho_imagem_item",
@@ -135,7 +138,7 @@ export default function General() {
       align: "center",
       headerAlign: "center",
       width: 150,
-      editable: true,
+      editable: controlEdit(),
       renderCell: (params) => {
         return (
           <Button disabled={params.value == "" ? true : false}>
@@ -149,10 +152,16 @@ export default function General() {
               }}
               to={params.value}
             >
-              <FaImages
-                size={28}
-                color={params.value == "" ? "gray" : "darkgreen"}
-              />
+              {params.value ? (
+                <img
+                  src={params.value}
+                  alt=""
+                  width={"50%"}
+                  style={{ borderRadius: 10 }}
+                />
+              ) : (
+                <FaImages color="gray" size={35} />
+              )}
             </Link>{" "}
           </Button>
         );
@@ -164,55 +173,49 @@ export default function General() {
       headerName: "Status",
       align: "center",
       headerAlign: "center",
-      width: 140,
-      editable: true,
-      renderCell: (params) => {
+      width: 180,
+      type: 'singleSelect',
+      valueOptions: ['ESTADO REGULAR', 'ESTADO RUIM', 'ESTADO EM ANALISE', 'MANUTENÇÃO'],
+
+      renderCell:(params)=>{
+
         switch (params.value) {
-          case "bom":
-            return (
-              <span>
-                <GrStatusGood size={20} color="green" /> Estado regular
-              </span>
-            );
-          case "ruim":
-            return (
-              <span>
-                <GoAlert size={20} color="orange" /> Estado ruim
-              </span>
-            );
-          case "analise":
-            return (
-              <span>
-                <GiMagnifyingGlass size={20} color="blue" /> Em análise
-              </span>
-            );
-          case "baixa":
-            return (
-              <span>
-                <GiCardDiscard size={20} color="gray" /> Baixa solicitada
-              </span>
-            );
+          case 'ESTADO REGULAR':
+              return <span>{params.value} ✅</span>
+
+          case 'ESTADO RUIM':
+            return <span>{params.value} ⚠️</span>
+           
+          case 'ESTADO EM ANALISE':
+            return <span>{params.value} 🔍</span>
+         
+          case 'MANUTENÇÃO':
+            return <span>{params.value} 🛠</span>
+
           default:
-            return (
-              <span>
-                <IoAlertCircle size={20} color="red" /> undefined!
-              </span>
-            );
+            break;
         }
+       
+    
       },
+      editable: controlEdit(),
+     
     },
     {
       field: "valor_item",
       headerName: "Valor",
       align: "center",
-      type:"number",
+      type: "number",
       headerAlign: "center",
       width: 200,
       renderCell: (params) => {
-        return <span>
-        <MdAttachMoney color="green" size={20}/> {params.value}</span>
+        return (
+          <span>
+            <MdAttachMoney color="green" size={20} /> {params.value}
+          </span>
+        );
       },
-      editable: true,
+      editable: controlEdit(),
     },
 
     {
@@ -221,7 +224,7 @@ export default function General() {
       align: "center",
       headerAlign: "center",
       width: 120,
-      editable: true,
+      editable: controlEdit(),
     },
 
     {
@@ -230,7 +233,7 @@ export default function General() {
       align: "center",
       headerAlign: "center",
       width: 120,
-      editable: true,
+          editable: controlEdit(),
     },
     {
       field: "termo",
@@ -239,7 +242,7 @@ export default function General() {
       align: "center",
       headerAlign: "center",
       width: 120,
-      editable: true,
+          editable: controlEdit(),
     },
 
     {
@@ -248,15 +251,15 @@ export default function General() {
       align: "center",
       headerAlign: "center",
       width: 120,
-      editable: true,
+          editable: controlEdit(),
     },
     {
-      field: "local",
-      headerName: "local",
+      field: "fornecedor",
+      headerName: "fornecedor",
       align: "center",
       headerAlign: "center",
       width: 120,
-      editable: true,
+          editable: controlEdit(),
     },
     {
       field: "sde_item",
@@ -264,7 +267,67 @@ export default function General() {
       align: "center",
       headerAlign: "center",
       width: 120,
-      editable: true,
+          editable: controlEdit(),
+    },
+    {
+      field: "termoPDF",
+      headerName: "Termo PDF",
+      align: "center",
+      headerAlign: "center",
+      width: 120,
+      renderCell: (params) => {
+        return (
+          <Button disabled={params.value == "" ? true : false}>
+            <Link
+              target="_blank"
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                
+                margin: "auto",
+              }}
+              to={params.value}
+            >
+              <FaRegFilePdf
+                size={28}
+                color={params.value == "" ? "gray" : "darkred"}
+              />
+            </Link>{" "}
+          </Button>
+        );
+      },
+          editable: controlEdit(),
+    },
+    {
+      field: "pedidoPDF",
+      headerName: "Pedido PDF",
+      align: "center",
+      headerAlign: "center",
+      width: 120,
+      renderCell: (params) => {
+        return (
+          <Button disabled={params.value == "" ? true : false}>
+            <Link
+              target="_blank"
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                margin: "auto",
+              }}
+              to={params.value}
+            >
+              <img
+                src="https://fau.org.br/wp-content/uploads/2023/05/Logo-nova-middle.png"
+                alt=""
+                width={50}
+              />
+            </Link>{" "}
+          </Button>
+        );
+      },
+          editable: controlEdit(),
     },
     {
       field: "empSIAFI",
@@ -272,7 +335,7 @@ export default function General() {
       align: "center",
       headerAlign: "center",
       width: 120,
-      editable: true,
+          editable: controlEdit(),
     },
 
     {
@@ -281,7 +344,7 @@ export default function General() {
       align: "center",
       headerAlign: "center",
       width: 120,
-      editable: true,
+          editable: controlEdit(),
     },
 
     {
@@ -290,13 +353,8 @@ export default function General() {
       align: "center",
       headerAlign: "center",
       width: 120,
-      renderCell: (params)=>{
-        const valor = params.value;
-        
-        
-        return <span style={{cursor:"pointer"}}><GrProjects color="gray"  size={15}/>{valor}</span>
-      },
-      editable: true,
+
+          editable: controlEdit(),
     },
     {
       field: "identificacao_centro_custo",
@@ -305,7 +363,7 @@ export default function General() {
       headerAlign: "center",
 
       width: 120,
-      editable: true,
+          editable: controlEdit(),
     },
     {
       field: "data_inicio_centro_custo",
@@ -313,7 +371,7 @@ export default function General() {
       align: "center",
       headerAlign: "center",
       width: 120,
-      editable: true,
+          editable: controlEdit(),
     },
     {
       field: "data_fim_centro_custo",
@@ -321,7 +379,7 @@ export default function General() {
       align: "center",
       headerAlign: "center",
       width: 120,
-      editable: true,
+          editable: controlEdit(),
     },
     {
       field: "modelo_descricao",
@@ -329,7 +387,7 @@ export default function General() {
       align: "center",
       headerAlign: "center",
       width: 120,
-      editable: true,
+          editable: controlEdit(),
     },
     {
       field: "email_contato",
@@ -337,7 +395,7 @@ export default function General() {
       align: "center",
       headerAlign: "center",
       width: 120,
-      editable: true,
+          editable: controlEdit(),
     },
     {
       field: "ocupacao_contato",
@@ -346,7 +404,7 @@ export default function General() {
       align: "center",
       headerAlign: "center",
       width: 120,
-      editable: true,
+          editable: controlEdit(),
     },
     {
       field: "responsavel_geral",
@@ -354,7 +412,7 @@ export default function General() {
       align: "center",
       headerAlign: "center",
       width: 150,
-      editable: true,
+          editable: controlEdit(),
     },
     {
       field: "telefone_contato",
@@ -362,7 +420,7 @@ export default function General() {
       align: "center",
       headerAlign: "center",
       width: 120,
-      editable: true,
+          editable: controlEdit(),
     },
     {
       field: "lastModify",
@@ -384,9 +442,11 @@ export default function General() {
         const formattedDate = format(dateInGMT3, "dd-MM-yyyy HH:mm");
         return <span>{formattedDate}</span>;
       },
-    
     },
   ];
+
+
+
 
   const [columnsVisibility, setColumnsVisibility] = useState(() => {
     const savedColumns = localStorage.getItem("ColumnsVisibility");
@@ -416,9 +476,13 @@ export default function General() {
     requestGet();
   }, []);
 
+
+
   const processRowUpdate = useCallback((newRow, oldRow) => {
     return new Promise((resolve, reject) => {
+
       if (newRow !== oldRow) {
+        
         setOpenDialog(true);
         setPromiseArguments({ resolve, reject, newRow, oldRow });
       } else {
@@ -469,7 +533,7 @@ export default function General() {
   const handleYes = async () => {
     setOpenDialog(false);
     const { newRow, resolve } = promiseArguments;
-
+    console.log({...newRow})
     await resolve(newRow);
 
     try {
@@ -519,7 +583,9 @@ export default function General() {
           id_recebimento: newRow.id_recebimento,
           termo: newRow.termo,
           lotação: newRow.lotação,
-          local: newRow.local,
+          fornecedor: newRow.fornecedor,
+          termoPDF: newRow.termoPDF,
+          pedidoPDF: newRow.pedidoPDF,
           empSIAFI: newRow.empSIAFI,
         },
       };
@@ -591,6 +657,7 @@ export default function General() {
     );
   }, [columnsVisibility]);
 
+  
   return (
     <Box
       sx={{
@@ -604,8 +671,8 @@ export default function General() {
         <Dialogs
           open={openDialog}
           close={handleNo}
-          newValue={"affectedLines.newRow"}
-          oldValue={"affectedLines.oldRow"}
+          newValue={affectedLines.new}
+          oldValue={affectedLines.old}
           handleY={handleYes}
           handleN={handleNo}
         />
@@ -622,13 +689,15 @@ export default function General() {
       <DataGrid
         style={{ width: "100%", height: "100%" }}
         getRowId={(row) => row.id_usuario}
-        onCellEditStart={(value) => console.log(value.value)}
         onRowSelectionModelChange={handleLine}
         columnVisibilityModel={columnsVisibility}
+        onCellEditStart={(params)=> setAffectedLines({old:params.formattedValue})}
+     
         onColumnVisibilityModelChange={(newModel) =>
           setColumnsVisibility(newModel)
         }
-        onCellEditStop={() => openDialog && setOpenDialog(true)}
+        onCellEditStop={(params) => setAffectedLines({new:params.formattedValue}) }
+        
         processRowUpdate={(newRow, oldRow) => processRowUpdate(newRow, oldRow)}
         localeText={{
           toolbarColumns: "Definir Colunas",
@@ -646,42 +715,18 @@ export default function General() {
                 <GridToolbarColumnsButton />
                 <GridToolbarDensitySelector />
                 <GridToolbarFilterButton />
-                <GridToolbarExport/>
+                <GridToolbarExport />
               </GridToolbarContainer>
             </div>
           ),
         }}
         columns={columns}
         rows={data}
-        initialState={{
-          pagination: {
-            paginationModel: {
-              pageSize: 20,
-            },
-          },
-        }}
+      
         pageSizeOptions={[1]}
       />
 
-      {/* <Button
-        variant="text"
-        style={{
-          width: 60,
-          borderRadius: 360,
-          height: 60,
-          backgroundColor: "#40A2E3",
-          position: "relative",
-          left: "90%",
-          top: -150,
-          cursor: "pointer",
-          border: "none",
-          fontSize: 25,
-          color: "white",
-        }}
-        onClick={handleOpenModalForm}
-      >
-        +
-      </Button> */}
+ 
     </Box>
   );
 }

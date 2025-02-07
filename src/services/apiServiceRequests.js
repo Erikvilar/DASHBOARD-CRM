@@ -82,6 +82,7 @@ export const axiosGeneralRequest = {
       throw error;
     }
   },
+  
   websocket:async()=>{
     try{
       const response = await axios.get("http://10.15.116.39:6680/ws",{

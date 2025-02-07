@@ -25,10 +25,12 @@ function Login() {
   };
 
   const registerSessionUser = async (data) => {
-    const { token, avatar, login } = data;
+    const { token, avatar, login,role } = data;
+    console.log(data)
     sessionStorage.setItem("JWT", token);
     sessionStorage.setItem("user", login);
     sessionStorage.setItem("avatar", avatar);
+    sessionStorage.setItem("role", role)
   };
 
   const sendRequest = async (e) => {

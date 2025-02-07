@@ -1,13 +1,16 @@
-import { Box, Button, Modal } from "@mui/material";
-import { ToastContainer } from "react-toastify";
+
 import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 
 import module from "./GeneralFormModal.module.css";
 import axiosGeneralRequest from "../../../services/ApiServiceRequests";
-import { useState } from "react";
-
+import { useEffect, useState } from "react";
+import { PageContainer } from "@toolpad/core";
+import Paper from '@mui/material/Paper';
+import { Button } from "@mui/material";
+import { Padding } from "@mui/icons-material";
+import axios from "axios";
 export default function GeneralFormModal({ open, close, handleClose }) {
   const [isValid, setIsValid] = useState("is-valid");
   const [isSubmited, setIsSubmited] = useState(false);
@@ -65,7 +68,25 @@ export default function GeneralFormModal({ open, close, handleClose }) {
       },
     }));
   };
-
+  const [responsible, setResponsible] = useState([]);
+  const token = sessionStorage.getItem("JWT")
+   const requestGet = async () => {
+        const response = await axios.get("http://10.2.128.20:6680/general/responsible",  {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        if (response.status === 200) {
+          
+          setResponsible(Object.values(response.data));
+        
+        }
+      }
+    
+    useEffect(()=>{
+      requestGet();
+    },[])
+    
   const handleCreate = async (e) => {
     e.preventDefault();
 
@@ -127,17 +148,12 @@ export default function GeneralFormModal({ open, close, handleClose }) {
   };
 
   return (
-    <Modal
-      open={open}
-      onClose={close}
-      aria-labelledby="modal-modal-title"
-      aria-describedby="modal-modal-description"
-    >
-      <Box>
-        <div className={module.boxTest}>
+    <Paper sx={{ width: '95%' }}>
+       
           <Form className={module.boxWindow} onSubmit={handleCreate}>
+          <span style={{margin:10}}>Cadastro de itens</span>
             {/*recebimento*/}
-            <fieldset className="p-3 ">
+            <fieldset >
               <legend>
                 <span>Recebimento</span>
               </legend>
@@ -199,7 +215,7 @@ export default function GeneralFormModal({ open, close, handleClose }) {
             </fieldset>
 
             {/* usuario */}
-            <fieldset className="p-3 ">
+            <fieldset>
               <legend>
                 <span>Usuário responsavel</span>
               </legend>
@@ -232,13 +248,16 @@ export default function GeneralFormModal({ open, close, handleClose }) {
                     Coordenador responsavel
                   </Form.Label>
 
-                  <Form.Control
-                    name="contactsDTO.responsavel_geral"
-                    className={isValid}
-                    value={data.contactsDTO.responsavel_geral}
-                    onChange={handleChange}
-                    placeholder="coordenador ou responsavel"
-                  />
+              
+                  <select>
+                    {responsible.map((values)=>{
+                      return (
+                      <option>
+                        {values.name}
+                      </option>
+                      )
+                    })}
+                  </select>
                 </Form.Group>
 
                 <Form.Group className="mb-3 " as={Col} controlId="telefone_contato"
@@ -268,7 +287,7 @@ export default function GeneralFormModal({ open, close, handleClose }) {
             </fieldset>
 
             {/* Items */}
-            <fieldset className="p-3 ">
+            <fieldset >
               <legend>
                 <span>Registro de items</span>
               </legend>
@@ -414,7 +433,7 @@ export default function GeneralFormModal({ open, close, handleClose }) {
             </fieldset>
 
             {/* Centro de custo*/}
-            <fieldset className="p-3 ">
+            <fieldset >
               <legend>
                 <span>Centro de custo</span>
               </legend>
@@ -471,10 +490,6 @@ export default function GeneralFormModal({ open, close, handleClose }) {
               </Button>
             </div>
           </Form>
-        </div>
-
-        <ToastContainer position="bottom-left" />
-      </Box>
-    </Modal>
+       </Paper>
   );
 }
