@@ -3,16 +3,16 @@ import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 
-import module from "./GeneralFormModal.module.css";
+
 import axiosGeneralRequest from "../../../services/ApiServiceRequests";
 import { useEffect, useState } from "react";
-import { PageContainer } from "@toolpad/core";
+
 import Paper from '@mui/material/Paper';
-import { Button } from "@mui/material";
-import { Padding } from "@mui/icons-material";
+import { Button, Input } from "@mui/material";
+
 import axios from "axios";
 export default function GeneralFormModal({ open, close, handleClose }) {
-  const [isValid, setIsValid] = useState("is-valid");
+  const [isValid, setIsValid] = useState("is-invalid");
   const [isSubmited, setIsSubmited] = useState(false);
   const [data, setData] = useState({
     itemsDTO: {
@@ -148,348 +148,368 @@ export default function GeneralFormModal({ open, close, handleClose }) {
   };
 
   return (
-    <Paper sx={{ width: '95%' }}>
+    <Paper sx={{ width: '95%', padding:5 ,backgroundColor:"#F7F7F7"}}>
        
-          <Form className={module.boxWindow} onSubmit={handleCreate}>
-          <span style={{margin:10}}>Cadastro de itens</span>
-            {/*recebimento*/}
-            <fieldset >
-              <legend>
-                <span>Recebimento</span>
-              </legend>
-              <Row>
-                {/*termo */}
-                <Form.Group className="mb-3" as={Col} controlId="termo">
-                  <Form.Label htmlFor="termo">Termo</Form.Label>
-                  <Form.Control
-                    placeholder="123456..."
-                    name="receivingDTO.termo"
-                    type="number"
-                    required
-                    className={isValid}
-                    value={data.receivingDTO.termo}
-                    onChange={handleChange}
-                  />
-                </Form.Group>
+       <Form onSubmit={handleCreate}>
+  <div style={{width:"100%",height:80, display:"flex", flexDirection:"row", justifyContent:"center", marginBottom:20}}>
+    <img src="src\images\Logo\sm_icon_dataflux3.png" width={50} height={50} alt="Logo da página"/>
+    <h3 style={{margin:10,color:"#1976d2", textAlign:"center", fontWeight:"bold"}}>Página de cadastro</h3>
+  </div>
 
-                {/*lotacao*/}
-                <Form.Group className="mb-3 " as={Col} controlId="lotacao">
-                  <Form.Label htmlFor="lotacao">Lotação</Form.Label>
-                  <Form.Control
-                    name="receivingDTO.lotação"
-                    value={data.receivingDTO.lotação}
-                    onChange={handleChange}
-                    type="number"
-                    required
-                    className={isValid}
-                    placeholder="123456.."
-                  />
-                </Form.Group>
+  {/* Recebimento */}
+  <fieldset>
+    <legend>
+      <h5 style={{margin:5,color:"#1976d2", textAlign:"left", fontWeight:"bold"}}>Recebimento</h5>
+    </legend>
+    <Row>
+      {/* Termo */}
+      <Form.Group className="mb-3" as={Col} controlId="termo">
+         <Form.Label style={{fontWeight:"bold"}}>Termo</Form.Label>
+        <Form.Control
+          placeholder="123456..."
+          name="receivingDTO.termo"
+          type="number"
+          maxLength={8}
+          required
+          className={isValid}
+          value={data.receivingDTO.termo}
+          onChange={handleChange}
+        />
+      </Form.Group>
 
-                {/*local termo */}
-                <Form.Group className="mb-3 " as={Col} controlId="Local">
-                  <Form.Label htmlFor="local">local termo</Form.Label>
-                  <Form.Control
-                    value={data.receivingDTO.local}
-                    name="receivingDTO.local"
-                    className={isValid}
-                    onChange={handleChange}
-                    type="text"
-                    placeholder="example"
-                  />
-                </Form.Group>
+      {/* Lotação */}
+      <Form.Group className="mb-3" as={Col} controlId="lotacao">
+         <Form.Label style={{fontWeight:"bold"}}>Lotação</Form.Label>
+        <Form.Control
+          name="receivingDTO.lotação"
+          value={data.receivingDTO.lotação}
+          onChange={handleChange}
+          type="number"
+          required
+          className={isValid}
+          placeholder="123456.."
+        />
+      </Form.Group>
 
-                {/*EMPSIAFI */}
-                <Form.Group className="mb-3 " as={Col} controlId="empsiafi">
-                  <Form.Label htmlFor="empsiafi">EMP-SIAFI</Form.Label>
-                  <Form.Control
-                    type="number"
-                    className={isValid}
-                    name="receivingDTO.empSIAFI"
-                    value={data.receivingDTO.empSIAFI}
-                    onChange={handleChange}
-                    placeholder="example"
-                  />
-                </Form.Group>
-              </Row>
-            </fieldset>
+      {/* Local Termo */}
+      <Form.Group className="mb-3" as={Col} controlId="local">
+         <Form.Label style={{fontWeight:"bold"}}>Local termo</Form.Label>
+        <Form.Control
+          value={data.receivingDTO.local}
+          name="receivingDTO.local"
+          className={isValid}
+          onChange={handleChange}
+          type="text"
+          placeholder="example"
+        />
+      </Form.Group>
 
-            {/* usuario */}
-            <fieldset>
-              <legend>
-                <span>Usuário responsavel</span>
-              </legend>
-              <Row>
-                <Form.Group className="mb-3 " as={Col} controlId="nome_usuario">
-                  <Form.Label htmlFor="nome_usuario">Nome</Form.Label>
-                  <Form.Control
-                    placeholder="nome do usuario"
-                    className={isValid}
-                    name="usersDTO.nome_usuario"
-                    value={data.usersDTO.nome_usuario}
-                    onChange={handleChange}
-                  />
-                </Form.Group>
-               
-                <Form.Group className="mb-3 " as={Col} controlId="tipo">
-                  <Form.Label htmlFor="tipo_usuario">Tipo</Form.Label>
-                  <Form.Control
-                    placeholder="Aluno ou engenheiro"
-                    className={isValid}
-                    value={data.usersDTO.tipo_usuario}
-                    name="usersDTO.tipo_usuario"
-                    onChange={handleChange}
-                  />
-                </Form.Group>
-               
-                <Form.Group className="mb-3 " as={Col} controlId="responsavel_geral"
-                >
-                  <Form.Label htmlFor="responsavel_geral">
-                    Coordenador responsavel
-                  </Form.Label>
+      {/* EMP-SIAFI */}
+      <Form.Group className="mb-3" as={Col} controlId="empsiafi">
+         <Form.Label style={{fontWeight:"bold"}}>EMP-SIAFI</Form.Label>
+        <Form.Control
+          type="number"
+          className={isValid}
+          name="receivingDTO.empSIAFI"
+          value={data.receivingDTO.empSIAFI}
+          onChange={handleChange}
+          placeholder="example"
+        />
+      </Form.Group>
+    </Row>
+  </fieldset>
 
-              
-                  <select>
-                    {responsible.map((values)=>{
-                      return (
-                      <option>
-                        {values.name}
-                      </option>
-                      )
-                    })}
-                  </select>
-                </Form.Group>
+  {/* Usuário Responsável */}
+  <fieldset>
+    <legend>
+      <h5 style={{margin:5,color:"#1976d2", textAlign:"left", fontWeight:"bold"}}>Usuário responsável</h5>
+    </legend>
+    <Row>
+      {/* Nome do Usuário */}
+      <Form.Group className="mb-3" as={Col} controlId="nome_usuario">
+         <Form.Label style={{fontWeight:"bold"}}>Nome</Form.Label>
+        <Form.Control
+          placeholder="nome do usuario"
+          className={isValid}
+          name="usersDTO.nome_usuario"
+          value={data.usersDTO.nome_usuario}
+          onChange={handleChange}
+        />
+      </Form.Group>
 
-                <Form.Group className="mb-3 " as={Col} controlId="telefone_contato"
-                >
-                  <Form.Label htmlFor="telefone_contato">Telefone</Form.Label>
-                  <Form.Control
-                    className={isValid}
-                    name="contactsDTO.telefone_contato"
-                    value={data.contactsDTO.telefone_contato}
-                    onChange={handleChange}
-                    placeholder="(00)0000-0000"
-                  />
-                </Form.Group>
+      {/* Tipo de Usuário */}
+      <Form.Group className="mb-3" as={Col} controlId="tipo">
+         <Form.Label style={{fontWeight:"bold"}}>Tipo</Form.Label>
+        <Form.Control
+          placeholder="Aluno ou engenheiro"
+          className={isValid}
+          value={data.usersDTO.tipo_usuario}
+          name="usersDTO.tipo_usuario"
+          onChange={handleChange}
+        />
+      </Form.Group>
 
-                <Form.Group className="mb-3 " as={Col} controlId="email">
-                  <Form.Label htmlFor="email">Email</Form.Label>
-                  <Form.Control
-                    className={isValid}
-                    type="email"
-                    name="contactsDTO.email_contato"
-                    value={data.contactsDTO.email_contato}
-                    onChange={handleChange}
-                    placeholder="email@email.com"
-                  />
-                </Form.Group>
-              </Row>
-            </fieldset>
+      {/* Telefone de Contato */}
+      <Form.Group className="mb-3" as={Col} controlId="telefone_contato">
+         <Form.Label style={{fontWeight:"bold"}}>Telefone</Form.Label>
+        <Form.Control
+          className={isValid}
+          name="contactsDTO.telefone_contato"
+          value={data.contactsDTO.telefone_contato}
+          onChange={handleChange}
+          placeholder="(00)0000-0000"
+        />
+      </Form.Group>
 
-            {/* Items */}
-            <fieldset >
-              <legend>
-                <span>Registro de items</span>
-              </legend>
-              <Row>
-                <Form.Group className="mb-3 " as={Col} controlId="patrimonio">
-                  <Form.Label htmlFor="patrimonio">
-                    Número patrimonio
-                  </Form.Label>
-                  <Form.Control
-                    name="itemsDTO.codigo_item"
-                    className={isValid}
-                    value={isSubmited ? null: data.itemsDTO.codigo_item}
-                    onChange={handleChange}
-                    placeholder="000000000"
-                  />
-                </Form.Group>
+      {/* Email */}
+      <Form.Group className="mb-3" as={Col} controlId="email">
+         <Form.Label style={{fontWeight:"bold"}}>Email</Form.Label>
+        <Form.Control
+          className={isValid}
+          type="email"
+          name="contactsDTO.email_contato"
+          value={data.contactsDTO.email_contato}
+          onChange={handleChange}
+          placeholder="email@email.com"
+        />
+      </Form.Group>
+    </Row>
+  </fieldset>
 
-                <Form.Group className="mb-3 " as={Col} controlId="descricao">
-                  <Form.Label htmlFor="descricao">Descrição</Form.Label>
-                  <Form.Control
-                    name="detailsDTO.descricao_item"
-                    onChange={handleChange}
-                    value={isSubmited ? null:  data.detailsDTO.descricao_item}
-                    className={isValid}
-                    placeholder="example"
-                  />
-                </Form.Group>
+  {/* Registro de Itens */}
+  <fieldset >
+    <legend>
+      <h5 style={{margin:5,color:"#1976d2", textAlign:"left", fontWeight:"bold"}}>Registro de items</h5>
+    </legend>
+    <Row style={{borderWidth:1, borderColor:"black", height:120, display:"flex", alignContent:"center", justifyContent:"center"}}>
+      {/* Número Patrimônio */}
+      <Form.Group className="mb-3" as={Col} controlId="patrimonio">
+         <Form.Label style={{fontWeight:"bold"}}>Número patrimônio</Form.Label>
+        <Form.Control
+          name="itemsDTO.codigo_item"
+          className={isValid}
+          value={isSubmited ? null : data.itemsDTO.codigo_item}
+          onChange={handleChange}
+          placeholder="000000000"
+        />
+      </Form.Group>
 
-                <Form.Group className="mb-3 " as={Col} controlId="marca">
-                  <Form.Label>Marca</Form.Label>
-                  <Form.Control
-                    name="detailsDTO.marca_descricao"
-                    value={isSubmited ? null:  data.detailsDTO.marca_descricao}
-                    className={isValid}
-                    onChange={handleChange}
-                    placeholder="example"
-                  />
-                </Form.Group>
+      {/* Descrição */}
+      <Form.Group className="mb-3" as={Col} controlId="descricao">
+         <Form.Label style={{fontWeight:"bold"}}>Descrição</Form.Label>
+        <Form.Control
+          name="detailsDTO.descricao_item"
+          onChange={handleChange}
+          value={isSubmited ? null : data.detailsDTO.descricao_item}
+          className={isValid}
+          placeholder="example"
+        />
+      </Form.Group>
 
-                <Form.Group className="mb-3 " as={Col} controlId="modelo">
-                  <Form.Label htmlFor="modelo">Modelo</Form.Label>
-                  <Form.Control
-                    name="detailsDTO.modelo_descricao"
-                    value={isSubmited ? null:  data.detailsDTO.modelo_descricao}
-                    className={isValid}
-                    onChange={handleChange}
-                    placeholder="example"
-                  />
-                </Form.Group>
+      {/* Marca */}
+      <Form.Group className="mb-3" as={Col} controlId="marca">
+         <Form.Label style={{fontWeight:"bold"}}>Marca</Form.Label>
+        <Form.Control
+          name="detailsDTO.marca_descricao"
+          value={isSubmited ? null : data.detailsDTO.marca_descricao}
+          className={isValid}
+          onChange={handleChange}
+          placeholder="example"
+        />
+      </Form.Group>
 
-                <Form.Group className="mb-3 " as={Col} controlId="serial">
-                  <Form.Label htmlFor="serial">Serial</Form.Label>
-                  <Form.Control
-                    name="detailsDTO.serie_descricao"
-                    value={isSubmited ? null:  data.detailsDTO.serie_descricao}
-                    className={isValid}
-                    onChange={handleChange}
-                    placeholder="example"
-                  />
-                </Form.Group>
+      {/* Modelo */}
+      <Form.Group className="mb-3" as={Col} controlId="modelo">
+         <Form.Label style={{fontWeight:"bold"}}>Modelo</Form.Label>
+        <Form.Control
+          name="detailsDTO.modelo_descricao"
+          value={isSubmited ? null : data.detailsDTO.modelo_descricao}
+          className={isValid}
+          onChange={handleChange}
+          placeholder="example"
+        />
+      </Form.Group>
 
-                <Form.Group className="mb-3 " as={Col} controlId="localizacao">
-                  <Form.Label htmlFor="localizacao">Localização</Form.Label>
-                  <Form.Control
-                    value={isSubmited ? null:  data.detailsDTO.localizacao_descricao}
-                    name="detailsDTO.localizacao_descricao"
-                    onChange={handleChange}
-                    className={isValid}
-                    placeholder="sala ..."
-                  />
-                </Form.Group>
-                <Row>
-                  <Form.Group className="mb-3 " as={Col} controlId="valor">
-                    <Form.Label htmlFor="valor">Valor unitário</Form.Label>
-                    <Form.Control
-                      className={isValid}
-                      type="number"
-                      onChange={handleChange}
-                      name="itemsDTO.valor_item"
-                      value={isSubmited ? null:  data.itemsDTO.valor_item}
-                      placeholder="example"
-                    />
-                  </Form.Group>
+      {/* Serial */}
+      <Form.Group className="mb-3" as={Col} controlId="serial">
+         <Form.Label style={{fontWeight:"bold"}}>Serial</Form.Label>
+        <Form.Control
+          name="detailsDTO.serie_descricao"
+          value={isSubmited ? null : data.detailsDTO.serie_descricao}
+          className={isValid}
+          onChange={handleChange}
+          placeholder="example"
+        />
+      </Form.Group>
 
-                  <Form.Group className="mb-3 " as={Col} controlId="sde">
-                    <Form.Label htmlFor="sde">SDE</Form.Label>
-                    <Form.Control
-                      name="itemsDTO.sde_item"
-                      value={isSubmited ? null:  data.itemsDTO.sde_item}
-                      onChange={handleChange}
-                      className={isValid}
-                      placeholder="example"
-                    />
-                  </Form.Group>
+      {/* Localização */}
+      <Form.Group className="mb-3" as={Col} controlId="localizacao">
+         <Form.Label style={{fontWeight:"bold"}}>Localização</Form.Label>
+        <Form.Control
+          value={isSubmited ? null : data.detailsDTO.localizacao_descricao}
+          name="detailsDTO.localizacao_descricao"
+          onChange={handleChange}
+          className={isValid}
+          placeholder="sala ..."
+        />
+      </Form.Group>
 
-                  <Form.Group className="mb-3 " as={Col} controlId="pedido">
-                    <Form.Label htmlFor="pedido">Número do pedido</Form.Label>
-                    <Form.Control
-                      name="itemsDTO.pedido_origem"
-                      type="number"
-                      onChange={handleChange}
-                      value={isSubmited ? null:  data.itemsDTO.pedido_origem}
-                      className={isValid}
-                      placeholder="example"
-                    />
-                  </Form.Group>
+      {/* Valor Unitário */}
+      <Form.Group className="mb-3" as={Col} controlId="valor">
+         <Form.Label style={{fontWeight:"bold"}}>Valor unitário</Form.Label>
+        <Form.Control
+          className={isValid}
+          type="number"
+          onChange={handleChange}
+          name="itemsDTO.valor_item"
+          value={isSubmited ? null : data.itemsDTO.valor_item}
+          placeholder="example"
+        />
+      </Form.Group>
 
-                  <Form.Group className="mb-3 " as={Col} controlId="sei">
-                    <Form.Label htmlFor="sei">Processo SEI</Form.Label>
-                    <Form.Control
-                      className={isValid}
-                      onChange={handleChange}
-                      name="itemsDTO.processoSEI"
-                      value={data.itemsDTO.processoSEI}
-                      placeholder="example"
-                    />
-                  </Form.Group>
+    
+    
+    </Row>
+    <Row>
+    <Form.Group className="mb-3" as={Col} controlId="sde">
+        <Form.Label style={{fontWeight:"bold"}}>SDE</Form.Label>
+        <Form.Control
+          name="itemsDTO.sde_item"
+          value={isSubmited ? null : data.itemsDTO.sde_item}
+          onChange={handleChange}
+          className={isValid}
+          placeholder="example"
+        />
+      </Form.Group>
 
-                  <Form.Group className="mb-3 " as={Col} controlId="nf">
-                    <Form.Label htmlFor="nf">Nº NF/invoice</Form.Label>
-                    <Form.Control
-                      onChange={handleChange}
-                      type="number"
-                      name="itemsDTO.nf_invoice_item"
-                      value={isSubmited ? null:  data.itemsDTO.nf_invoice_item}
-                      className={isValid}
-                      placeholder="example"
-                    />
-                  </Form.Group>
+      {/* Número do Pedido */}
+      <Form.Group className="mb-3" as={Col} controlId="pedido">
+        <Form.Label style={{fontWeight:"bold"}}>Número do pedido</Form.Label>
+        <Form.Control
+          name="itemsDTO.pedido_origem"
+          type="number"
+          onChange={handleChange}
+          value={isSubmited ? null : data.itemsDTO.pedido_origem}
+          className={isValid}
+          placeholder="example"
+        />
+      </Form.Group>
 
-                  <Form.Group className="mb-3 " as={Col} controlId="image">
-                    <Form.Label htmlFor="image">Foto/Imagem</Form.Label>
-                    <Form.Control
-                      className={isValid}
-                      onChange={handleChange}
-                      name="itemsDTO.caminho_imagem_item"
-                      value={isSubmited ? null:  data.itemsDTO.caminho_imagem_item}
-                      placeholder="Link da imagem"
-                    />
-                  </Form.Group>
-                </Row>
-              </Row>
-            </fieldset>
+      {/* Processo SEI */}
+      <Form.Group className="mb-3" as={Col} controlId="sei">
+        <Form.Label style={{fontWeight:"bold"}}>Processo SEI</Form.Label>
+        <Form.Control
+          className={isValid}
+          onChange={handleChange}
+          name="itemsDTO.processoSEI"
+          value={data.itemsDTO.processoSEI}
+          placeholder="example"
+        />
+      </Form.Group>
 
-            {/* Centro de custo*/}
-            <fieldset >
-              <legend>
-                <span>Centro de custo</span>
-              </legend>
-              <Row>
-                <Form.Group
-                  className="mb-3 "
-                  as={Col}
-                  controlId="formGridAddress1"
-                >
-                  <Form.Label>Nome do projeto</Form.Label>
-                  <Form.Control placeholder="example" />
-                </Form.Group>
-                <Form.Group
-                  className="mb-3 "
-                  as={Col}
-                  controlId="formGridAddress1"
-                >
-                  <Form.Label>Identificação</Form.Label>
-                  <Form.Control placeholder="example" />
-                </Form.Group>
-                <Form.Group
-                  className="mb-3 "
-                  as={Col}
-                  controlId="formGridAddress1"
-                >
-                  <Form.Label>Data de inicio do projeto</Form.Label>
-                  <Form.Control type="date" placeholder="example" />
-                </Form.Group>
-                <Form.Group
-                  className="mb-3 "
-                  as={Col}
-                  controlId="formGridAddress1"
-                >
-                  <Form.Label>Data fim do projeto</Form.Label>
-                  <Form.Control type="date" placeholder="example" />
-                </Form.Group>
-              </Row>
-            </fieldset>
+      {/* Nº NF/Invoice */}
+      <Form.Group className="mb-3" as={Col} controlId="nf">
+        <Form.Label style={{fontWeight:"bold"}}>Nº NF/invoice</Form.Label>
+        <Form.Control
+          onChange={handleChange}
+          type="number"
+          name="itemsDTO.nf_invoice_item"
+          value={isSubmited ? null : data.itemsDTO.nf_invoice_item}
+          className={isValid}
+          placeholder="example"
+        />
+      </Form.Group>
 
-            <div className={module.boxButtons}>
-              <Button
-                variant="text"
-                onClick={handleClose}
-                style={{ backgroundColor: "orange", color: "white" }}
-              >
-                Cancelar
-              </Button>
-              <Button
-                variant="text"
-                type="submit"
-                style={{ backgroundColor: "yellowgreen", color: "white" }}
-              >
-                Salvar
-              </Button>
-            </div>
-          </Form>
+      {/* Foto/Imagem */}
+      <Form.Group className="mb-3" as={Col} controlId="image">
+        <Form.Label style={{fontWeight:"bold"}}>Foto/Imagem</Form.Label>
+        <Form.Control
+          className={isValid}
+          onChange={handleChange}
+          name="itemsDTO.caminho_imagem_item"
+          value={isSubmited ? null : data.itemsDTO.caminho_imagem_item}
+          placeholder="Link da imagem"
+        />
+      </Form.Group>
+    </Row>
+    <Row>
+    <Form.Group className="mb-3" as={Col} controlId="image">
+        <Form.Label style={{fontWeight:"bold"}}>Foto/Imagem</Form.Label>
+        <Form.Control
+          className={isValid}
+          onChange={handleChange}
+          name="itemsDTO.caminho_imagem_item"
+          value={isSubmited ? null : data.itemsDTO.caminho_imagem_item}
+          placeholder="Link da imagem"
+        />
+      </Form.Group>
+    <Form.Group className="mb-3" as={Col} controlId="image">
+        <Form.Label style={{fontWeight:"bold"}}>Foto/Imagem</Form.Label>
+        <Form.Control
+          className={isValid}
+          type="file"
+          onChange={handleChange}
+          name="itemsDTO.caminho_imagem_item"
+          value={isSubmited ? null : data.itemsDTO.caminho_imagem_item}
+          placeholder="Link da imagem"
+        />
+        <Input type="file"></Input>
+      
+      </Form.Group>
+    </Row>
+    
+  </fieldset>
+
+  {/* Centro de Custo */}
+  <fieldset>
+    <legend>
+      <h5 style={{margin:5,color:"#1976d2", textAlign:"left", fontWeight:"bold"}}>Centro de custo</h5>
+    </legend>
+    <Row>
+      {/* Nome do Projeto */}
+      <Form.Group className="mb-3" as={Col} controlId="nome_projeto">
+        <Form.Label style={{fontWeight:"bold"}}>Nome do projeto</Form.Label>
+        <Form.Control placeholder="example" />
+      </Form.Group>
+
+      {/* Identificação */}
+      <Form.Group className="mb-3" as={Col} controlId="identificacao">
+        <Form.Label style={{fontWeight:"bold"}}>Identificação</Form.Label>
+        <Form.Control placeholder="example" />
+      </Form.Group>
+
+      {/* Data de Início do Projeto */}
+      <Form.Group className="mb-3" as={Col} controlId="data_inicio">
+        <Form.Label style={{fontWeight:"bold"}}>Data de início do projeto</Form.Label>
+        <Form.Control type="date" placeholder="example" />
+      </Form.Group>
+
+      {/* Data de Fim do Projeto */}
+      <Form.Group className="mb-3" as={Col} controlId="data_fim">
+        <Form.Label  style={{fontWeight:"bold"}}>Data fim do projeto</Form.Label>
+        <Form.Control type="date" placeholder="example" />
+      </Form.Group>
+    </Row>
+  </fieldset>
+
+  {/* Botões de Ação */}
+  <div>
+    <Button
+      variant="text"
+      onClick={handleClose}
+      style={{ backgroundColor: "orange", color: "white" }}
+    >
+      Cancelar
+    </Button>
+    <Button
+      variant="text"
+      type="submit"
+      style={{ backgroundColor: "yellowgreen", color: "white" }}
+    >
+      Salvar
+    </Button>
+  </div>
+</Form>
        </Paper>
   );
 }

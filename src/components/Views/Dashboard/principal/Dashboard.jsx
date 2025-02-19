@@ -53,7 +53,7 @@ export default function Dashboard(props) {
       case "/cadastro/CadastroResponsaveis":
         return sessionStorage.getItem("role") == "USER" ?toast.error("nao autorizado") : <CadResponsaveis/>
       case "/gerenciamento/projetos/MFLD":
-        return  <ProjetosView projectName={"MFLD"} />;
+        return  <ProjetosView projectName={"CHARPINF"} />;
       case "/gerenciamento/projetos/LIGAS":
         return   <ProjetosView projectName={"LIGAS"} />;
       case "/gerenciamento/projetos/TECHNIP":

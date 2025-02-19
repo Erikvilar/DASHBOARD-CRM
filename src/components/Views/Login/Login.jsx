@@ -7,7 +7,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer, toast } from "react-toastify";
 import { Bounce } from "react-activity";
 import { useNavigate } from "react-router-dom";
-import axiosGeneralRequest from "../../../services/ApiServiceRequests";
+import axiosGeneralRequest from "../../../services/apiServiceRequests";
 
 function Login() {
   const [request, setRequest] = useState({ login: "", password: "" });

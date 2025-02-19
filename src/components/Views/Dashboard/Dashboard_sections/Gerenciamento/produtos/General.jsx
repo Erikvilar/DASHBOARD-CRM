@@ -1,4 +1,4 @@
-import { pdf } from "@react-pdf/renderer";
+import { pdf, render } from "@react-pdf/renderer";
 import {
   useCallback,
   useEffect,
@@ -12,10 +12,12 @@ import {
   Button,
   GeneralFormModal,
   axiosGeneralRequest,
-  FaImages,
   format,
   DocumentToPrint,
-  PrintIcon,
+  GiMagnifyingGlass,
+  GrStatusGood,
+  GoAlert,
+  BsTools,
   Link,
 } from "./index.js";
 import {
@@ -30,13 +32,14 @@ import {
   initializeWebSocket,
   sendWebSocketMessage,
 } from "../../../../../../services/ConnectionWebsocket.js";
+import { FcOpenedFolder, FcPrint } from "react-icons/fc";
 
 import eventEmitter from "../../../../../../services/events/Emitter.js";
 import { FaRegFilePdf } from "react-icons/fa";
 import { subHours } from "date-fns";
-import { MdAttachMoney } from "react-icons/md";
-
-
+import { MdAttachMoney, MdFolderOff } from "react-icons/md";
+import { Bounce } from "react-activity";
+import { MenuItem, Select } from "@mui/material";
 
 export default function General() {
   const navigate = useNavigate();
@@ -46,168 +49,246 @@ export default function General() {
   const [openModalForm, setOpenModalForm] = useState(null);
   const handleCloseModalForm = () => setOpenModalForm(false);
   const [line, setLine] = useState();
-  const [message, setMessage] = useState(null);
+  const message = useState(null);
   const handleLine = (value) => setLine(value);
-  const [affectedLines, setAffectedLines] = useState({old:"", new:""})
-const role = sessionStorage.getItem("role");
-const controlEdit =()=>{
-  return role == "USER" ? false:true;
-}
+  const [affectedLines, setAffectedLines] = useState({ old: "", new: "" });
+  const role = sessionStorage.getItem("role");
+  const [page, setPage] = useState(0);
+  const [pageSize, setPageSize] = useState(50);
+  const [columnResponsibles, setColumnResponsibles] = useState([]);
+  let token = sessionStorage.getItem("JWT");
+  const controlEdit = () => {
+    return role != "USER";
+  };
+  useEffect(() => {
+    const request = async () => {
+      try {
+        const response = await axiosGeneralRequest.get(token);
+        if (response.status === 200) {
+          console.log("Dados iniciais carregados com sucesso.");
+          setData(response.data);
+          console.log(typeof response.data);
+        }
+      } catch (e) {
+        console.error("Erro ao buscar os dados iniciais:", e);
+        toast.error("Identificado acesso não autorizado.");
+        setTimeout(() => navigate("/"), 5500);
+      }
+    };
+    request();
+  }, []);
+
+  useEffect(() => {
+    const request = async () => {
+      const response = await axiosGeneralRequest.responsibles(token);
+      if (response.status === 200) {
+        setColumnResponsibles(Object.values(response.data));
+        console.log("retorno"+columnResponsibles)
+      }
+    };
+    request();
+  }, []);
 
   const columns = [
+    // ID ITEM
     {
       field: "id_item",
       headerName: "ID",
       align: "center",
       headerAlign: "center",
       width: 50,
+      renderHeader: () => (
+        <span style={{ color: "#08C2FF", fontWeight: 800 }}>ID</span>
+      ),
+      renderCell: (params) => (
+        <span style={{ fontWeight: 800 }}>{params.value}</span>
+      ),
       editable: false,
     },
+    //IMPRIMIR
     {
       field: "imprimir",
       headerName: "imprimir",
-      align: "center",
+      align: "left",
       headerAlign: "center",
-      width: 100,
+      width: 80,
+      renderHeader: () => (
+        <span style={{ color: "#08C2FF", fontWeight: 800 }}>
+          <FcPrint size={20} />
+        </span>
+      ),
       renderCell: (param) => {
         return (
           <Button onClick={() => handlePrint(param.row)}>
-            <PrintIcon />
+            <FcPrint size={20} />
           </Button>
         );
       },
       editable: false,
     },
-
+    //CODIGO DO ITEM
     {
       field: "codigo_item",
-      headerName: "Código",
+      headerName: "Nº PATRIMONIO",
       align: "center",
       headerAlign: "center",
+      renderHeader: () => (
+        <span style={{ color: "#FA812F", fontWeight: 800 }}>Nº PATRIMONIO</span>
+      ),
       width: 150,
       editable: controlEdit(),
     },
-
+    //DESCRIÇÃO DO ITEM
     {
       field: "descricao_item",
-      headerName: "Descrição",
+      headerName: "DESCRIÇÃO DO ITEM",
       align: "center",
       headerAlign: "center",
-      width: 180,
-      editable: controlEdit(),
-    },
-    {
-      field: "nome_usuario",
-      headerName: "Responsavel",
-      align: "center",
-      headerAlign: "center",
-      width: 150,
-      editable: controlEdit(),
-    },
-    {
-      field: "tipo_usuario",
-      headerName: "Ocupação",
-      align: "center",
-      headerAlign: "center",
+      renderHeader: () => (
+        <span style={{ color: "#FA812F", fontWeight: 800 }}>
+          DESCRIÇÃO DO ITEM
+        </span>
+      ),
       width: 250,
       editable: controlEdit(),
     },
-    //tb_items
-
+    //NOME DO USUARIO
+    {
+      field: "nome_usuario",
+      headerName: "RESPONSÁVEL IMEDIATO",
+      align: "center",
+      headerAlign: "center",
+      renderHeader: () => (
+        <span style={{ color: "#FA812F", fontWeight: 800 }}>
+          RESPONSÁVEL IMEDIATO
+        </span>
+      ),
+      width: 200,
+      editable: controlEdit(),
+    },
+    //TIPO DE USUARIO
+    {
+      field: "tipo_usuario",
+      headerName: "OCUPAÇÃO DO IMEDIATO",
+      align: "center",
+      headerAlign: "center",
+      renderHeader: () => (
+        <span style={{ color: "#FA812F", fontWeight: 800 }}>
+          OCUPAÇÃO DO IMEDIATO
+        </span>
+      ),
+      width: 250,
+      editable: controlEdit(),
+    },
+    //NF E INVOICE
     {
       field: "nf_invoice_item",
-      headerName: "NF/INVOICE",
+      headerName: "Nº NF/INVOICE/NF-e",
       align: "center",
       headerAlign: "center",
-      width: 100,
+      renderHeader: () => (
+        <span style={{ color: "#FA812F", fontWeight: 800 }}>
+          Nº NF/INVOICE/NF-e
+        </span>
+      ),
+      width: 250,
       editable: controlEdit(),
     },
-
-    {
-      field: "observacao_item",
-      headerName: "Observação",
-      align: "center",
-      headerAlign: "center",
-      width: 300,
-    
-      editable: controlEdit(),
-    },
+    //CAMINHO DA IMAGEM
     {
       field: "caminho_imagem_item",
-      headerName: "Imagem",
+      headerName: "IMAGENS DO ITEM",
       align: "center",
       headerAlign: "center",
-      width: 150,
+      width: 200,
+      renderHeader: () => (
+        <span style={{ color: "#FA812F", fontWeight: 800 }}>
+          IMAGENS DO ITEM
+        </span>
+      ),
       editable: controlEdit(),
       renderCell: (params) => {
-        return (
-          <Button disabled={params.value == "" ? true : false}>
-            <Link
-              target="_blank"
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                margin: "auto",
-              }}
-              to={params.value}
-            >
-              {params.value ? (
-                <img
-                  src={params.value}
-                  alt=""
-                  width={"50%"}
-                  style={{ borderRadius: 10 }}
-                />
-              ) : (
-                <FaImages color="gray" size={35} />
-              )}
-            </Link>{" "}
-          </Button>
+        return params.value !== "" ? (
+          <Link to={params.value} target="_blank">
+            <FcOpenedFolder size={35} />
+          </Link>
+        ) : (
+          <MdFolderOff color="gray" size={35} />
         );
       },
     },
-
+    //STATUS DO ITEM
     {
       field: "status_item",
-      headerName: "Status",
+      headerName: "SITUAÇÃO DO ITEM",
       align: "center",
       headerAlign: "center",
-      width: 180,
-      type: 'singleSelect',
-      valueOptions: ['ESTADO REGULAR', 'ESTADO RUIM', 'ESTADO EM ANALISE', 'MANUTENÇÃO'],
+      width: 200,
+      type: "singleSelect",
+      renderHeader: () => (
+        <span style={{ color: "#FA812F", fontWeight: 800 }}>
+          SITUAÇÃO DO ITEM
+        </span>
+      ),
+      valueOptions: [
+        "Estado regular",
+        "Estado ruim",
+        "Em análise",
+        "Em manutenção",
+      ],
 
-      renderCell:(params)=>{
-
+      renderCell: (params) => {
         switch (params.value) {
-          case 'ESTADO REGULAR':
-              return <span>{params.value} ✅</span>
+          case "Estado regular":
+            return (
+              <span>
+                {" "}
+                <GrStatusGood color="green" size={18} /> {params.value}
+              </span>
+            );
 
-          case 'ESTADO RUIM':
-            return <span>{params.value} ⚠️</span>
-           
-          case 'ESTADO EM ANALISE':
-            return <span>{params.value} 🔍</span>
-         
-          case 'MANUTENÇÃO':
-            return <span>{params.value} 🛠</span>
+          case "Estado ruim":
+            return (
+              <span>
+                {" "}
+                <GoAlert color="black" size={18} /> {params.value}
+              </span>
+            );
+
+          case "Em análise":
+            return (
+              <span>
+                {" "}
+                <GiMagnifyingGlass color="blue" size={18} /> {params.value}
+              </span>
+            );
+
+          case "Em manutenção":
+            return (
+              <span>
+                {" "}
+                <BsTools size={18} color="brown" /> {params.value}
+              </span>
+            );
 
           default:
             break;
         }
-       
-    
       },
       editable: controlEdit(),
-     
     },
+    //VALOR DO ITEM
     {
       field: "valor_item",
-      headerName: "Valor",
+      headerName: "VALOR DO ITEM",
       align: "center",
       type: "number",
       headerAlign: "center",
+
       width: 200,
+      renderHeader: () => (
+        <span style={{ color: "#FA812F", fontWeight: 800 }}>VALOR DO ITEM</span>
+      ),
       renderCell: (params) => {
         return (
           <span>
@@ -217,64 +298,148 @@ const controlEdit =()=>{
       },
       editable: controlEdit(),
     },
-
+    //MARCA DO ITEM
     {
       field: "marca_descricao",
-      headerName: "Marca",
+      headerName: "MARCA DO ITEM",
       align: "center",
       headerAlign: "center",
+      renderHeader: () => (
+        <span style={{ color: "#FA812F", fontWeight: 800 }}>MARCA DO ITEM</span>
+      ),
+      width: 200,
+      editable: controlEdit(),
+    },
+    //SERIE DESCRIÇÃO
+    {
+      field: "serie_descricao",
+      headerName: "SERIAL",
+      align: "center",
+      headerAlign: "center",
+      renderHeader: () => (
+        <span style={{ color: "#FA812F", fontWeight: 800 }}>SERIAL</span>
+      ),
       width: 120,
       editable: controlEdit(),
     },
-
+    //MODELO DE DESCRIÇÃO
     {
-      field: "localizacao_descricao",
-      headerName: "Local",
+      field: "modelo_descricao",
+      headerName: "MODELO DO ITEM",
       align: "center",
       headerAlign: "center",
-      width: 120,
-          editable: controlEdit(),
+      renderHeader: () => (
+        <span style={{ color: "#FA812F", fontWeight: 800 }}>
+          MODELO DO ITEM
+        </span>
+      ),
+      width: 200,
+      editable: controlEdit(),
     },
+    //OBSERVAÇÕES DO ITEM
+    {
+      field: "observacao_item",
+      headerName: "OBSERVÇÕES",
+      align: "center",
+      headerAlign: "center",
+      renderHeader: () => (
+        <span style={{ color: "#FA812F", fontWeight: 800 }}>OBSERVÇÕES</span>
+      ),
+      width: 300,
+
+      editable: controlEdit(),
+    },
+    //TEMRO
     {
       field: "termo",
-      headerName: "Termo",
+      headerName: "Nº TERMO",
       type: "number",
       align: "center",
       headerAlign: "center",
+      renderHeader: () => (
+        <span style={{ color: "#C14600", fontWeight: 800 }}>Nº TERMO</span>
+      ),
       width: 120,
-          editable: controlEdit(),
+      editable: controlEdit(),
     },
-
+    //LOCALIZAÇÃO DO ITEM
+    {
+      field: "localizacao_descricao",
+      headerName: "LOCALIZAÇÃO DO ITEM",
+      align: "center",
+      headerAlign: "center",
+      renderHeader: () => (
+        <span style={{ color: "#C14600", fontWeight: 800 }}>
+          LOCALIZAÇÃO DO ITEM
+        </span>
+      ),
+      width: 200,
+      editable: controlEdit(),
+    },
+    //LOTAÇÃO
     {
       field: "lotação",
-      headerName: "Lotação",
+      headerName: "LOTAÇÃO",
       align: "center",
       headerAlign: "center",
-      width: 120,
-          editable: controlEdit(),
+      renderHeader: () => (
+        <span style={{ color: "#C14600", fontWeight: 800 }}>LOTAÇÃO</span>
+      ),
+      width: 200,
+      editable: controlEdit(),
     },
+    //FORNECEDOR
     {
       field: "fornecedor",
-      headerName: "fornecedor",
+      headerName: "NOME FORNECEDOR",
       align: "center",
       headerAlign: "center",
-      width: 120,
-          editable: controlEdit(),
+      renderHeader: () => (
+        <span style={{ color: "#C14600", fontWeight: 800 }}>
+          NOME FORNECEDOR
+        </span>
+      ),
+      width: 280,
+      editable: controlEdit(),
     },
+    //EMAIL FORNECEDOR
+    {
+      field: "email_fornecedor",
+      headerName: "EMAIL FORNECEDOR",
+      align: "center",
+      headerAlign: "center",
+      renderHeader: () => (
+        <span style={{ color: "#C14600", fontWeight: 800 }}>
+          EMAIL FORNECEDOR
+        </span>
+      ),
+      width: 280,
+      editable: controlEdit(),
+    },
+    //SDE ITEM
     {
       field: "sde_item",
-      headerName: "SDE",
+      headerName: "Nº SDE",
       align: "center",
       headerAlign: "center",
+      renderHeader: () => (
+        <span style={{ color: "#C14600", fontWeight: 800 }}>Nº SDE</span>
+      ),
       width: 120,
-          editable: controlEdit(),
+      editable: controlEdit(),
     },
+    //TERMO PDF
     {
       field: "termoPDF",
-      headerName: "Termo PDF",
+      headerName: "DOCUMENTO TERMO",
       align: "center",
       headerAlign: "center",
-      width: 120,
+      width: 200,
+      renderHeader: () => (
+        <span style={{ color: "#FF8383", fontWeight: 800 }}>
+          DOCUMENTO TERMO
+        </span>
+      ),
       renderCell: (params) => {
         return (
           <Button disabled={params.value == "" ? true : false}>
@@ -284,7 +449,7 @@ const controlEdit =()=>{
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
-                
+
                 margin: "auto",
               }}
               to={params.value}
@@ -297,14 +462,20 @@ const controlEdit =()=>{
           </Button>
         );
       },
-          editable: controlEdit(),
+      editable: controlEdit(),
     },
+    //PEDIDO PDF
     {
       field: "pedidoPDF",
-      headerName: "Pedido PDF",
+      headerName: "DOCUMENTO PEDIDO",
       align: "center",
       headerAlign: "center",
-      width: 120,
+      width: 200,
+      renderHeader: () => (
+        <span style={{ color: "#FF8383", fontWeight: 800 }}>
+          DOCUMENTO PEDIDO
+        </span>
+      ),
       renderCell: (params) => {
         return (
           <Button disabled={params.value == "" ? true : false}>
@@ -327,115 +498,162 @@ const controlEdit =()=>{
           </Button>
         );
       },
-          editable: controlEdit(),
+      editable: controlEdit(),
     },
+    //EMPSIAFI
     {
       field: "empSIAFI",
-      headerName: "empSIAFI",
+      headerName: "EMPSIAFI",
       align: "center",
       headerAlign: "center",
+      renderHeader: () => (
+        <span style={{ color: "#FF8383", fontWeight: 800 }}>EMPSIAFI</span>
+      ),
       width: 120,
-          editable: controlEdit(),
+      editable: controlEdit(),
     },
-
-    {
-      field: "serie_descricao",
-      headerName: "Serie",
-      align: "center",
-      headerAlign: "center",
-      width: 120,
-          editable: controlEdit(),
-    },
-
+    //NOME CENTRO DE CUSTO
     {
       field: "nome_centro_custo",
-      headerName: "Nome Projeto",
+      headerName: "NOME DO PROJETO",
       align: "center",
+      renderHeader: () => (
+        <span style={{ color: "#A0C878", fontWeight: 800 }}>
+          NOME DO PROJETO
+        </span>
+      ),
       headerAlign: "center",
-      width: 120,
+      width: 200,
 
-          editable: controlEdit(),
+      editable: controlEdit(),
     },
+    //IDENTIFICAÇÃO DO PROJETO
     {
       field: "identificacao_centro_custo",
-      headerName: "SIGLA",
+      headerName: "IDENTIFICAÇÃO DO PROJETO",
       align: "center",
+      renderHeader: () => (
+        <span style={{ color: "#A0C878", fontWeight: 800 }}>
+          IDENTIFICAÇÃO DO PROJETO
+        </span>
+      ),
       headerAlign: "center",
 
-      width: 120,
-          editable: controlEdit(),
+      width: 200,
+      editable: controlEdit(),
     },
+    //DATA DE INICIO
     {
       field: "data_inicio_centro_custo",
-      headerName: "Inicio",
+      headerName: "DATA INÍCIO PROJETO",
       align: "center",
       headerAlign: "center",
-      width: 120,
-          editable: controlEdit(),
+      renderHeader: () => (
+        <span style={{ color: "#A0C878", fontWeight: 800 }}>
+          DATA INÍCIO PROJETO
+        </span>
+      ),
+      width: 200,
+      editable: controlEdit(),
     },
+    //DATA FIM 
     {
       field: "data_fim_centro_custo",
-      headerName: "Fim",
+      headerName: "DATA FIM PROJETO",
       align: "center",
       headerAlign: "center",
-      width: 120,
-          editable: controlEdit(),
+      renderHeader: () => (
+        <span style={{ color: "#A0C878", fontWeight: 800 }}>
+          DATA FIM PROJETO
+        </span>
+      ),
+      width: 200,
+      editable: controlEdit(),
     },
+    //RESPONSAVEL GERAL
     {
-      field: "modelo_descricao",
-      headerName: "Modelo",
+      field: "responsavel_geral",
+      headerName: "RESPONSÁVEL GERAL",
       align: "center",
       headerAlign: "center",
-      width: 120,
-          editable: controlEdit(),
+      width: 200,
+      type: 'singleSelect',
+      valueOptions: columnResponsibles.map(responsible => responsible.name),
+      renderHeader: () => (
+        <span style={{ color: "#2973B2", fontWeight: 800 }}>
+          RESPONSÁVEL GERAL
+        </span>
+      ),
+      editable: controlEdit(),
     },
+    //EMAIL CONTATO
     {
       field: "email_contato",
-      headerName: "Email",
+      headerName: "EMAIL RESPONSÁVEL GERAL",
       align: "center",
       headerAlign: "center",
-      width: 120,
-          editable: controlEdit(),
+      renderHeader: () => (
+        <span style={{ color: "#2973B2", fontWeight: 800 }}>
+          EMAIL RESPONSÁVEL GERAL
+        </span>
+      ),
+      width: 250,
+      editable: controlEdit(),
     },
+    //OCUPAÇÃO CONTATO
     {
       field: "ocupacao_contato",
 
-      headerName: "Contato ocupacional",
+      headerName: "OCUPAÇÃO",
       align: "center",
       headerAlign: "center",
+
+      renderHeader: () => (
+        <span style={{ color: "#2973B2", fontWeight: 800 }}>OCUPAÇÃO</span>
+      ),
       width: 120,
-          editable: controlEdit(),
+      editable: controlEdit(),
     },
-    {
-      field: "responsavel_geral",
-      headerName: "Responsavel Geral",
-      align: "center",
-      headerAlign: "center",
-      width: 150,
-          editable: controlEdit(),
-    },
+    //TELEFONE CONTATO
     {
       field: "telefone_contato",
-      headerName: "Telefone",
+      headerName: "TELEFONE PARA CONTATO",
       align: "center",
       headerAlign: "center",
-      width: 120,
-          editable: controlEdit(),
+      renderHeader: () => (
+        <span style={{ color: "#2973B2", fontWeight: 800 }}>
+          TELEFONE PARA CONTATO
+        </span>
+      ),
+      width: 200,
+      editable: controlEdit(),
     },
+    //PESSOA QUEM REGISTROU ULTIMA MODIFICAÇÃO <-- CAMPO IMPORTANTE
     {
       field: "lastModify",
-      headerName: "Alteração",
+      headerName: "ALTERADO",
       align: "center",
       headerAlign: "center",
-      width: 80,
-      editable: true,
+      renderHeader: () => (
+        <span style={{ color: "blue", fontWeight: 800 }}>ALTERADO</span>
+      ),
+      renderCell: (params) => (
+        <p style={{ textTransform: "uppercase" }}>{params.value}</p>
+      ),
+      width: 180,
+      editable: false,
     },
+    //UPDATE DATE
     {
       field: "updateIn",
-      headerName: "Alteração",
-      editable: true,
+      headerName: "ATUALIZADO",
+      editable: false,
       headerAlign: "center",
+
       width: 200,
+      renderHeader: () => (
+        <span style={{ color: "blue", fontWeight: 800 }}>ATUALIZADO</span>
+      ),
       renderCell: (params) => {
         const date = new Date(params.value);
         const dateInGMT3 = subHours(date, 3);
@@ -445,9 +663,6 @@ const controlEdit =()=>{
     },
   ];
 
-
-
-
   const [columnsVisibility, setColumnsVisibility] = useState(() => {
     const savedColumns = localStorage.getItem("ColumnsVisibility");
     return savedColumns
@@ -455,34 +670,9 @@ const controlEdit =()=>{
       : Object.fromEntries(columns.map((col) => [col.field, true]));
   });
 
-  let token = sessionStorage.getItem("JWT");
-
-  const requestGet = async () => {
-    try {
-      const response = await axiosGeneralRequest.get(token);
-      if (response.status === 200) {
-        console.log("Dados iniciais carregados com sucesso.");
-        setData(response.data);
-        console.log(typeof response.data);
-      }
-    } catch (e) {
-      console.error("Erro ao buscar os dados iniciais:", e);
-      toast.error("Identificado acesso não autorizado.");
-      setTimeout(() => navigate("/"), 5500);
-    }
-  };
-
-  useEffect(() => {
-    requestGet();
-  }, []);
-
-
-
   const processRowUpdate = useCallback((newRow, oldRow) => {
     return new Promise((resolve, reject) => {
-
       if (newRow !== oldRow) {
-        
         setOpenDialog(true);
         setPromiseArguments({ resolve, reject, newRow, oldRow });
       } else {
@@ -533,7 +723,7 @@ const controlEdit =()=>{
   const handleYes = async () => {
     setOpenDialog(false);
     const { newRow, resolve } = promiseArguments;
-    console.log({...newRow})
+    console.log({ ...newRow });
     await resolve(newRow);
 
     try {
@@ -584,8 +774,10 @@ const controlEdit =()=>{
           termo: newRow.termo,
           lotação: newRow.lotação,
           fornecedor: newRow.fornecedor,
-          termoPDF: newRow.termoPDF,
-          pedidoPDF: newRow.pedidoPDF,
+          email_fornecedor:
+            newRow.email_fornecedor != null ? newRow.email_fornecedor : "vazio",
+          termoPDF: newRow.termoPDF != null ? newRow.termoPDF : "vazio",
+          pedidoPDF: newRow.pedidoPDF != null ? newRow.pedidoPDF : "vazio",
           empSIAFI: newRow.empSIAFI,
         },
       };
@@ -657,7 +849,19 @@ const controlEdit =()=>{
     );
   }, [columnsVisibility]);
 
-  
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.ctrlKey && event.key === "ArrowRight") {
+        setPage((prev) => prev + 1);
+      } else if (event.ctrlKey && event.key === "ArrowLeft" && page > 0) {
+        setPage((prev) => prev - 1);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [page]);
+
   return (
     <Box
       sx={{
@@ -691,18 +895,27 @@ const controlEdit =()=>{
         getRowId={(row) => row.id_usuario}
         onRowSelectionModelChange={handleLine}
         columnVisibilityModel={columnsVisibility}
-        onCellEditStart={(params)=> setAffectedLines({old:params.formattedValue})}
-     
+        onCellEditStart={(params) =>
+          setAffectedLines({ old: params.formattedValue })
+        }
         onColumnVisibilityModelChange={(newModel) =>
           setColumnsVisibility(newModel)
         }
-        onCellEditStop={(params) => setAffectedLines({new:params.formattedValue}) }
-        
+        onCellEditStop={(params) =>
+          setAffectedLines({ new: params.formattedValue })
+        }
         processRowUpdate={(newRow, oldRow) => processRowUpdate(newRow, oldRow)}
         localeText={{
           toolbarColumns: "Definir Colunas",
           toolbarDensity: "Densidade",
           toolbarFilters: "Filtrar",
+          noRowsLabel: (
+            <div>
+              {" "}
+              Carregando dados{" "}
+              <Bounce color="#727981" size={12} speed={1} animating={true} />
+            </div>
+          ),
         }}
         slots={{
           toolbar: () => (
@@ -722,11 +935,21 @@ const controlEdit =()=>{
         }}
         columns={columns}
         rows={data}
-      
+        pagination
+        paginationModel={{ page, pageSize }}
+        onPaginationModelChange={(model) => setPage(model.page)}
         pageSizeOptions={[1]}
+        sx={{
+          "& .MuiDataGrid-row.Mui-selected": {
+            backgroundColor: "#4C585B !important", // Cor de fundo ao selecionar
+            color: "white", // Cor do texto ao selecionar
+          },
+          "& .MuiDataGrid-row.Mui-selected:hover": {
+            backgroundColor: "#7E99A3 !important", // Cor ao passar o mouse na linha selecionada
+            cursor: "pointer",
+          },
+        }}
       />
-
- 
     </Box>
   );
 }

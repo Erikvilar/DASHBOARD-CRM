@@ -18,6 +18,7 @@ import PrintIcon from '@mui/icons-material/Print';
 import DocumentToPrint from "../../../../toPrint/DocumentToPrint.jsx";
 import { Spinner } from "react-activity";
 import {format} from "date-fns";
+import { BsTools } from "react-icons/bs";
 export{
     useCallback,
     useEffect,
@@ -38,6 +39,7 @@ export{
     GiCardDiscard,
     GiMagnifyingGlass,
     GoAlert,
+    BsTools,
     IoAlertCircle,
     Link,
     DocumentToPrint,

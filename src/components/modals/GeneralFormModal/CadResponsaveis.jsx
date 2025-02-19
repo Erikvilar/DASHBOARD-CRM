@@ -5,33 +5,11 @@ import { Box, Button } from "@mui/material";
 import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
-import module from "./GeneralFormModal.module.css";
-import axios from "axios";
-import { useEffect, useState } from "react";
-
 
 
 
 const CadResponsaveis =()=>{
-const [data, setData] = useState([]);
-const token = sessionStorage.getItem("JWT")
- const requestGet = async () => {
-      const response = await axios.get("http://10.2.128.20:6680/general/responsible",  {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      if (response.status === 200) {
-        
-        setData(response.data);
-      
-      }
-    }
-  
-  useEffect(()=>{
-    requestGet();
-  },[])
-const listData = Object.values(data)
+
 
   return (
     <>
@@ -75,7 +53,7 @@ const listData = Object.values(data)
         />
       </Form.Group>
       </Row>
-      <div className={module.boxButtons}>
+      <div >
               <Button
                 variant="text"
         
@@ -95,18 +73,11 @@ const listData = Object.values(data)
       </fieldset >
       <Box sx={{display:"flex", justifyContent:"center", flexDirection:"column"}}>
         <b style={{padding:20}}>Usuarios registrados</b>
-        {listData.map((values)=>{
-            return (
-               
-                <p style={{padding:10}}>
-                   <b>Nome</b>:  {values.name}  --- <b>Occupação</b>: {values.occupation}
-                </p>
-            )
-        })}
+       
       </Box>
       <Box>
         <select name="" id="">
-            {listData.map((values)=>(<option>{values.name}</option>))}
+  
         </select>
       </Box>
       </>

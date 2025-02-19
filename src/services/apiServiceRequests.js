@@ -1,17 +1,19 @@
 import axios from "axios";
 import apiUrlBase from "./apiUrlBase";
 
-const {IPconnection, PORTconnection} = apiUrlBase.network;
 
-const {update, create, baseUrl,project } = apiUrlBase.general;
+const { IPconnection, PORTconnection } = apiUrlBase.network;
 
-const {login, auth} = apiUrlBase.authentication;
+const { update, create, baseUrl, project } = apiUrlBase.general;
 
-export const axiosGeneralRequest = {
-
-  login:async (data) => {
+const { login, auth } = apiUrlBase.authentication;
+const axiosGeneralRequest = {
+  login: async (data) => {
     try {
-      const response = await axios.post(`http://${IPconnection}:${PORTconnection}${auth}${login}`, data);
+      const response = await axios.post(
+        `http://${IPconnection}:${PORTconnection}${auth}${login}`,
+        data
+      );
       return response;
     } catch (error) {
       throw error;
@@ -20,36 +22,46 @@ export const axiosGeneralRequest = {
 
   get: async (token) => {
     try {
-      const response = await axios.get(`http://${IPconnection}:${PORTconnection}${baseUrl}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      return response; 
+      const response = await axios.get(
+        `http://${IPconnection}:${PORTconnection}${baseUrl}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      return response;
     } catch (error) {
-      throw error; 
+      throw error;
     }
   },
-  project: async (projectName,token) => {
+  project: async (projectName, token) => {
     try {
-      const response = await axios.get(`http://${IPconnection}:${PORTconnection}${project}${projectName}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      return response; 
+      const response = await axios.get(
+        `http://${IPconnection}:${PORTconnection}${project}${projectName}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      return response;
     } catch (error) {
-      throw error; 
+      throw error;
     }
   },
 
-  put:async(data,token)=>{
+  put: async (data, token) => {
     try {
-      const response = await axios.put(`http://${IPconnection}:${PORTconnection}${baseUrl}${update}`, data,{
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axios.put(
+        `http://${IPconnection}:${PORTconnection}${baseUrl}${update}`,
+        data,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       return response;
     } catch (error) {
       throw error;
@@ -58,45 +70,67 @@ export const axiosGeneralRequest = {
 
   post: async (data, token) => {
     try {
-      const response = await axios.post(`http://${IPconnection}:${PORTconnection}${baseUrl}${create}`, data,{
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axios.post(
+        `http://${IPconnection}:${PORTconnection}${baseUrl}${create}`,
+        data,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       return response;
     } catch (error) {
       throw error;
     }
   },
 
-
-  delete:async(data,token)=>{
+  delete: async (data, token) => {
     try {
-      const response = await axios.delete(`http://${IPconnection}:${PORTconnection}${baseUrl}/${data}`,{
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axios.delete(
+        `http://${IPconnection}:${PORTconnection}${baseUrl}/${data}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       return response;
     } catch (error) {
       throw error;
     }
   },
-  
-  websocket:async()=>{
-    try{
-      const response = await axios.get("http://10.15.116.39:6680/ws",{
+
+  websocket: async () => {
+    try {
+      const response = await axios.get("http://10.15.116.39:6680/ws", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-      })
-      return response
-    }catch(error){
+      });
+      return response;
+    } catch (error) {}
+  },
 
-    }
-  }
+  responsibles: async (token) => {
+    try {
+      const response = await axios.get(
+        `http://${IPconnection}:${PORTconnection}${baseUrl}/responsible`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (response.status === 200) {
  
-}
+        return response;
 
-export default axiosGeneralRequest
+      }
+    } catch (error) {
+      throw error;
+    }
+  },
+};
 
+export default axiosGeneralRequest;
