@@ -115,8 +115,7 @@ const axiosGeneralRequest = {
   responsibles: async (token) => {
     try {
       const response = await axios.get(
-        `http://${IPconnection}:${PORTconnection}${baseUrl}/responsible`,
-        {
+        `http://${IPconnection}:${PORTconnection}${baseUrl}/responsible`,{
           headers: {
             Authorization: `Bearer ${token}`,
           },

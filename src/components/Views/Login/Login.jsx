@@ -7,7 +7,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer, toast } from "react-toastify";
 import { Bounce } from "react-activity";
 import { useNavigate } from "react-router-dom";
-import axiosGeneralRequest from "../../../services/apiServiceRequests";
+import axiosGeneralRequest from "../../../services/ApiServiceRequests";
 
 function Login() {
   const [request, setRequest] = useState({ login: "", password: "" });
@@ -60,9 +60,11 @@ function Login() {
       <section className={styles.dashboardLogin}>
         <ToastContainer position="bottom-left" />
         <div className={styles.dashboardView}>
-          <div className={styles.dashboardImage}>
-            <img src="src\images\Logo\DATAFLUX.png" alt="" height={450} />
-          </div>
+          <div className={styles.dashboard}>
+            <img src="src\images\Logo\DATAFLUX.png" alt=""  />
+            <img src="src\images\Logo\ltadLogo.png" alt=""  />
+         
+        
           <form action="" onSubmit={sendRequest}>
             <div>
               <h2>
@@ -113,9 +115,15 @@ function Login() {
             <a href="">Preciso de ajuda</a>
             <a href="">Contate-nos</a>
           </div>
+          </div>
+         
+          
         </div>
+        
       </section>
+      
     </div>
+    
   );
 }
 export default Login;

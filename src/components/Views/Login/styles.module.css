@@ -2,16 +2,14 @@
 
 .background {
   background-image: url("https://github.com/Erikvilar/PrototypeEmbrapii/blob/onBuilding/src/images/outlet/equippment/LTAD_Equipamento_BCS1.jpg?raw=true");
-  /* background-image: url("https://c.wallhere.com/photos/7e/3b/ge_es44c4_bnsf8272_bnsf7998_csx_railroad_railway_train-801899.jpg!d"); */
-  background-position:120% 50%;
+  background-position: 100%;
   background-size: cover;
-  height: auto;
+  height: 100vh;
 }
 
 .dashboardLogin {
   width: 100%;
   height: 100vh;
-
   background-image: linear-gradient(
     125deg,
     hsl(0, 0%, 100%) 6%,
@@ -25,18 +23,92 @@
   flex-direction: column;
   justify-self: center;
 }
-.dashboardImage {
-  width: 500px;
+.dashboard {
+  width: 80%;
+  max-height: 100vh;
+  min-height: 50vh;
   margin: auto;
-  height: 380px
+  flex-direction: column;
+  justify-items: center;
 }
-.dashboardImage img {
-  margin-left: 50px;
+.dashboard img:nth-child(2) {
+  position: absolute;
+  top: -20px;
+  width: 150px;
+  left: 30px;
 }
+.dashboard img:nth-child(1) {
+  width: 20%;
+
+  display: flex;
+  justify-content: center;
+}
+/* estilos para notebook */
+@media only screen and (min-width: 1920px) {
+  .dashboard img:nth-child(1) {
+    width: 25%;
+    position: relative;
+
+    display: flex;
+    justify-content: center;
+  }
+}
+/* estilos para celular */
+@media only screen and (max-width: 480px) {
+  .background {
+    background-image: url("https://github.com/Erikvilar/PrototypeEmbrapii/blob/onBuilding/src/images/outlet/equippment/LTAD_Equipamento_BCS1.jpg?raw=true");
+    background-position: 100%;
+    background-size: cover;
+    max-height: 600px!important;
+  }
+  .dashboard {
+    width: 100%;
+    margin: auto;
+    flex-direction: column;
+    justify-items: center;
+  }
+  .dashboard img:nth-child(1) {
+    width: 75%;
+    position: relative;
+
+    display: flex;
+    justify-content: center;
+  }
+  .dashboard img:nth-child(2) {
+
+    width: 100px;
+    left: 10px;
+  }
+  .dashboardView form {
+    display: flex;
+    position: relative;
+    top: -90px;
+    flex-direction: column;
+  }
+  .about {
+    width: 100%;
+    position: relative;
+    top: -10px;
+    height: 80px;
+    background-color:#3a72bc !important;
+    display: flex;
+    justify-content: center;
+    justify-items: center!important;
+    align-items: center!important;
+    text-align: center!important;
+  }
+  .about a {
+
+    text-decoration: none;
+    color: #ffffff !important;
+    font-weight: 700;
+    font-family: "Roboto", sans-serif;
+  }
+}
+
 .dashboardView form {
   display: flex;
-  width: 300px;
-  margin: auto;
+
   flex-direction: column;
 }
 .dashboardView input {
@@ -55,7 +127,7 @@
   &:focus {
     border: 2px solid #2c99f3;
     background-color: rgba(128, 128, 128, 0.151);
-    }
+  }
 }
 .dashboardView label {
   font-weight: 600;
@@ -95,14 +167,10 @@
 }
 .about {
   width: 100%;
-  position: absolute;
-  bottom: 0;
   background-color: transparent;
   display: flex;
   justify-content: start;
   align-items: end;
-  padding-bottom: 50px;
-  padding-right: 100px;
 }
 .about a {
   text-decoration: none;

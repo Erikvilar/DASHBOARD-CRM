@@ -774,8 +774,7 @@ export default function General() {
           termo: newRow.termo,
           lotação: newRow.lotação,
           fornecedor: newRow.fornecedor,
-          email_fornecedor:
-            newRow.email_fornecedor != null ? newRow.email_fornecedor : "vazio",
+          email_fornecedor:newRow.email_fornecedor != null ? newRow.email_fornecedor : "vazio",
           termoPDF: newRow.termoPDF != null ? newRow.termoPDF : "vazio",
           pedidoPDF: newRow.pedidoPDF != null ? newRow.pedidoPDF : "vazio",
           empSIAFI: newRow.empSIAFI,
