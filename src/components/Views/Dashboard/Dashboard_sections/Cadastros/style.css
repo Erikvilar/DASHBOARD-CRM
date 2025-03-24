@@ -1,0 +1,57 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Saira:ital,wght@0,100..900;1,100..900&family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Saira:ital,wght@0,100..900;1,100..900&family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Dosis:wght@200..800&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Saira:ital,wght@0,100..900;1,100..900&family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Dosis:wght@200..800&family=Lexend+Peta:wght@100..900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Saira:ital,wght@0,100..900;1,100..900&family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap');
+
+h3,
+h4 {
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 200;
+  text-transform: uppercase;
+  font-size: 1.05rem;
+  font-style: normal;
+  background: linear-gradient(to right, #383838, #383838);
+}
+.box-add {
+  margin: 20px;
+
+  padding-top: 50px;
+
+  box-shadow: 2px 5px 15px rgb(0, 0, 0);
+  border-radius: 10px;
+
+
+height: auto;
+}
+.buttons-tools{
+    background-color: #383838;
+    border-radius: 0px 0px 10px 10px;
+}
+.buttons-tools button:nth-child(1) {
+  background-color: #0e6902c0;
+}
+.buttons-tools button:nth-child(2) {
+  background-color: #4b4b4bc0;
+  &:hover {
+    background-color: #bd0b05;
+  }
+}
+.buttons-tools button:nth-child(3) {
+  background-color: #4b4b4bc0;
+  &:hover {
+    background-color: #01529ec0;
+  }
+}
+.buttons-tools button span {
+  color: white;
+}
+fieldset{
+    font-family: "Work Sans", sans-serif;
+}.my-popup-class {
+  font-family: "Arial", sans-serif;
+  font-size: 16px;
+
+ 
+}

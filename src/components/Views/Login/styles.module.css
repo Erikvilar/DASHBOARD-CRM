@@ -1,0 +1,242 @@
+@import url("https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=League+Spartan:wght@100..900&display=swap");
+.background {
+  background-image: url("https://github.com/Erikvilar/PrototypeEmbrapii/blob/onBuilding/src/images/outlet/equippment/LTAD_Equipamento_BCS1.jpg?raw=true");
+  background-position: 100%;
+  background-size: cover;
+  height: 100vh;
+  
+}
+.dashboardLogin {
+  width:100%;
+  height: 100vh;
+  background-image: linear-gradient(
+    125deg,
+    hsl(0, 0%, 100%) 6%,
+    hsl(60, 100%, 99%) 49%,
+    hsla(0, 0%, 100%, 0.538) 65%,
+    hsla(0, 0%, 100%, 0.641) 10%,
+    hsla(0, 0%, 100%, 0.404) 10%,
+    hsla(55, 93%, 36%, 0) 80%
+  );
+  display: flex;
+  flex-direction: column;
+
+ justify-content: center;
+}.formDashboard{
+  display: flex;
+  justify-content: center;
+  justify-self: center;
+}
+/*estilos para telas maiores*/
+@media only screen and (min-width: 1920px) {
+
+  .dashboard {
+    width: 100%;
+    display: flex;
+    justify-self: center;
+    align-items: center;
+    flex-direction: column;
+    justify-items: center;
+    
+  }
+  .dashboard form button{
+    width: 50%;
+    height: 50px;
+  }.about{
+    margin-top: 100px;
+    
+    
+  
+  }
+ 
+}
+
+.dashboard img:nth-child(2) {
+  position: absolute;
+  top: -20px;
+  width: 150px;
+  left: 30px;
+}
+.dashboard img:nth-child(1) {
+  margin: auto;
+  width: 15%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+/* estilos para notebook */
+@media(width < 1920px){
+  .dashboardLogin {
+    width: 100%;
+    height: 100vh;
+   
+    background-image: linear-gradient(
+      125deg,
+      hsl(0, 0%, 100%) 6%,
+      hsl(60, 100%, 99%) 49%,
+      hsla(0, 0%, 100%, 0.538) 65%,
+      hsla(0, 0%, 100%, 0.641) 10%,
+      hsla(0, 0%, 100%, 0.404) 10%,
+      hsla(55, 93%, 36%, 0) 80%
+    );
+    display: flex;
+    flex-direction: column;
+   justify-content: center;
+  }
+  .dashboard {
+    width: 100%;
+    display: flex;
+    justify-self: center;
+    align-items: center;
+    flex-direction: column;
+    justify-items: center;
+    
+  }
+  .dashboard img:nth-child(1) {
+    width: 15%;
+    position: relative;
+
+    display: flex;
+    justify-content: center;
+  }.dashboard form button{
+    width: 50%;
+    height: 50px;
+  }.about{
+    margin-top: 20px;
+    
+    
+  
+  }.formDashboard input{
+    height: 40px;
+  }
+ 
+}
+/* estilos para celular */
+@media only screen and (max-width: 480px) {
+  .background {
+    background-image: url("https://github.com/Erikvilar/PrototypeEmbrapii/blob/onBuilding/src/images/outlet/equippment/LTAD_Equipamento_BCS1.jpg?raw=true");
+    background-position: 100%;
+    background-size: cover;
+    max-height: 600px!important;
+  }
+  .dashboard {
+    width: 100%;
+    display: flex;
+    margin: auto;
+    align-items: center;
+    flex-direction: column;
+    justify-items: center;
+  }
+  .dashboard img:nth-child(1) {
+    width: 75%;
+    position: relative;
+    margin: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .dashboard img:nth-child(2) {
+
+    width: 100px;
+    left: 10px;
+  }
+  .dashboardView form {
+    display: flex;
+    position: relative;
+    top: -90px;
+    flex-direction: column;
+  }
+  .about {
+    width: 100%;
+    position: relative;
+    top: -10px;
+    height: 80px;
+    background-color:#3a72bc !important;
+    display: flex;
+    justify-content: center;
+    justify-items: center!important;
+    align-items: center!important;
+    text-align: center!important;
+  }
+  .about a {
+
+    text-decoration: none;
+    color: #ffffff !important;
+    font-weight: 700;
+    font-family: "Roboto", sans-serif;
+  }
+}
+
+.dashboardView form {
+  display: flex;
+
+  flex-direction: column;
+}
+.dashboardView input {
+  display: flex;
+  width: 300px;
+  background-color: transparent;
+  border: none;
+  font-weight: 500;
+  color: #2c99f3;
+  border: 1px solid gray;
+  border-radius: 10px;
+  padding: 10px;
+  flex-direction: column;
+  margin-bottom: 10px;
+  outline: none;
+  &:focus {
+    border: 2px solid #2c99f3;
+    background-color: rgba(128, 128, 128, 0.151);
+  }
+}
+.dashboardView label {
+  font-weight: 600;
+  padding-top: 15px;
+  padding-bottom: 5px;
+  color: #0950ad;
+  font-family: "Geist", sans-serif;
+  text-align: start;
+}
+.dashboardView button {
+  width: 200px;
+  height: 50px;
+  border: none;
+  border-radius: 15px;
+  background-color: #3a72bc;
+  color: white;
+  padding: 5px;
+  margin: auto;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: 0.5s ease;
+  &:hover {
+    background-color: #023068;
+  }
+}
+
+.dashboardView div h2 {
+  font-size: 20px;
+  text-align: center;
+  padding-bottom: 20px;
+  font-weight: 500;
+
+  font-optical-sizing: auto;
+  font-style: normal;
+  color: #0950ad;
+  font-family: "Geist", sans-serif;
+}
+.about {
+  width: 100%;
+  background-color: transparent;
+  display: flex;
+  justify-content: start;
+  align-items: end;
+}
+.about a {
+  text-decoration: none;
+  color: #0950ad;
+  font-weight: 700;
+  font-family: "Roboto", sans-serif;
+  margin: 10px;
+}
