@@ -10,7 +10,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/ws": {
-        target: "http://192.168.100.5:6680", 
+        target: "http://10.2.128.20:6680", 
         changeOrigin: true,
         ws: true, 
       },

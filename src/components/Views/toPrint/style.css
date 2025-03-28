@@ -1,0 +1,163 @@
+button {
+  border: none;
+  outline: none;
+  background-color: transparent;
+}
+
+/* Ajuste de estilo para impressão */
+@media print {
+  /* Ajustando as propriedades para impressão */
+  html,
+  body {
+    height: auto !important;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    overflow: auto;
+    font-family: Arial, sans-serif;
+  }
+  .title-user-print {
+    display: none;
+  }
+
+  .print-area {
+    font-size: 12px;
+    padding: 15px;
+    line-height: 1.4;
+    max-width: 100%;
+    height: 100vh;
+    margin: 0 auto;
+  }.table{
+
+    max-width: 100%;
+
+    margin-top: 50px;
+    flex-wrap: wrap;
+    display: flex;
+    flex-direction: row
+  }.table .visible-row{
+    display: flex;
+    flex-wrap: wrap;
+    height: 100px;
+    width: 100%;
+  
+  }.table .visible-row div{
+    width: 15%;
+  
+  }
+
+  .header-print {
+    display: flex;
+    flex-direction: row;
+    text-align: center;
+    width: 100%;
+    padding: 0px;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+
+  .header-print p {
+    font-size: 13px;
+    padding-top: 20px;
+    font-weight: 700;
+    text-align: center;
+  }
+  .title-print h2 {
+    font-size: 18px;
+    text-align: center;
+  }
+
+  /* Quebra de página */
+  .page-break {
+    display: block;
+    page-break-before: always;
+    margin-top: 1rem;
+  }
+
+  @page {
+    size: A4;
+    margin: 10mm;
+  }
+}
+
+/* Ajustes de design para visualização na tela antes da impressão */
+@media screen {
+  .print-area {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    font-size: 14px;
+    line-height: 1.6;
+    width: 50%;
+    justify-self: center;
+    margin-top: none;
+  }
+  .visible-row {
+    display: flex;
+  }
+  .visible-row div {
+    margin: 20px;
+  }
+  .title-user-print {
+    margin-left: 20px;
+  }
+  .title-print {
+    display: none;
+  }
+
+  .header-print {
+    display: none;
+  }
+  .print-button {
+    background-color: orange;
+    width: 90px;
+    height: 90px;
+    position: fixed;
+    left: 80%;
+    top: 80%;
+
+    bottom: 0;
+
+    border-radius: 360px;
+    padding: 10px;
+    margin-top: 20px;
+    margin-left: 20px;
+    color: white;
+    border: 1px solid rgb(255, 255, 255);
+    font-weight: 700;
+    transition: 0.3ms ease-in;
+    &:hover {
+      background-color: rgb(255, 255, 255);
+      color: orange;
+      border: 1px solid orange;
+    }
+    &:active {
+      transform: scale(1.02);
+      background-color: #00a2ff;
+      border: 2px solid #00a2ff;
+      color: white;
+    }
+  } /* Estilos para a visualização na tela (antes de imprimir) */
+
+  .header-print p {
+    font-size: 14px;
+    font-weight: 700;
+    text-align: left;
+    width: 60%;
+  }
+
+  .print-area img {
+    width: 40%;
+    margin: 5px;
+    border-radius: 10px;
+    &:hover {
+      cursor: pointer;
+    }
+  }
+
+  /* Remover quebras de página na visualização normal */
+  .page-break {
+    display: none;
+  }
+}

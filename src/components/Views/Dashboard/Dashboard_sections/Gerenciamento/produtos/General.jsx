@@ -698,7 +698,7 @@ export default function General() {
     },
     //LOTAÇÃO
     {
-      field: "lotação",
+      field: "lotacao",
       headerName: "LOTAÇÃO",
       align: "center",
       headerAlign: "center",
@@ -1145,7 +1145,7 @@ export default function General() {
         receivingDTO: {
           id_recebimento: update.id_recebimento,
           termo: update.termo,
-          lotação: update.lotação,
+          lotacao: update.lotacao,
           fornecedor: update.fornecedor,
           email_fornecedor:
             update.email_fornecedor != null ? update.email_fornecedor : "vazio",

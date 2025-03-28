@@ -20,6 +20,7 @@ import CadastrarItems from "../Dashboard_sections/Cadastros/CadastrarItems";
 import { axios, axiosGeneralRequest } from "../Dashboard_sections/Cadastros";
 import CadastroPessoal from "../Dashboard_sections/Cadastros/CadastroPessoal";
 import Swal from "sweetalert2";
+import Arquivos from "../Dashboard_sections/Cadastros/Arquivos";
 
 const demoTheme = extendTheme({
   colorSchemes: { light: true, dark: true },
@@ -55,7 +56,8 @@ export default function Dashboard(props) {
         return <CadastrarItems role={role} />;
       case "/cadastro/pessoas":
         return <CadastroPessoal role={role} />;
-
+      case "/cadastro/arquivos":
+        return <Arquivos/>
 
       case "/gerenciamento/projetos/MFLD":
         return <ProjetosView projectName={"CHARPINF"} />;
@@ -194,6 +196,12 @@ export default function Dashboard(props) {
             {
               segment: "pessoas",
               title: "Registrar pessoas",
+              icon: <AiFillProduct size={24} />,
+            },
+          
+            {
+              segment: "arquivos",
+              title: "Arquivos",
               icon: <AiFillProduct size={24} />,
             },
           ],

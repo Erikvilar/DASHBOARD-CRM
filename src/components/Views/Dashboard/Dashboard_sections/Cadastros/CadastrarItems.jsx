@@ -12,20 +12,17 @@ import {
   Form,
   Col,
 } from "./index.js";
-import { useDemoRouter } from "@toolpad/core/internal";
 import { useRef } from "react";
 import Swal from "sweetalert2";
 import { format } from "date-fns";
 import Unauthorized from "../../../visualAccess/unauthorized.jsx";
 export default function CadastrarItems({ role }) {
-  
   const [nextId, setNextId] = useState(1);
   const formRefs = useRef([]);
   const [users, setUsers] = useState();
   const [projetos, setProjetos] = useState();
   const [responsibles, setResponsibles] = useState();
   const token = localStorage.getItem("JWT");
-  const router = useDemoRouter();
 
   const getBrazilianDateTime = () => {
     return format(new Date(), "yyyy-MM-dd'T'HH:mm:ss.SSS", {
@@ -34,7 +31,6 @@ export default function CadastrarItems({ role }) {
   };
 
   const [dateTime, setDateTime] = useState(getBrazilianDateTime());
-
 
   const addItem = () => {
     setData((prevData) => ({
@@ -62,7 +58,7 @@ export default function CadastrarItems({ role }) {
             serie_descricao: "",
           },
           userId: "",
-          responsibleId:"",
+          responsibleId: "",
           costCenterId: "",
         },
       ],
@@ -88,8 +84,6 @@ export default function CadastrarItems({ role }) {
       lotacao: "",
       fornecedor: "",
       email_fornecedor: "",
-      termoPDF: "",
-      pedidoPDF: "",
       empSIAFI: "",
     },
     items: [
@@ -114,11 +108,34 @@ export default function CadastrarItems({ role }) {
           serie_descricao: "",
         },
         userId: "",
-        responsibleId:"",
+        responsibleId: "",
         costCenterId: "",
       },
     ],
   });
+
+  const [files, setFiles] = useState({
+    termoPDF:null,
+    pedidoPDF:null,
+    images:{
+      firstImage:null,
+      secondImage:null
+    }
+  });
+  const handleFiles =(e)=>{
+    const {name, files:selectedFiles} = e.target;
+    if(name === "termoPDF" || name === "pedidoPDF"){
+      setFiles((prevState)=>({
+        ...prevState, 
+        [name]:selectedFiles[0],
+      }));
+    }else if(name === "firstImage" || name === "secondImage"){
+      setFiles((prevState)=>({
+        ...prevState.images,
+        [name]:selectedFiles[0],
+      }));
+    }
+  }
 
   const handleInputChange = (e, index, field, nested = false) => {
     const { name, value } = e.target;
@@ -160,11 +177,8 @@ export default function CadastrarItems({ role }) {
       const response = await axiosGeneralRequest.costCenter(token);
       if (response.status == 200) {
         setProjetos(Object.values(response.data));
-
       }
-    } catch (error) {
-  
-    }
+    } catch (error) {}
   };
 
   const handleUsers = async () => {
@@ -172,25 +186,21 @@ export default function CadastrarItems({ role }) {
       const response = await axiosGeneralRequest.users(token);
       if (response.status == 200) {
         setUsers(Object.values(response.data));
-
       }
-    } catch (error) {
-   
-    }
+    } catch (error) {}
   };
 
-  const handleResponsibles = async()=>{
-    try{
+  const handleResponsibles = async () => {
+    try {
       const response = await axiosGeneralRequest.responsibles(token);
-    if(response.status == 200){
-      setResponsibles(Object.values(response.data))
-      console.log(responsibles)
+      if (response.status == 200) {
+        setResponsibles(Object.values(response.data));
+        console.log(responsibles);
+      }
+    } catch (error) {
+      console.log("ocorreu um erro ao trazer os responsavel", error);
     }
-    }catch(error){
-      console.log("ocorreu um erro ao trazer os responsavel", error)
-    }
-  
-  }
+  };
 
   const handleImageChange = (e, index, imageIndex) => {
     const { value } = e.target;
@@ -210,13 +220,12 @@ export default function CadastrarItems({ role }) {
     }
   }, [data.items.length]);
 
-
-
   useEffect(() => {
     handleCostCenter();
     handleUsers();
     handleResponsibles();
   }, []);
+
 
   const verifyDupliChecker = (items) => {
     const codigos = items.map((item) => item.codigo_item);
@@ -256,14 +265,13 @@ export default function CadastrarItems({ role }) {
           axiosGeneralRequest.post(data, token),
           timeout,
         ]);
- 
+
         Swal.fire({
           icon: "success",
           title: "Sucesso!",
           text: response?.data,
         });
       } catch (error) {
-       
         Swal.fire({
           icon: "error",
           title: "Erro!",
@@ -273,8 +281,10 @@ export default function CadastrarItems({ role }) {
     }
   };
 
+  console.log(data);
+  console.log(files)
   return role === "USER" || null ? (
-    <Unauthorized/>
+    <Unauthorized />
   ) : (
     <Form style={{ borderWidth: 1 }} onSubmit={submitForms}>
       <div
@@ -353,6 +363,16 @@ export default function CadastrarItems({ role }) {
                 />
               </Form.Group>
             ))}
+            <Row style={{marginTop:20}}>
+              <Form.Group as={Col} controlId={`pedidoPDF`}>
+                <Form.Label>PedidoPDF</Form.Label>
+                <Form.Control required type="file" accept=".pdf" onChange={handleFiles}/>
+              </Form.Group>
+              <Form.Group as={Col} controlId={`termoPDF`}>
+                <Form.Label>TermoPDF</Form.Label>
+                <Form.Control required type="file" accept=".pdf" onChange={handleFiles}/>
+              </Form.Group>
+            </Row>
           </Row>
         </div>
       </fieldset>
@@ -567,8 +587,7 @@ export default function CadastrarItems({ role }) {
               />
             </Form.Group>
           </Row>
-          <Row style={{ padding: 10 }}>
-
+          <Row  style={{ padding: 10 }}>
             <Form.Group>
               <FormControl
                 style={{ width: "33%" }}
@@ -626,7 +645,10 @@ export default function CadastrarItems({ role }) {
                   name={`responsibleId${index}`}
                 >
                   {responsibles?.map((value) => (
-                    <MenuItem value={value.id_responsavel_geral} key={value.id_responsavel_geral}>
+                    <MenuItem
+                      value={value.id_responsavel_geral}
+                      key={value.id_responsavel_geral}
+                    >
                       {value.nome_responsavel_geral}
                     </MenuItem>
                   ))}
@@ -634,34 +656,32 @@ export default function CadastrarItems({ role }) {
               </FormControl>
             </Form.Group>
           </Row>
-          <Row style={{ padding: 10 }}>
-            <div
-              style={{
-                width: "auto",
-                display: "flex",
-                justifyContent: "space-between",
-                margin: "auto",
-              }}
-            >
-              {Object.values(item.caminho_imagem_item) != "" ? (
-                <div style={{ margin: 30 }}>
-                  <img
-                    style={{ width: 350, height: 250, margin: 5 }}
-                    src={item.caminho_imagem_item[0]}
-                    alt=""
-                  />
-                  <img
-                    style={{ width: 350, height: 250, margin: 5 }}
-                    src={item.caminho_imagem_item[1]}
-                    alt=""
-                  />
-                </div>
-              ) : (
-                <p style={{ textAlign: "center", margin: 50 }}>
-                  Imagem do item aparecerá aqui
-                </p>
-              )}
-            </div>
+          <legend style={{ textAlign: "left", margin: 20 }}>
+            <h5>Relação de arquivos</h5>
+          </legend>
+
+          <Row style={{ margin: 15 }}>
+            <Form.Group as={Col} controlId={`firstImage_${index}`}>
+              <Form.Label>imagem completa</Form.Label>
+              <Form.Control
+                placeholder="imagem completa"
+                required
+                name="firstImage"
+                type="file"
+                accept="image/*"
+                onChange={handleFiles}
+              />
+            </Form.Group>
+            <Form.Group as={Col} controlId={`SecondImage_${index}`}>
+              <Form.Label>imagem TAG</Form.Label>
+              <Form.Control 
+              required 
+              name="secondImage"
+              type="file" 
+              accept="image/*"
+              onChange={handleFiles}
+              />
+            </Form.Group>
           </Row>
 
           <div
