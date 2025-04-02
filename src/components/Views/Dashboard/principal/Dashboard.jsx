@@ -83,11 +83,11 @@ export default function Dashboard(props) {
     },
   });
 
-  const logoutMethod = async(user,token)=>{
+  const logoutMethod = async(user)=>{
     const data={
       login:user
     }
-    const response = await axiosGeneralRequest.logout(data, token)
+    const response = await axiosGeneralRequest.logout(data)
     if(response.status == 200){
       console.log(response.data.isLogged)
       localStorage.setItem("isLogged",response.data.isLogged)
@@ -104,7 +104,7 @@ export default function Dashboard(props) {
     });
 
     setTimeout(async() => {
-      await logoutMethod(user,token)
+      await logoutMethod(user)
       localStorage.removeItem("JWT");
       navigate("/");
       Swal.close()
@@ -147,33 +147,7 @@ export default function Dashboard(props) {
               icon: <InventoryIcon />,
             },
 
-            {
-              segment: "projetos",
-              title: "Relatório de projetos",
-              icon: <ContentPasteIcon />,
-              children: [
-                {
-                  segment: "MFLD",
-                  title: "MFLD",
-                  icon: <DescriptionIcon />,
-                },
-                {
-                  segment: "LIGAS",
-                  title: "LIGAS",
-                  icon: <DescriptionIcon />,
-                },
-                {
-                  segment: "TECHNIP",
-                  title: "TECHNIP",
-                  icon: <DescriptionIcon />,
-                },
-                {
-                  segment: "LZENERGIA",
-                  title: "LZ ENERGIA",
-                  icon: <DescriptionIcon />,
-                },
-              ],
-            },
+            
           ],
         },
         {

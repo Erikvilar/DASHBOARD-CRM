@@ -16,6 +16,7 @@ import { useRef } from "react";
 import Swal from "sweetalert2";
 import { format } from "date-fns";
 import Unauthorized from "../../../visualAccess/unauthorized.jsx";
+import { IoIosCloudUpload } from "react-icons/io";
 export default function CadastrarItems({ role }) {
   const [nextId, setNextId] = useState(1);
   const formRefs = useRef([]);
@@ -29,7 +30,11 @@ export default function CadastrarItems({ role }) {
       timeZone: "America/Sao_Paulo",
     });
   };
-
+  const [files, setFiles] = useState({
+    termoPDF: null,
+    pedidoPDF: null,
+    images: [],
+  });
   const [dateTime, setDateTime] = useState(getBrazilianDateTime());
 
   const addItem = () => {
@@ -46,7 +51,7 @@ export default function CadastrarItems({ role }) {
           caminho_imagem_item: [],
           pedido_origem: "",
           sde_item: "",
-          status_item: "Estado regular",
+          status_item: "Estado Regular",
           situacao_registro: "Pendente",
           valor_item: "",
           updateIn: dateTime,
@@ -63,21 +68,32 @@ export default function CadastrarItems({ role }) {
         },
       ],
     }));
+
     setNextId((prev) => prev + 1);
   };
 
   const removeItem = async (idToRemove) => {
     const result = await sweetAlerts.deleteAlert();
-    if (result)
+    if (result) {
       setData((prevData) => {
         if (prevData.items.length === 1) return prevData;
+        const updatedItems = prevData.items.filter((_, i) => i !== idToRemove);
+        const codigoItemToRemove = prevData.items[idToRemove]?.codigo_item;
+        setFiles((prevFiles) => {
+          const updatedImages = prevFiles.images.filter(
+            (imageGroup) => imageGroup.codigo_item !== codigoItemToRemove
+          );
+          return { ...prevFiles, images: updatedImages };
+        });
+
+        // Retorna o novo estado de items
         return {
           ...prevData,
-          items: prevData.items.filter((_, i) => i !== idToRemove),
+          items: updatedItems,
         };
       });
+    }
   };
-
   const [data, setData] = useState({
     receivingDTO: {
       termo: null,
@@ -110,32 +126,11 @@ export default function CadastrarItems({ role }) {
         userId: "",
         responsibleId: "",
         costCenterId: "",
+        
       },
     ],
+    logUser:localStorage.getItem("user")
   });
-
-  const [files, setFiles] = useState({
-    termoPDF:null,
-    pedidoPDF:null,
-    images:{
-      firstImage:null,
-      secondImage:null
-    }
-  });
-  const handleFiles =(e)=>{
-    const {name, files:selectedFiles} = e.target;
-    if(name === "termoPDF" || name === "pedidoPDF"){
-      setFiles((prevState)=>({
-        ...prevState, 
-        [name]:selectedFiles[0],
-      }));
-    }else if(name === "firstImage" || name === "secondImage"){
-      setFiles((prevState)=>({
-        ...prevState.images,
-        [name]:selectedFiles[0],
-      }));
-    }
-  }
 
   const handleInputChange = (e, index, field, nested = false) => {
     const { name, value } = e.target;
@@ -202,13 +197,70 @@ export default function CadastrarItems({ role }) {
     }
   };
 
-  const handleImageChange = (e, index, imageIndex) => {
-    const { value } = e.target;
-    setData((prevData) => {
-      const newItems = [...prevData.items];
-      newItems[index].caminho_imagem_item[imageIndex] = value;
-      return { ...prevData, items: newItems };
-    });
+
+  const handleFiles = (e, index) => {
+    const { name, files: selectedFiles } = e.target;
+
+    if (name === "termoPDF" || name === "pedidoPDF") {
+      setFiles((prevState) => ({
+        ...prevState,
+        [name]: selectedFiles[0],
+      }));
+    } else {
+      setFiles((prevState) => {
+        const updatedImages = [...prevState.images];
+
+        // Inicializa o índice se não existir
+        if (!updatedImages[index]) {
+          updatedImages[index] = {
+            codigo_item: data.items[index]?.codigo_item || "",
+            firstImage: null,
+            secondImage: null,
+          };
+        }
+
+        // Atualiza a imagem mantendo o código do item
+        updatedImages[index] = {
+          ...updatedImages[index],
+          [name]: selectedFiles[0],
+        };
+
+        return { ...prevState, images: updatedImages };
+      });
+    }
+  };
+
+  const uploadFiles = async () => {
+    const formData = new FormData();
+
+    if (files.termoPDF) {
+      formData.append("termoPDF", files.termoPDF);
+    }
+    if (files.pedidoPDF) {
+      formData.append("pedidoPDF", files.pedidoPDF);
+    }
+
+    // Adiciona as imagens com seus códigos de item
+    if (files.images && files.images.length > 0) {
+      files.images.forEach((imagePair, index) => {
+        if (imagePair.firstImage) {
+          formData.append(`images`, imagePair.firstImage);
+        }
+        if (imagePair.secondImage) {
+          formData.append(`images`, imagePair.secondImage);
+        }
+        data.items.forEach((items) => {
+          formData.append("codigo_item", items.codigo_item);
+        });
+      });
+    }
+    console.log(formData);
+    try {
+      const response = await axiosGeneralRequest.upload(formData, token);
+      console.log("Upload bem-sucedido:", response.status);
+    } catch (error) {
+      console.error("Erro ao enviar arquivos:", error);
+    }
   };
 
   useEffect(() => {
@@ -225,7 +277,6 @@ export default function CadastrarItems({ role }) {
     handleUsers();
     handleResponsibles();
   }, []);
-
 
   const verifyDupliChecker = (items) => {
     const codigos = items.map((item) => item.codigo_item);
@@ -251,6 +302,7 @@ export default function CadastrarItems({ role }) {
         title: "Enviando dados...",
         text: "Aguarde enquanto processamos a requisição.",
         allowOutsideClick: false,
+        timer: 3000,
         didOpen: () => {
           Swal.showLoading();
         },
@@ -271,7 +323,9 @@ export default function CadastrarItems({ role }) {
           title: "Sucesso!",
           text: response?.data,
         });
+        await uploadFiles();
       } catch (error) {
+        console.log(error);
         Swal.fire({
           icon: "error",
           title: "Erro!",
@@ -282,7 +336,7 @@ export default function CadastrarItems({ role }) {
   };
 
   console.log(data);
-  console.log(files)
+  console.log(files);
   return role === "USER" || null ? (
     <Unauthorized />
   ) : (
@@ -363,14 +417,39 @@ export default function CadastrarItems({ role }) {
                 />
               </Form.Group>
             ))}
-            <Row style={{marginTop:20}}>
-              <Form.Group as={Col} controlId={`pedidoPDF`}>
-                <Form.Label>PedidoPDF</Form.Label>
-                <Form.Control required type="file" accept=".pdf" onChange={handleFiles}/>
+            <Row style={{ marginTop: 20 }}>
+              <Form.Group as={Col} controlId={`pedidoPDF`} >
+                <Form.Label   style={{ textTransform: "uppercase", letterSpacing: 2 }}>Pedido FAU  <IoIosCloudUpload
+                  className="upload-icon"
+                  size={35}
+                  style={{ color: files.pedidoPDF ? "#578FCA" : "grey" }}
+                /></Form.Label>
+                <Form.Control
+                  required
+                  type="file"
+                  accept=".pdf"
+                  name="pedidoPDF"
+                  onChange={handleFiles}
+                />
               </Form.Group>
+             
               <Form.Group as={Col} controlId={`termoPDF`}>
-                <Form.Label>TermoPDF</Form.Label>
-                <Form.Control required type="file" accept=".pdf" onChange={handleFiles}/>
+                <Form.Label  style={{ textTransform: "uppercase", letterSpacing: 2 }}>Termo de responsabilidade LTAD  <IoIosCloudUpload
+                  className="upload-icon"
+                  size={35}
+                  style={{ color: files.termoPDF ? "#578FCA" : "grey" }}
+                /></Form.Label>
+                <Form.Control
+                  required
+                  type="file"
+                  accept=".pdf"
+
+                  name="termoPDF"
+                  onChange={handleFiles}
+                />
+            
+              
+              
               </Form.Group>
             </Row>
           </Row>
@@ -406,13 +485,15 @@ export default function CadastrarItems({ role }) {
           <Row style={{ padding: 10 }}>
             <Form.Group as={Col} controlId={`codigo_item_${index}`}>
               <Form.Label>Número Patrimônio</Form.Label>
+             
               <Form.Control
                 required
                 placeholder={"Insira o número"}
-                type="text"
+                type="number"
                 value={item.codigo_item}
                 onChange={(e) => handleInputChange(e, index, "codigo_item")}
               />
+               
             </Form.Group>
 
             <Form.Group as={Col} controlId={`descricao_item_${index}`}>
@@ -561,33 +642,8 @@ export default function CadastrarItems({ role }) {
               />
             </Form.Group>
           </Row>
+       
           <Row style={{ padding: 10 }}>
-            <Form.Group as={Col} controlId={`caminho_imagem_item${index}`}>
-              <Form.Label>Imagem completa</Form.Label>
-              <Form.Control
-                required
-                placeholder={
-                  "Copie e cole o link da imagem completa do item aqui"
-                }
-                type="text"
-                value={item.caminho_imagem_item?.[0]}
-                onChange={(e) => handleImageChange(e, index, 0)}
-              />
-            </Form.Group>
-            <Form.Group as={Col} controlId={`caminho_imagem_item${index}`}>
-              <Form.Label>Imagem tag patrimonio</Form.Label>
-              <Form.Control
-                required
-                placeholder={
-                  "Copie e cole o link da imagem da TAG do patrimonio"
-                }
-                type="text"
-                value={item.caminho_imagem_item?.[1]}
-                onChange={(e) => handleImageChange(e, index, 1)}
-              />
-            </Form.Group>
-          </Row>
-          <Row  style={{ padding: 10 }}>
             <Form.Group>
               <FormControl
                 style={{ width: "33%" }}
@@ -662,24 +718,34 @@ export default function CadastrarItems({ role }) {
 
           <Row style={{ margin: 15 }}>
             <Form.Group as={Col} controlId={`firstImage_${index}`}>
-              <Form.Label>imagem completa</Form.Label>
+              <Form.Label style={{ textTransform: "uppercase", letterSpacing: 2 }}>Foto/Imagem completa do item<IoIosCloudUpload
+                  className="upload-icon"
+                  size={35}
+                  style={{ color: files.images[index] ? "#578FCA" : "grey",marginLeft:10 }}
+                /> </Form.Label>
               <Form.Control
                 placeholder="imagem completa"
                 required
                 name="firstImage"
                 type="file"
                 accept="image/*"
-                onChange={handleFiles}
+                disabled={item.codigo_item == "" ? true : false}
+                onChange={(e) => handleFiles(e, index)}
               />
             </Form.Group>
             <Form.Group as={Col} controlId={`SecondImage_${index}`}>
-              <Form.Label>imagem TAG</Form.Label>
-              <Form.Control 
-              required 
-              name="secondImage"
-              type="file" 
-              accept="image/*"
-              onChange={handleFiles}
+              <Form.Label style={{ textTransform: "uppercase", letterSpacing: 2 }}>Foto/Imagem da TAG/Placa do item <IoIosCloudUpload
+                  className="upload-icon"
+                  size={35}
+                  style={{ color: files.images[index]? "#578FCA" : "grey" ,marginLeft:10}}
+                /></Form.Label>
+              <Form.Control
+                required
+                name="secondImage"
+                type="file"
+                accept="image/*"
+                disabled={item.codigo_item == "" ? true : false}
+                onChange={(e) => handleFiles(e, index)}
               />
             </Form.Group>
           </Row>

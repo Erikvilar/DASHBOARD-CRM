@@ -1,4 +1,4 @@
-import { pdf } from "@react-pdf/renderer";
+import { pdf, render } from "@react-pdf/renderer";
 import "./styles.css";
 import {
   useCallback,
@@ -20,7 +20,8 @@ import {
   BsTools,
   Link,
 } from "./index.js";
-import { FcInfo } from "react-icons/fc";
+import { FcInfo , FcOk} from "react-icons/fc";
+
 import {
   GridToolbarColumnsButton,
   GridToolbarContainer,
@@ -44,6 +45,7 @@ import { Bounce } from "react-activity";
 import { Avatar, Chip } from "@mui/material";
 import Swal from "sweetalert2";
 import CountUp from "react-countup";
+import { useRef } from "react";
 export default function General() {
   const navigate = useNavigate();
   const [openDialog, setOpenDialog] = useState(null);
@@ -61,9 +63,10 @@ export default function General() {
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(11);
   const [responsavel, setResponsavel] = useState();
-
+  const [logs, setLogs] = useState();
   const [projetos, setProjetos] = useState();
   const [users, setUsers] = useState();
+  const boxRef = useRef(null);
   const [totalValue, setTotalValue] = useState(0);
   const { newRow = () => {}, resolve = () => {} } = promiseArguments || {};
   const controlEdit = () => {
@@ -71,7 +74,30 @@ export default function General() {
   };
   let token = localStorage.getItem("JWT");
   let user = localStorage.getItem("user");
+  const logoutMethod = async (user) => {
+    const data = {
+      login: user,
+    };
+    Swal.fire({
+      title: "Sua sessão foi encerrada faça login novamente",
+      text: "Sessão temporariamente expirada, faça login novamente para autenticar no sistema.",
+      allowOutsideClick: false,
+      confirmButtonText: "OK",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const response = await axiosGeneralRequest.logout(data);
 
+        if (response.status == 200) {
+          console.log(response.data.isLogged);
+          localStorage.setItem("isLogged", response.data.isLogged);
+          console.log("usuario deslogado");
+        }
+        localStorage.removeItem("JWT");
+        navigate("/");
+        Swal.close();
+      }
+    });
+  };
 
   const showAllItems = async () => {
     try {
@@ -81,11 +107,22 @@ export default function General() {
         setData(response.data);
         console.log("reload executado");
       }
-    } catch (e) {
-      console.error("Erro ao buscar os dados iniciais:", e);
+    } catch (error) {
+      if (error.response?.status == 403) {
+        console.log("sessao expirada");
+        await logoutMethod(user);
+      }
+      console.error("Erro ao buscar os dados iniciais:", error);
     }
   };
 
+  const callLogs = async () => {
+    const response = await axiosGeneralRequest.log(token);
+    if (response.status === 200) {
+      setLogs(Object.values(response.data));
+    }
+  };
+  console.log(logs);
   const handleCostCenter = async () => {
     try {
       const response = await axiosGeneralRequest.costCenter(token);
@@ -96,6 +133,7 @@ export default function General() {
       console.log(error);
     }
   };
+
   const handleUsers = async () => {
     try {
       const response = await axiosGeneralRequest.users(token);
@@ -106,6 +144,7 @@ export default function General() {
       console.log(error);
     }
   };
+
   const handleresponsible = async () => {
     try {
       const response = await axiosGeneralRequest.responsibles(token);
@@ -118,11 +157,24 @@ export default function General() {
   };
 
   const formatValueMoney = (valor) => {
-    if (!valor) return "";
-    return new Intl.NumberFormat("pt-BR", {
+    if (valor === null || valor === undefined) return "";
+
+    const formattedValue = new Intl.NumberFormat("pt-BR", {
       style: "currency",
       currency: "BRL",
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
     }).format(valor);
+
+    const [currencySymbol, numberValue] = formattedValue.split("R$");
+    return (
+      <div style={{ display: "flex", justifyContent: "space-between" }}>
+        <span style={{ width: "20%" }}>R$</span>
+        <span style={{ width: "80%", display: "flex", justifyContent: "end" }}>
+          {numberValue.trim()}
+        </span>
+      </div>
+    );
   };
 
   useEffect(() => {
@@ -200,7 +252,7 @@ export default function General() {
       align: "left",
       headerAlign: "center",
       width: 150,
-      renderHeader: () => <span className="header_style">RELATORIO</span>,
+      renderHeader: () => <span className="header_style">RELATÓRIO</span>,
       renderCell: (param) => {
         return (
           <Button onClick={() => handlePrint(param.row)}>
@@ -218,12 +270,13 @@ export default function General() {
     //UPDATE DATE
     {
       field: "updateIn",
-      headerName: "ATUALIZADO",
+      headerName: "ULTIMA ATUALIZAÇÃO",
       editable: false,
-      headerAlign: "center",
 
-      width: 200,
-      renderHeader: () => <span className="header_style">ATUALIZADO</span>,
+      width: 150,
+      renderHeader: () => (
+        <span className="header_style">ULTIMA ATUALIZAÇÃO</span>
+      ),
       renderCell: (params) => {
         if (!params.value) return <span>-</span>;
 
@@ -234,10 +287,10 @@ export default function General() {
     //CODIGO DO ITEM
     {
       field: "codigo_item",
-      headerName: "Nº PATRIMONIO",
+      headerName: "Nº PATRIMÔNIO",
       align: "center",
       headerAlign: "center",
-      renderHeader: () => <span className="header_style">Nº PATRIMONIO</span>,
+      renderHeader: () => <span className="header_style">Nº PATRIMÔNIO</span>,
       width: 150,
       editable: controlEdit(),
     },
@@ -248,61 +301,12 @@ export default function General() {
       align: "center",
       headerAlign: "center",
       renderHeader: () => (
-        <span className="header_style">DESCRIÇÃO DO ITEM</span>
+        <span className="header_style">DESCRIÇÃO DETALHADA DE ITENS</span>
       ),
       width: 420,
       editable: controlEdit(),
     },
-    //NOME DO USUARIO
-    {
-      field: "nome_usuario",
-      headerName: "RESPONSÁVEL IMEDIATO",
-      align: "center",
-      headerAlign: "center",
-      renderHeader: () => (
-        <span className="header_style">RESPONSÁVEL IMEDIATO</span>
-      ),
-      type: "singleSelect",
-      valueOptions: users?.map((u) => u.nome_usuario),
-      width: 200,
-      editable: controlEdit(),
-    },
-    //OCUPAÇÃO DO IMEDIATO"
-    {
-      field: "tipo_usuario",
-      headerName: "OCUPAÇÃO DO IMEDIATO",
-      align: "center",
-      headerAlign: "center",
-      renderHeader: () => (
-        <span className="header_style">OCUPAÇÃO DO IMEDIATO</span>
-      ),
-      width: 250,
-      editable: false,
-    },
-    //TELEFONE DO IMEDIATO
-    {
-      field: "telefone_usuario",
-      headerName: "TELEFONE DO IMEDIATO",
-      align: "center",
-      headerAlign: "center",
-      renderHeader: () => (
-        <span className="header_style">TELEFONE DO IMEDIATO</span>
-      ),
-      width: 250,
-      editable: false,
-    },
-    //EMAIL DO IMEDIATO
-    {
-      field: "email_usuario",
-      headerName: "EMAIL DO IMEDIATO",
-      align: "center",
-      headerAlign: "center",
-      renderHeader: () => (
-        <span className="header_style">EMAIL DO IMEDIATO</span>
-      ),
-      width: 250,
-      editable: false,
-    },
+
     //NF E INVOICE
     {
       field: "nf_invoice_item",
@@ -331,81 +335,83 @@ export default function General() {
             title: "Atualizar imagem do item",
             input: "text",
             html: `
-          <div style="
-    display: flex; 
-    flex-direction: column; 
-    align-items: center; 
-    text-align: center; 
-    max-width: 90vw; 
-    max-height: 600px; 
-    overflow-y: auto;
-    padding: 20px;
-  ">
-  <p style="font-size: 16px; font-weight: bold; margin-bottom: 15px;">
-    Insira o link da imagem e prossiga em continuar para atualizar.
-  </p>
-
-  <div style="
-    display: flex; 
-    justify-content: center; 
-    gap: 30px; 
-    max-width: 100%; 
-    flex-wrap: wrap;
-    align-items: center;
-  ">
-    <!-- Primeira Imagem -->
-    <div style="
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-    ">
-      <a href="${params.value[0]}" target="_blank" style="display: block;">
-        <img src="${params.value[0]}" alt="Imagem exemplo 1" 
-          style="width: 100%; max-width: 300px; height: auto; max-height: 300px; border-radius: 10px; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);" />
-      </a>
-      <p style="
-        background-color: #FF9800; 
-        color: white; 
-        padding: 8px 12px; 
-        border-radius: 15px; 
-        font-size: 14px; 
-        font-weight: bold;
-        margin-top: 10px;
-        display: inline-block;
-      ">
-        Imagem geral patrimônio
-      </p>
-    </div>
-
-    <!-- Segunda Imagem -->
-    <div style="
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-    ">
-      <a href="${params.value[1]}" target="_blank" style="display: block;">
-        <img src="${params.value[1]}" alt="Imagem exemplo 2" 
-          style="width: 100%; max-width: 300px; height: auto; max-height: 300px; border-radius: 10px; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);" />
-      </a>
-      <p style="
-        background-color: #FF9800; 
-        color: white; 
-        padding: 8px 12px; 
-        border-radius: 15px; 
-        font-size: 14px; 
-        font-weight: bold;
-        margin-top: 10px;
-        display: inline-block;
-      ">
-        Imagem tag patrimônio
-      </p>
-    </div>
-  </div>
-</div>
-
-          `,
+              <div style="
+                display: flex; 
+                flex-direction: column; 
+                align-items: center; 
+                text-align: center; 
+                
+                max-height: 600px; 
+                overflow-y: auto; 
+                padding: 20px;
+              ">
+                <p style="font-size: 16px; font-weight: bold; margin-bottom: 15px;">
+                  Insira o link da imagem e prossiga em continuar para atualizar.
+                </p>
+                
+                <div style="
+                  display: flex; 
+                  justify-content: center; 
+                  gap: 30px; 
+                  max-width: 100%; 
+                  flex-wrap: nowrap; 
+                  align-items: center;
+                ">
+                  <!-- Primeira Imagem -->
+                  <div style="
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    text-align: center;
+                  ">
+                    <a href="${params.value[0]}" target="_blank" style="display: block;">
+                      <img src="${params.value[0]}" alt="Imagem exemplo 1"
+                        style="width: 100%; max-width: 350px; height: auto; max-height: 300px; 
+                        border-radius: 10px; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);" />
+                    </a>
+                    <p style="
+                      background-color: #FF9800; 
+                      color: white; 
+                      padding: 8px 12px; 
+                      border-radius: 15px; 
+                      font-size: 14px; 
+                      font-weight: bold; 
+                      margin-top: 10px; 
+                      display: inline-block;
+                    ">
+                      Imagem geral patrimônio
+                    </p>
+                  </div>
+          
+                  <!-- Segunda Imagem -->
+                  <div style="
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    text-align: center;
+                  ">
+                    <a href="${params.value[1]}" target="_blank" style="display: block;">
+                      <img src="${params.value[1]}" alt="Imagem exemplo 2"
+                        style="width: 100%; max-width: 350px; height: auto; max-height: 300px; 
+                        border-radius: 10px; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);" />
+                    </a>
+                    <p style="
+                      background-color: #FF9800; 
+                      color: white; 
+                      padding: 8px 12px; 
+                      border-radius: 15px; 
+                      font-size: 14px; 
+                      font-weight: bold; 
+                      margin-top: 10px; 
+                      display: inline-block;
+                    ">
+                      Imagem tag patrimônio
+                    </p>
+                  </div>
+                </div>
+              </div>
+            `,
+            width: 800, // Define a largura do modal
             confirmButtonColor: "#1976d2",
             confirmButtonText: "continuar",
             showClass: {
@@ -505,49 +511,49 @@ export default function General() {
       headerName: "SITUAÇÃO DO ITEM",
       align: "center",
       headerAlign: "center",
-      width: 200,
+      width: 250,
       type: "singleSelect",
+
       renderHeader: () => (
         <span className="header_style">SITUAÇÃO DO ITEM</span>
       ),
       valueOptions: [
-        "Estado regular",
-        "Estado ruim",
-        "Em análise",
-        "Em manutenção",
+        "Estado Regular",
+        "Estado Ruim",
+        "Estado em Análise",
+        "Estado em Manutenção",
       ],
 
       renderCell: (params) => {
         switch (params.value) {
-          case "Estado regular":
+          case "Estado Regular":
             return (
               <span>
                 {" "}
-                <GrStatusGood color="green" size={18} /> {params.value}
+                {params.value} <GrStatusGood color="green" size={18} />
               </span>
             );
 
-          case "Estado ruim":
+          case "Estado Ruim":
             return (
               <span>
                 {" "}
-                <GoAlert color="orange" size={18} /> {params.value}
+                {params.value} <GoAlert color="orange" size={18} />
               </span>
             );
 
-          case "Em análise":
+          case "Estado em Análise":
             return (
               <span>
                 {" "}
-                <GiMagnifyingGlass color="blue" size={18} /> {params.value}
+                {params.value} <GiMagnifyingGlass color="blue" size={18} />
               </span>
             );
 
-          case "Em manutenção":
+          case "Estado em Manutenção":
             return (
               <span>
-                {" "}
-                <BsTools size={18} color="brown" /> {params.value}
+                {params.value} <BsTools size={18} color="brown" />
               </span>
             );
 
@@ -565,10 +571,10 @@ export default function General() {
       type: "number",
       headerAlign: "center",
 
-      width: 200,
+      width: 150,
       renderHeader: () => <span className="header_style">VALOR DO ITEM</span>,
       renderCell: (params) => {
-        return <span>{formatValueMoney(params.value)}</span>;
+        return <div>{formatValueMoney(params.value)}</div>;
       },
       editable: controlEdit(),
     },
@@ -605,7 +611,7 @@ export default function General() {
     //OBSERVAÇÕES DO ITEM
     {
       field: "observacao_item",
-      headerName: "OBSERVÇÕES",
+      headerName: "OBSERVAÇÕES",
       align: "center",
       headerAlign: "center",
       renderHeader: () => <span className="header_style">OBSERVÇÕES</span>,
@@ -682,6 +688,7 @@ export default function General() {
       headerAlign: "center",
       renderHeader: () => <span className="header_style">Nº TERMO</span>,
       width: 120,
+      renderCell: (params) => <p>{params.value}</p>,
       editable: controlEdit(),
     },
     //LOCALIZAÇÃO DO ITEM
@@ -690,9 +697,7 @@ export default function General() {
       headerName: "LOCALIZAÇÃO DO ITEM",
       align: "center",
       headerAlign: "center",
-      renderHeader: () => (
-        <span className="header_style">LOCALIZAÇÃO DO ITEM</span>
-      ),
+      renderHeader: () => <span className="header_style">LOCALIZAÇÃO</span>,
       width: 200,
       editable: controlEdit(),
     },
@@ -878,6 +883,7 @@ export default function General() {
       renderHeader: () => (
         <span className="header_style">DATA INÍCIO PROJETO</span>
       ),
+      renderCell: (params) => <span>{format(params.value, "dd-MM-yyyy")}</span>,
       width: 200,
       editable: false,
     },
@@ -891,6 +897,50 @@ export default function General() {
         <span className="header_style">DATA FIM PROJETO</span>
       ),
       width: 200,
+      editable: false,
+    },
+    //NOME DO USUARIO
+    {
+      field: "nome_usuario",
+      headerName: "RESPONSÁVEL IMEDIATO",
+      align: "center",
+      headerAlign: "center",
+      renderHeader: () => (
+        <span className="header_style">RESPONSÁVEL IMEDIATO</span>
+      ),
+      type: "singleSelect",
+      valueOptions: users?.map((u) => u.nome_usuario),
+      width: 200,
+      editable: controlEdit(),
+    },
+    //OCUPAÇÃO DO IMEDIATO"
+    {
+      field: "tipo_usuario",
+      headerName: "OCUPAÇÃO DO IMEDIATO",
+      align: "center",
+      headerAlign: "center",
+      renderHeader: () => <span className="header_style">OCUPAÇÃO</span>,
+      width: 250,
+      editable: false,
+    },
+    //TELEFONE DO IMEDIATO
+    {
+      field: "telefone_usuario",
+      headerName: "TELEFONE DO IMEDIATO",
+      align: "center",
+      headerAlign: "center",
+      renderHeader: () => <span className="header_style">TELEFONE</span>,
+      width: 250,
+      editable: false,
+    },
+    //EMAIL DO IMEDIATO
+    {
+      field: "email_usuario",
+      headerName: "EMAIL DO IMEDIATO",
+      align: "center",
+      headerAlign: "center",
+      renderHeader: () => <span className="header_style">EMAIL</span>,
+      width: 250,
       editable: false,
     },
     //RESPONSAVEL GERAL
@@ -910,9 +960,7 @@ export default function General() {
       headerName: "OCUPAÇÃO DO RESPONSÁVEL",
       align: "center",
       headerAlign: "center",
-      renderHeader: () => (
-        <span className="header_style">OCUPAÇÃO DO RESPONSÁVEL</span>
-      ),
+      renderHeader: () => <span className="header_style">OCUPAÇÃO </span>,
       width: 250,
       editable: false,
     },
@@ -922,9 +970,7 @@ export default function General() {
       headerName: "EMAIL RESPONSÁVEL GERAL",
       align: "center",
       headerAlign: "center",
-      renderHeader: () => (
-        <span className="header_style">EMAIL RESPONSÁVEL</span>
-      ),
+      renderHeader: () => <span className="header_style">EMAIL</span>,
       width: 250,
       editable: false,
     },
@@ -934,9 +980,7 @@ export default function General() {
       headerName: "TELEFONE RESPONSÁVEL",
       align: "center",
       headerAlign: "center",
-      renderHeader: () => (
-        <span className="header_style">TELEFONE RESPONSÁVEL</span>
-      ),
+      renderHeader: () => <span className="header_style">TELEFONE</span>,
       width: 200,
       editable: false,
     },
@@ -946,7 +990,9 @@ export default function General() {
       headerName: "ALTERADO",
       align: "center",
       headerAlign: "center",
-      renderHeader: () => <span className="header_style">ALTERADO</span>,
+      renderHeader: () => (
+        <span className="header_style">REGISTRO DE ALTERAÇÃO</span>
+      ),
       renderCell: (params) => (
         <div
           style={{
@@ -958,7 +1004,7 @@ export default function General() {
           {Object.values(params.value) != "" ? (
             <Chip
               style={{ backgroundColor: "grey", color: "white" }}
-              avatar={<Avatar alt="Natacha" src={params.value[1]} />}
+              avatar={<Avatar alt="pessoa" src={params.value} />}
               label={
                 <span style={{ textTransform: "uppercase" }}>
                   {params.value[0]}
@@ -1052,6 +1098,13 @@ export default function General() {
     eventEmitter.on("messageReceived", handleMessage);
     return () => eventEmitter.off("messageReceived", handleMessage);
   }, []);
+
+  useEffect(()=>{
+    if(boxRef.current){
+      boxRef.current.scrollTop = boxRef.current.scrollHeight;
+    }
+  },[logs])
+
   //handler data
   useEffect(() => {
     const fetchData = async () => {
@@ -1061,6 +1114,7 @@ export default function General() {
           handleCostCenter(),
           handleUsers(),
           handleresponsible(),
+          callLogs(),
         ]);
       } catch (error) {
         console.error("Erro ao buscar dados:", error);
@@ -1159,6 +1213,7 @@ export default function General() {
       if (response.status == 202) {
         sendWebSocketMessage("/app/join", response.data);
         toast.success("Dados atualizados");
+        callLogs();
       } else {
         console.log("ocorrreu um erro" + response.statusText);
       }
@@ -1208,14 +1263,14 @@ export default function General() {
         local: row.localizacao_descricao,
         modelo: row.modelo_descricao,
         serial: row.serie_descricao,
+        ultimaModificacao:row.lastModify[0],
+        horaUltimaModificacao:row.updateIn,
         termo: row.termo,
       };
 
-      const blob = await pdf(<DocumentToPrint data={print} />).toBlob();
-      const url = URL.createObjectURL(blob);
+    
 
-      setTimeout(() => window.open(url, "_blank"), 1500);
-      setTimeout(() => URL.revokeObjectURL(url), 10000);
+        navigate("/print", {state:print})
     } catch (error) {
       console.log(error);
     } finally {
@@ -1296,22 +1351,29 @@ export default function General() {
                 />
                 <div
                   style={{
-                    width: 300,
-                    height: 80,
+                    width: 350,
+                    height: 30,
+                    marginTop:20,
+                    borderRadius:20,
                     display: "flex",
                     alignItems: "center",
                     fontSize: 18,
+                    paddingLeft:10,
+                    marginRight:30,
+                    backgroundColor:"orange"
                   }}
                 >
-                  <span>Valor total: </span>
+                  <span style={{fontWeight:700,color:"white"}}>Custo total: </span>
                   <CountUp
+                    style={{fontWeight:700,color:"white"}}
                     start={0}
                     end={totalValue}
                     duration={1.5}
                     separator="."
                     decimals={2}
                     decimal=","
-                    prefix="R$ "
+                    prefix="R$  "
+                    
                   />
                 </div>
               </div>
@@ -1344,41 +1406,50 @@ export default function General() {
       />
 
       <Box
+       ref={boxRef}
         sx={{
-          height: "40px",
-          marginTop: "20px",
+          height: "80px",
+         
           paddingLeft: 2,
           overflow: "scroll",
+        
           scrollbarWidth: "none",
           fontSize: 13,
+        
+         scrollBehavior:"smooth",
+          display:"flex",
+          justifyContent:"center",
+          justifySelf:"center",
+          alignItems:"center",
+          flexDirection:"column",
           scrollSnapType: "y",
         }}
       >
-        <div
-          style={{
-            scrollSnapAlign: "start",
-            height: 40,
-            display: "flex",
-            justifyContent: "start",
-            alignItems: "center",
-          }}
-        >
-          <FcInfo />
-          usuario atualizou aquilo em 20/10/30 de NOTEBOOK para CELULAR IPHONE
-          9050
-        </div>
-        <div
-          style={{
-            scrollSnapAlign: "start",
-            height: 40,
-            display: "flex",
-            justifyContent: "start",
-            alignItems: "center",
-          }}
-        >
-          <FcInfo />
-          Erik atualizou aquilo em 20/10/30 de NOTEBOOK para CELULAR IPHONE 9050
-        </div>
+        <Box >
+        {logs?.map((log) => (
+          <div
+ 
+            key={log.id}
+            style={{
+              scrollSnapAlign: "center",
+          
+           
+              width:"90%",
+              whiteSpace:"pre-wrap",
+              lineHeight:"2",
+              height: 50,
+              margin:20,
+              display: "flex",
+              justifyContent: "start",
+              alignItems: "center",
+        
+            }}
+          >
+          {log.type == "update"? <span> <FcInfo size={20}/> {log.userLog} atualizou em {format(log.timestamp, "dd-MM-yyyy")} as {format(log.timestamp, "HH:MM")} a linha {log.entityId} de <span>{log.oldValue}</span>  para  <span >{log.newValue}</span> </span>  : <span><FcOk size={20}/> {log.userLog} em {format(log.timestamp, "dd-MM-yyyy")} as {format(log.timestamp, "HH:MM")} cadastrou {log.newValue} </span> }
+      
+          </div>
+        ))}
+        </Box>
       </Box>
     </Box>
   );

@@ -23,18 +23,29 @@ const axiosGeneralRequest = {
       throw error;
     }
   },
-
-
-  logout: async (data,token) => {
+  upload: async (data,token) => {
     try {
       const response = await axios.post(
-        `http://${IPconnection}:${PORTconnection}${auth}${logout}`,
+        `http://${IPconnection}:${PORTconnection}/upload`,
         data,
         {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         }
+      );
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  logout: async (data) => {
+    try {
+      const response = await axios.post(
+        `http://${IPconnection}:${PORTconnection}${auth}${logout}`,
+        data,
+       
       );
       return response;
     } catch (error) {
@@ -153,6 +164,7 @@ const axiosGeneralRequest = {
       throw error;
     }
   },
+
   costCenter: async (token) => {
     try {
       const response = await axios.get(
@@ -171,6 +183,7 @@ const axiosGeneralRequest = {
       throw error;
     }
   },
+
   users: async (token) => {
     try {
       const response = await axios.get(
@@ -189,6 +202,26 @@ const axiosGeneralRequest = {
       throw error;
     }
   },
+  
+  log: async (token) => {
+    try {
+      const response = await axios.get(
+        `http://${IPconnection}:${PORTconnection}/log`,{
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (response.status === 200) {
+ 
+        return response;
+
+      }
+    } catch (error) {
+      throw error;
+    }
+  },
+
 };
 
 export default axiosGeneralRequest;

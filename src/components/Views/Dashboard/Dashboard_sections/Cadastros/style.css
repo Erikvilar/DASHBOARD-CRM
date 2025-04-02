@@ -2,7 +2,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Saira:ital,wght@0,100..900;1,100..900&family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Dosis:wght@200..800&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Saira:ital,wght@0,100..900;1,100..900&family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Dosis:wght@200..800&family=Lexend+Peta:wght@100..900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Saira:ital,wght@0,100..900;1,100..900&family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap");
-@import url('https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap");
 
 h3,
 h4 {
@@ -22,12 +22,11 @@ h4 {
   box-shadow: 2px 5px 15px rgb(0, 0, 0);
   border-radius: 10px;
 
-
-height: auto;
+  height: auto;
 }
-.buttons-tools{
-    background-color: #383838;
-    border-radius: 0px 0px 10px 10px;
+.buttons-tools {
+  background-color: #383838;
+  border-radius: 0px 0px 10px 10px;
 }
 .buttons-tools button:nth-child(1) {
   background-color: #0e6902c0;
@@ -47,11 +46,56 @@ height: auto;
 .buttons-tools button span {
   color: white;
 }
-fieldset{
-    font-family: "Work Sans", sans-serif;
-}.my-popup-class {
+fieldset {
+  font-family: "Work Sans", sans-serif;
+}
+.my-popup-class {
   font-family: "Arial", sans-serif;
   font-size: 16px;
+}
+.form-pdf-field {
+  display: flex;
+  flex-direction: row;
+  height: 180px;
+  
+
+  margin: 5px;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  position: relative;
+  background-color: transparent;
+  margin-top: 10px;
+}
+.form-pdf-field::file-selector-button{
+  background-color: #01529ec0;
+}
+.form-pdf-field div b {
+  padding: 10px;
+}
+.form-pdf-field div {
+  width: 200px;
+  height: 180px;
+}
+.upload-label {
+  background-color: #6e6e6e27;
+  border-radius:360px;
+  height:80px;
+  width: 80px;
 
  
+  margin: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.upload-label .upload-icon {
+  cursor: pointer;
+}
+
+
+.form-pdf-field .file-input {
 }

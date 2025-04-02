@@ -1,163 +1,135 @@
-button {
-  border: none;
-  outline: none;
-  background-color: transparent;
+.print-area {
+  width: 40%;
+    border: 0.1px solid rgb(32, 31, 31);
+  height: 100vh;
+  overflow-y: scroll;
+  scrollbar-width: none;
+  margin: auto;
+}
+.print-header {
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.print-header :nth-child(1) > img {
+  width: 180px;
+}
+.print-header :nth-child(3) > img {
+  width: 190px;
+}
+.title-print {
+  font-weight: 600;
+  font-size: large;
+  text-align: center;
+  margin-bottom: 20px;
+}
+.table-printable-view {
+
+
+  height: 300px;
+  display: flex;
+  flex-direction: column;
+
+}
+.row-pritable {
+
+
+  margin-bottom: 10px;
+  display: flex;
+  flex-direction: row;
+}
+.row-pritable .column {
+  border: 0.1rem solid black;
+  border-right: none;
+
+  width: 100%;
+}.table-printable-view :nth-child(1){
+  border-left: none;
+}
+.table-printable-view :nth-child(2) :nth-child(2) {
+  width: 30%;
+}
+.table-printable-view :nth-child(1) div {
+  height: 80px;
+}
+.table-printable-view :nth-child(2) div {
+  height: 130px;
+}
+.table-printable-view :nth-child(3) div {
+  height: 60px;
 }
 
-/* Ajuste de estilo para impressão */
+.row-pritable .column .column-title {
+  border: 0.1px solid black;
+  border-top: none;
+  border-right: none;
+  border-left: none;
+  width: 100%;
+  font-size: 13px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  font-weight: 600;
+  height: 30px;
+}
+.row-pritable .column .content-text {
+  font-size: 12px;
+  margin: 5px;
+  width: 100%;
+}
+
+.print-header :nth-of-type(2) {
+  width: 40%;
+  text-align: center;
+  font-weight: 600;
+}
+.print-header :nth-of-type(2) > p {
+  margin-top: 20px;
+  font-size: 14px;
+
+}.row-of-images{
+  display: flex;
+  justify-content: center;
+
+}
+.row-of-images img{
+  margin: 5px;
+  width: 200px;
+  border-radius: 5px;
+  height: 200px;
+}.row-of-about :nth-child(1)  {
+  display: flex;
+  width: 90%;
+  margin: 20px;
+  align-items: center; 
+  justify-content: space-between;
+
+}.row-of-about :nth-child(2) {
+
+
+  font-size: 13px;
+  font-weight: 500;
+  margin: auto;
+  
+  text-align: center;
+  width: 80%;
+  
+
+}
 @media print {
-  /* Ajustando as propriedades para impressão */
-  html,
-  body {
+  html,body{
     height: auto !important;
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    overflow: auto;
-    font-family: Arial, sans-serif;
+    overflow: auto !important;
+ 
   }
-  .title-user-print {
-    display: none;
-  }
-
   .print-area {
-    font-size: 12px;
-    padding: 15px;
-    line-height: 1.4;
-    max-width: 100%;
+    width: 100%;
     height: 100vh;
-    margin: 0 auto;
-  }.table{
-
-    max-width: 100%;
-
-    margin-top: 50px;
-    flex-wrap: wrap;
-    display: flex;
-    flex-direction: row
-  }.table .visible-row{
-    display: flex;
-    flex-wrap: wrap;
-    height: 100px;
-    width: 100%;
-  
-  }.table .visible-row div{
-    width: 15%;
-  
   }
-
-  .header-print {
-    display: flex;
-    flex-direction: row;
-    text-align: center;
-    width: 100%;
-    padding: 0px;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 10px;
-  }
-
-  .header-print p {
-    font-size: 13px;
-    padding-top: 20px;
-    font-weight: 700;
-    text-align: center;
-  }
-  .title-print h2 {
-    font-size: 18px;
-    text-align: center;
-  }
-
-  /* Quebra de página */
-  .page-break {
-    display: block;
-    page-break-before: always;
-    margin-top: 1rem;
-  }
-
   @page {
     size: A4;
-    margin: 10mm;
-  }
-}
-
-/* Ajustes de design para visualização na tela antes da impressão */
-@media screen {
-  .print-area {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    font-size: 14px;
-    line-height: 1.6;
-    width: 50%;
-    justify-self: center;
-    margin-top: none;
-  }
-  .visible-row {
-    display: flex;
-  }
-  .visible-row div {
-    margin: 20px;
-  }
-  .title-user-print {
-    margin-left: 20px;
-  }
-  .title-print {
-    display: none;
-  }
-
-  .header-print {
-    display: none;
-  }
-  .print-button {
-    background-color: orange;
-    width: 90px;
-    height: 90px;
-    position: fixed;
-    left: 80%;
-    top: 80%;
-
-    bottom: 0;
-
-    border-radius: 360px;
-    padding: 10px;
-    margin-top: 20px;
-    margin-left: 20px;
-    color: white;
-    border: 1px solid rgb(255, 255, 255);
-    font-weight: 700;
-    transition: 0.3ms ease-in;
-    &:hover {
-      background-color: rgb(255, 255, 255);
-      color: orange;
-      border: 1px solid orange;
-    }
-    &:active {
-      transform: scale(1.02);
-      background-color: #00a2ff;
-      border: 2px solid #00a2ff;
-      color: white;
-    }
-  } /* Estilos para a visualização na tela (antes de imprimir) */
-
-  .header-print p {
-    font-size: 14px;
-    font-weight: 700;
-    text-align: left;
-    width: 60%;
-  }
-
-  .print-area img {
-    width: 40%;
-    margin: 5px;
-    border-radius: 10px;
-    &:hover {
-      cursor: pointer;
-    }
-  }
-
-  /* Remover quebras de página na visualização normal */
-  .page-break {
-    display: none;
+    margin: 5mm;
   }
 }

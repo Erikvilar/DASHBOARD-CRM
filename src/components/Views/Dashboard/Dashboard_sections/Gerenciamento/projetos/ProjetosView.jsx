@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import {useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { axiosGeneralRequest } from "../Produtos"; 
+import { axiosGeneralRequest } from "../produtos"; 
 import { MdAttachMoney } from "react-icons/md";
 import { PageContainer,  } from "@toolpad/core";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
