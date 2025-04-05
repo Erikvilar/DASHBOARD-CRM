@@ -43,9 +43,12 @@
     width: 50%;
     height: 50px;
   }.about{
-    margin-top: 100px;
     
-    
+    width: 100%;
+    position: relative;
+    top: 90px;
+    height: 80px;
+
   
   }
  

@@ -1,6 +1,5 @@
-import React, { useState } from "react";
-import { Form, Button } from "react-bootstrap";
-import axios from "axios";
+import { useState } from "react";
+
 import "./style.css";
 import Projetos from "./projetos";
 import Responsaveis from "./responsaveis";

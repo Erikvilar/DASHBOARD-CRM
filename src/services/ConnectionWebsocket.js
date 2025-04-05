@@ -2,6 +2,7 @@ import { Client } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
 import eventEmitter from "./events/Emitter";
 import Swal from "sweetalert2";
+import axiosGeneralRequest from "./apiServiceRequests";
 
 let client;
 let isConnected = false;
@@ -57,11 +58,11 @@ export const initializeWebSocket = (navigate) => {
         didOpen: () => Swal.showLoading(),
       }).then(()=>{
         desconectWebSocket();
-        navigate("/")
+       
       });
-    
-  
+      
       localStorage.setItem("status", JSON.stringify(false))
+      navigate("/")
       console.log("websocket encerrado");
     },
   });

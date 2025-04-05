@@ -2,6 +2,7 @@
   width: 40%;
     border: 0.1px solid rgb(32, 31, 31);
   height: 100vh;
+
   overflow-y: scroll;
   scrollbar-width: none;
   margin: auto;
@@ -117,6 +118,25 @@
   width: 80%;
   
 
+}.button-print{
+  width: 100px;
+  height: 100px;
+  outline: none;
+  background-color: #1976d2;
+  border: none;
+  border-radius: 360px;
+  position: absolute;
+  top: 750px;
+  left: 1300px;
+  transition: 500ms ease-in-out;
+  &:hover{
+    background-color: white;
+    color:#1976d2 ;
+    border: 2px solid #1976d2;
+  }
+  &:active{
+    transform: scale(1.1);
+  }
 }
 @media print {
   html,body{

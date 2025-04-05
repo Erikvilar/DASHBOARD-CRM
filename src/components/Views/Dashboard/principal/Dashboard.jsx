@@ -4,7 +4,6 @@ import DashboardIcon from "@mui/icons-material/Dashboard";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import BarChartIcon from "@mui/icons-material/BarChart";
 import DescriptionIcon from "@mui/icons-material/Description";
-import ContentPasteIcon from "@mui/icons-material/ContentPaste";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import LayersIcon from "@mui/icons-material/Layers";
@@ -13,14 +12,15 @@ import { DashboardLayout } from "@toolpad/core/DashboardLayout";
 import { useDemoRouter } from "@toolpad/core/internal";
 import General from "../Dashboard_sections/Gerenciamento/produtos/General";
 import { useNavigate } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer,} from "react-toastify";
 import ProjetosView from "../Dashboard_sections/Gerenciamento/projetos/ProjetosView";
 import { AiFillProduct } from "react-icons/ai";
 import CadastrarItems from "../Dashboard_sections/Cadastros/CadastrarItems";
-import { axios, axiosGeneralRequest } from "../Dashboard_sections/Cadastros";
-import CadastroPessoal from "../Dashboard_sections/Cadastros/CadastroPessoal";
+import {  axiosGeneralRequest } from "../Dashboard_sections/Cadastros";
 import Swal from "sweetalert2";
 import Arquivos from "../Dashboard_sections/Cadastros/Arquivos";
+import softwareAbout from "../../../../manifest";
+import CadastroGeral from "../Dashboard_sections/Cadastros/CadastroGeral";
 
 const demoTheme = extendTheme({
   colorSchemes: { light: true, dark: true },
@@ -51,11 +51,14 @@ export default function Dashboard(props) {
         return <General />;
       case "/gerenciamento/produtos":
         return <General />;
-
+      case "/gerenciamento/":
+        return <General/>
       case "/cadastro/Items":
         return <CadastrarItems role={role} />;
+      case "/cadastro":
+        return <CadastrarItems role={role} />;
       case "/cadastro/pessoas":
-        return <CadastroPessoal role={role} />;
+        return <CadastroGeral role={role} />;
       case "/cadastro/arquivos":
         return <Arquivos/>
 
@@ -232,16 +235,18 @@ export default function Dashboard(props) {
             alt="MUI logo"
           />
         ),
-        title: "Dashboard",
+        title:`Dashboard ${(softwareAbout.version())}`,
       }}
       session={session}
       authentication={authentication}
       theme={demoTheme}
       window={demoWindow}
+      
+      
     >
-      <ToastContainer limit={1} autoClose={3000} position="bottom-left" />
 
-      <DashboardLayout>{renderBasePathName()}</DashboardLayout>
+
+      <DashboardLayout >{renderBasePathName()}</DashboardLayout>
     </AppProvider>
   );
 }

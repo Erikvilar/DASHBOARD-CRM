@@ -17,6 +17,7 @@ import Swal from "sweetalert2";
 import { format } from "date-fns";
 import Unauthorized from "../../../visualAccess/unauthorized.jsx";
 import { IoIosCloudUpload } from "react-icons/io";
+// eslint-disable-next-line react/prop-types
 export default function CadastrarItems({ role }) {
   const [nextId, setNextId] = useState(1);
   const formRefs = useRef([]);
@@ -38,6 +39,7 @@ export default function CadastrarItems({ role }) {
   const [dateTime, setDateTime] = useState(getBrazilianDateTime());
 
   const addItem = () => {
+    scrollToDown();
     setData((prevData) => ({
       ...prevData,
       items: [
@@ -100,6 +102,7 @@ export default function CadastrarItems({ role }) {
       lotacao: "",
       fornecedor: "",
       email_fornecedor: "",
+      pedido: "",
       empSIAFI: "",
     },
     items: [
@@ -126,10 +129,10 @@ export default function CadastrarItems({ role }) {
         userId: "",
         responsibleId: "",
         costCenterId: "",
-        
+
       },
     ],
-    logUser:localStorage.getItem("user")
+    logUser: localStorage.getItem("user")
   });
 
   const handleInputChange = (e, index, field, nested = false) => {
@@ -173,7 +176,7 @@ export default function CadastrarItems({ role }) {
       if (response.status == 200) {
         setProjetos(Object.values(response.data));
       }
-    } catch (error) {}
+    } catch (error) { }
   };
 
   const handleUsers = async () => {
@@ -182,7 +185,7 @@ export default function CadastrarItems({ role }) {
       if (response.status == 200) {
         setUsers(Object.values(response.data));
       }
-    } catch (error) {}
+    } catch (error) { }
   };
 
   const handleResponsibles = async () => {
@@ -263,14 +266,14 @@ export default function CadastrarItems({ role }) {
     }
   };
 
-  useEffect(() => {
+  const scrollToDown = () => {
     if (formRefs.current.length > 0) {
       formRefs.current[formRefs.current.length - 1]?.scrollIntoView({
         behavior: "smooth",
         block: "start",
       });
     }
-  }, [data.items.length]);
+  }
 
   useEffect(() => {
     handleCostCenter();
@@ -287,7 +290,6 @@ export default function CadastrarItems({ role }) {
 
   const submitForms = async (e) => {
     e.preventDefault();
-    const result = await sweetAlerts.submitAlert();
     if (verifyDupliChecker(data.items)) {
       Swal.fire({
         icon: "error",
@@ -297,39 +299,43 @@ export default function CadastrarItems({ role }) {
       });
       return;
     }
+    const result = await sweetAlerts.submitAlert();
     if (result) {
-      Swal.fire({
-        title: "Enviando dados...",
-        text: "Aguarde enquanto processamos a requisição.",
-        allowOutsideClick: false,
-        timer: 3000,
-        didOpen: () => {
-          Swal.showLoading();
-        },
-      });
-
-      const timeout = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error("Tempo limite excedido")), 3000)
-      );
-
       try {
+        await Swal.fire({
+          title: "Enviando dados aguarde...",
+          text: "Estamos salvando seus arquivos...",
+          timerProgressBar:true,
+          allowOutsideClick: false,
+          timer: 2000,
+          didOpen: () => {
+            Swal.showLoading();
+          },
+        });
+
+        const timeout = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("Tempo limite excedido")), 3000)
+        );
+
         const response = await Promise.race([
           axiosGeneralRequest.post(data, token),
           timeout,
         ]);
 
+        await uploadFiles();
+
         Swal.fire({
           icon: "success",
-          title: "Sucesso!",
+          title: "Dados salvos",
           text: response?.data,
-        });
-        await uploadFiles();
+        })
+
       } catch (error) {
         console.log(error);
         Swal.fire({
           icon: "error",
           title: "Erro!",
-          text: error.response?.data,
+          text: error.response?.data+", consulte o dashboard e verifique o cadastro deste número.",
         });
       }
     }
@@ -340,7 +346,7 @@ export default function CadastrarItems({ role }) {
   return role === "USER" || null ? (
     <Unauthorized />
   ) : (
-    <Form style={{ borderWidth: 1 }} onSubmit={submitForms}>
+    <Form style={{ borderWidth: 1, scrollBehavior: "smooth" }} onSubmit={submitForms} >
       <div
         style={{
           width: "100%",
@@ -419,7 +425,7 @@ export default function CadastrarItems({ role }) {
             ))}
             <Row style={{ marginTop: 20 }}>
               <Form.Group as={Col} controlId={`pedidoPDF`} >
-                <Form.Label   style={{ textTransform: "uppercase", letterSpacing: 2 }}>Pedido FAU  <IoIosCloudUpload
+                <Form.Label style={{ textTransform: "uppercase", letterSpacing: 2 }}>Pedido FAU  <IoIosCloudUpload
                   className="upload-icon"
                   size={35}
                   style={{ color: files.pedidoPDF ? "#578FCA" : "grey" }}
@@ -432,9 +438,9 @@ export default function CadastrarItems({ role }) {
                   onChange={handleFiles}
                 />
               </Form.Group>
-             
+
               <Form.Group as={Col} controlId={`termoPDF`}>
-                <Form.Label  style={{ textTransform: "uppercase", letterSpacing: 2 }}>Termo de responsabilidade LTAD  <IoIosCloudUpload
+                <Form.Label style={{ textTransform: "uppercase", letterSpacing: 2 }}>Termo de responsabilidade LTAD  <IoIosCloudUpload
                   className="upload-icon"
                   size={35}
                   style={{ color: files.termoPDF ? "#578FCA" : "grey" }}
@@ -447,9 +453,9 @@ export default function CadastrarItems({ role }) {
                   name="termoPDF"
                   onChange={handleFiles}
                 />
-            
-              
-              
+
+
+
               </Form.Group>
             </Row>
           </Row>
@@ -485,7 +491,7 @@ export default function CadastrarItems({ role }) {
           <Row style={{ padding: 10 }}>
             <Form.Group as={Col} controlId={`codigo_item_${index}`}>
               <Form.Label>Número Patrimônio</Form.Label>
-             
+
               <Form.Control
                 required
                 placeholder={"Insira o número"}
@@ -493,7 +499,7 @@ export default function CadastrarItems({ role }) {
                 value={item.codigo_item}
                 onChange={(e) => handleInputChange(e, index, "codigo_item")}
               />
-               
+
             </Form.Group>
 
             <Form.Group as={Col} controlId={`descricao_item_${index}`}>
@@ -569,11 +575,12 @@ export default function CadastrarItems({ role }) {
               <Form.Label>NF/INVOICE</Form.Label>
               <Form.Control
                 required
-                placeholder={"NFe00000000000000000000000000000000000000000000"}
+                placeholder={"Nota fiscal"}
                 type="number"
                 value={item.nf_invoice_item}
                 onChange={(e) => handleInputChange(e, index, "nf_invoice_item")}
               />
+              <p style={{ fontSize: 12 }}>Caso não haja digite '0000'  4 zeros</p>
             </Form.Group>
 
             <Form.Group as={Col} controlId={`processoSEI${index}`}>
@@ -642,7 +649,7 @@ export default function CadastrarItems({ role }) {
               />
             </Form.Group>
           </Row>
-       
+
           <Row style={{ padding: 10 }}>
             <Form.Group>
               <FormControl
@@ -664,7 +671,7 @@ export default function CadastrarItems({ role }) {
                       value={value.id_centro_custo}
                       key={value.id_centro_custo}
                     >
-                      {value.identificacao_centro_custo}
+                      {value.nome_centro_custo}
                     </MenuItem>
                   ))}
                 </Select>
@@ -719,10 +726,10 @@ export default function CadastrarItems({ role }) {
           <Row style={{ margin: 15 }}>
             <Form.Group as={Col} controlId={`firstImage_${index}`}>
               <Form.Label style={{ textTransform: "uppercase", letterSpacing: 2 }}>Foto/Imagem completa do item<IoIosCloudUpload
-                  className="upload-icon"
-                  size={35}
-                  style={{ color: files.images[index] ? "#578FCA" : "grey",marginLeft:10 }}
-                /> </Form.Label>
+                className="upload-icon"
+                size={35}
+                style={{ color: files.images[index] ? "#578FCA" : "grey", marginLeft: 10 }}
+              /> </Form.Label>
               <Form.Control
                 placeholder="imagem completa"
                 required
@@ -735,10 +742,10 @@ export default function CadastrarItems({ role }) {
             </Form.Group>
             <Form.Group as={Col} controlId={`SecondImage_${index}`}>
               <Form.Label style={{ textTransform: "uppercase", letterSpacing: 2 }}>Foto/Imagem da TAG/Placa do item <IoIosCloudUpload
-                  className="upload-icon"
-                  size={35}
-                  style={{ color: files.images[index]? "#578FCA" : "grey" ,marginLeft:10}}
-                /></Form.Label>
+                className="upload-icon"
+                size={35}
+                style={{ color: files.images[index] ? "#578FCA" : "grey", marginLeft: 10 }}
+              /></Form.Label>
               <Form.Control
                 required
                 name="secondImage"
@@ -767,14 +774,14 @@ export default function CadastrarItems({ role }) {
               Adicionar Campo
             </Button>
             <div style={{ display: "flex" }}>
-              <Button
+              {/* <Button
                 variant="contained"
                 style={{ margin: 10 }}
                 onClick={() => removeItem(index)}
               >
                 <span>Limpar campos</span>
                 <MdCleaningServices size={25} />
-              </Button>
+              </Button> */}
               <Button
                 variant="contained"
                 style={{ margin: 10 }}

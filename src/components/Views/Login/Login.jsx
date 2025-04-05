@@ -9,6 +9,7 @@ import { Bounce } from "react-activity";
 import { useNavigate } from "react-router-dom";
 import axiosGeneralRequest from "../../../services/apiServiceRequests";
 import Swal from "sweetalert2";
+import softwareAbout from "../../../manifest";
 
 function Login() {
   const [request, setRequest] = useState({ login: "", password: "" });
@@ -44,13 +45,37 @@ function Login() {
         });
   
       
-      } else if (response.status == 401) {
-        warn();
-      } else if (response.status == 403) {
-        error();
       }
+     
     } catch (error) {
-      toast.error("Erro na conexão com serviço.");
+      if(error.response?.status == 409){
+        Swal.fire({
+          title: "Esta conta já está acessada em outro dispositivo",
+          text: "Caso esteja enfrentando problemas com login favor reporte ao administrador do sistema.",
+          confirmButtonText:"OK",
+          confirmButtonColor:"blue",
+          allowOutsideClick: false,
+          
+        }).then((result)=>{
+          if(result.isConfirmed){
+            Swal.close();
+          }
+        });
+      }else if(error.response?.status == 403){
+        Swal.fire({
+          title: "Sistema esta enfrentando alguns problemas técnicos.",
+          text: "Caso esteja enfrentando problemas com login favor reporte ao administrador do sistema.",
+          confirmButtonColor:"green",
+          confirmButtonText:"OK",
+          allowOutsideClick: false,
+          
+        }).then((result)=>{
+          if(result.isConfirmed){
+            Swal.close();
+          }
+        });
+      }
+
       console.log(error);
     }
   };
@@ -154,9 +179,10 @@ function Login() {
 
               <div>
               <a href="">Preciso de ajuda</a>
-              <a href="">Contate-nos</a>
+              <a href="mailto:erik.alves@ltad.com.br">Contate-nos</a>
+              <a style={{color:"#0950ad"}}>v.{softwareAbout.version()}</a>
               </div>
-      
+                
             </div>
             <div className={styles.about}>
 

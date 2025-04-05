@@ -2,15 +2,13 @@ import { AppProvider, DashboardLayout } from "@toolpad/core";
 import { useRef } from "react";
 import { useLocation } from "react-router-dom";
 import { useReactToPrint } from "react-to-print";
-
+import PrintIcon from '@mui/icons-material/Print';
 import "./style.css";
 import { format } from "date-fns";
 export default function DocumentToPrint() {
-  const currentDate = new Date().toLocaleDateString();
-  const hourNow = new Date().getHours().toLocaleString();
-  const minuteNow = new Date().getMinutes().toLocaleString();
+
   const location = useLocation();
-  const { id, name } = location.state || {}; // Evita erro se state for undefined
+
   const componentRef = useRef(null);
 
 
@@ -65,7 +63,7 @@ export default function DocumentToPrint() {
       }}
     >
       <DashboardLayout disableCollapsibleSidebar hideNavigation>
-        <button onClick={handlePrint}>printar</button>
+        <button onClick={handlePrint} className="button-print"><PrintIcon size={24} className="printIcon"/></button>
 
         <div ref={componentRef} className="print-area">
           <div className="print-header">

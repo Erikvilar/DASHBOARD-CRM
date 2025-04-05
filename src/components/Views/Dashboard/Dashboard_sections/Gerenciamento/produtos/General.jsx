@@ -1,4 +1,4 @@
-import { pdf, render } from "@react-pdf/renderer";
+
 import "./styles.css";
 import {
   useCallback,
@@ -13,14 +13,13 @@ import {
   GeneralFormModal,
   axiosGeneralRequest,
   format,
-  DocumentToPrint,
   GiMagnifyingGlass,
   GrStatusGood,
   GoAlert,
   BsTools,
   Link,
 } from "./index.js";
-import { FcInfo , FcOk} from "react-icons/fc";
+import { FcInfo, FcOk } from "react-icons/fc";
 
 import {
   GridToolbarColumnsButton,
@@ -51,8 +50,8 @@ export default function General() {
   const [openDialog, setOpenDialog] = useState(null);
   const [data, setData] = useState();
   const [promiseArguments, setPromiseArguments] = useState({
-    newRow: () => {},
-    resolve: () => {},
+    newRow: () => { },
+    resolve: () => { },
   });
   const [openModalForm, setOpenModalForm] = useState(null);
   const handleCloseModalForm = () => setOpenModalForm(false);
@@ -68,10 +67,14 @@ export default function General() {
   const [users, setUsers] = useState();
   const boxRef = useRef(null);
   const [totalValue, setTotalValue] = useState(0);
-  const { newRow = () => {}, resolve = () => {} } = promiseArguments || {};
+  const { newRow = () => { }, resolve = () => { } } = promiseArguments || {};
   const controlEdit = () => {
+
     return role != "USER";
   };
+  const manangerService = () => {
+    return role != "MANAGER";
+  }
   let token = localStorage.getItem("JWT");
   let user = localStorage.getItem("user");
   const logoutMethod = async (user) => {
@@ -91,9 +94,10 @@ export default function General() {
           console.log(response.data.isLogged);
           localStorage.setItem("isLogged", response.data.isLogged);
           console.log("usuario deslogado");
+          navigate("/");
         }
         localStorage.removeItem("JWT");
-        navigate("/");
+
         Swal.close();
       }
     });
@@ -193,9 +197,11 @@ export default function General() {
       renderHeader: () => (
         <span className="header_style">SITUAÇÃO DE CADASTRO</span>
       ),
-      valueOptions: ["Concluido", "Pendente", "Em andamento"],
+      valueOptions: ["Concluido", "Pendente", "Em andamento", "Excluido"],
 
       renderCell: (params) => {
+
+
         switch (params.value) {
           case "Concluido":
             return (
@@ -226,11 +232,24 @@ export default function General() {
                 label={params.value}
               />
             );
+          case "Excluido":
+            return (
+              <Chip
+                size="small"
+                color="grey"
+                label={params.value}
+              />
+            );
           default:
             break;
+
+
         }
+
+
+
       },
-      editable: controlEdit(),
+      editable: role === "MANAGER"
     },
     ///ID
     {
@@ -243,7 +262,7 @@ export default function General() {
       renderCell: (params) => (
         <span style={{ fontWeight: 800 }}>{params.value}</span>
       ),
-      editable: false,
+      editable: controlEdit(),
     },
     //IMPRIMIR
     {
@@ -292,7 +311,7 @@ export default function General() {
       headerAlign: "center",
       renderHeader: () => <span className="header_style">Nº PATRIMÔNIO</span>,
       width: 150,
-      editable: controlEdit(),
+      editable: true,
     },
     //DESCRIÇÃO DO ITEM
     {
@@ -316,6 +335,14 @@ export default function General() {
       renderHeader: () => (
         <span className="header_style">Nº NF/INVOICE/NF-e</span>
       ),
+      renderCell: (params) => {
+        const nf = params.value
+        if (nf === "0000") {
+          return <div style={{ backgroundColor: "#A62C2C", color: "white" }}>Nota fiscal não foi fornecida</div>
+        } else {
+          return <div >{params.value}</div>
+        }
+      },
       width: 250,
       editable: controlEdit(),
     },
@@ -333,7 +360,7 @@ export default function General() {
           const rowOfImages = params.row;
           const { value: input1 } = await Swal.fire({
             title: "Atualizar imagem do item",
-            input: "text",
+            // input: "text",
             html: `
               <div style="
                 display: flex; 
@@ -417,12 +444,12 @@ export default function General() {
             showClass: {
               popup: "animate__animated animate__fadeIn", // Animação de entrada com zoom
             },
-            inputLabel: "Insira a imagem geral do item.",
-            inputPlaceholder: "Cole ou digite o link aqui",
+            // inputLabel: "Insira a imagem geral do item.",
+            // inputPlaceholder: "Cole ou digite o link aqui",
             showCancelButton: true,
-            inputAttributes: {
-              "aria-label": "Digite o primeiro campo",
-            },
+            // inputAttributes: {
+            //   "aria-label": "Digite o primeiro campo",
+            // },
           });
 
           if (!input1) return; // Se o campo 1 não foi preenchido, sai da função.
@@ -688,7 +715,16 @@ export default function General() {
       headerAlign: "center",
       renderHeader: () => <span className="header_style">Nº TERMO</span>,
       width: 120,
-      renderCell: (params) => <p>{params.value}</p>,
+      editable: controlEdit(),
+    },
+    {
+      field: "pedido",
+      headerName: "Nº Pedido",
+      type: "number",
+      align: "center",
+      headerAlign: "center",
+      renderHeader: () => <span className="header_style">Nº Pedido</span>,
+      width: 120,
       editable: controlEdit(),
     },
     //LOCALIZAÇÃO DO ITEM
@@ -788,7 +824,7 @@ export default function General() {
           </Button>
         );
       },
-      editable: controlEdit(),
+      editable: false,
     },
     //PEDIDO PDF
     {
@@ -837,7 +873,7 @@ export default function General() {
           </Button>
         );
       },
-      editable: controlEdit(),
+      editable: false,
     },
     //EMPSIAFI
     {
@@ -874,6 +910,7 @@ export default function General() {
       width: 200,
       editable: false,
     },
+
     //DATA DE INICIO
     {
       field: "data_inicio_centro_custo",
@@ -896,6 +933,9 @@ export default function General() {
       renderHeader: () => (
         <span className="header_style">DATA FIM PROJETO</span>
       ),
+      renderCell: (params) => {
+        return <p>{format(params.value, "dd-MM-yyyy")}</p>
+      },
       width: 200,
       editable: false,
     },
@@ -1024,7 +1064,7 @@ export default function General() {
         </div>
       ),
       width: 180,
-      editable: true,
+      editable: false,
     },
   ];
 
@@ -1088,6 +1128,7 @@ export default function General() {
 
       return updatedData;
     });
+    callLogs();
   };
 
   useEffect(() => {
@@ -1099,11 +1140,11 @@ export default function General() {
     return () => eventEmitter.off("messageReceived", handleMessage);
   }, []);
 
-  useEffect(()=>{
-    if(boxRef.current){
+  useEffect(() => {
+    if (boxRef.current) {
       boxRef.current.scrollTop = boxRef.current.scrollHeight;
     }
-  },[logs])
+  }, [logs])
 
   //handler data
   useEffect(() => {
@@ -1137,13 +1178,13 @@ export default function General() {
     setOpenDialog(false);
     try {
       const dateGMT3 = getBrazilianDateTime();
-
+      const randomUUID = Math.random().toPrecision(5)
       //structure send to backend
       const dataUpdate = {
         itemsDTO: {
           id_item: update.id_item,
           nf_invoice_item: update.nf_invoice_item,
-          codigo_item: update.codigo_item,
+          codigo_item: update.situacao_registro === "Excluido" ? update.codigo_item + " Excluido Nº processo " + randomUUID : update.codigo_item,
           observacao_item: text ? text : update.observacao_item,
           caminho_imagem_item: [
             images.image1 ? images.image1 : update.caminho_imagem_item[0],
@@ -1205,6 +1246,7 @@ export default function General() {
             update.email_fornecedor != null ? update.email_fornecedor : "vazio",
           termoPDF: update.termoPDF != null ? update.termoPDF : "vazio",
           pedidoPDF: update.pedidoPDF != null ? update.pedidoPDF : "vazio",
+          pedido: update.pedido,
           empSIAFI: newRow.empSIAFI,
         },
       };
@@ -1263,14 +1305,14 @@ export default function General() {
         local: row.localizacao_descricao,
         modelo: row.modelo_descricao,
         serial: row.serie_descricao,
-        ultimaModificacao:row.lastModify[0],
-        horaUltimaModificacao:row.updateIn,
+        ultimaModificacao: row.lastModify[0],
+        horaUltimaModificacao: row.updateIn,
         termo: row.termo,
       };
 
-    
 
-        navigate("/print", {state:print})
+
+      navigate("/print", { state: print })
     } catch (error) {
       console.log(error);
     } finally {
@@ -1353,19 +1395,19 @@ export default function General() {
                   style={{
                     width: 350,
                     height: 30,
-                    marginTop:20,
-                    borderRadius:20,
+                    marginTop: 20,
+                    borderRadius: 20,
                     display: "flex",
                     alignItems: "center",
                     fontSize: 18,
-                    paddingLeft:10,
-                    marginRight:30,
-                    backgroundColor:"orange"
+                    paddingLeft: 10,
+                    marginRight: 30,
+                    backgroundColor: "orange"
                   }}
                 >
-                  <span style={{fontWeight:700,color:"white"}}>Custo total: </span>
+                  <span style={{ fontWeight: 700, color: "white" }}>Custo total: </span>
                   <CountUp
-                    style={{fontWeight:700,color:"white"}}
+                    style={{ fontWeight: 700, color: "white" }}
                     start={0}
                     end={totalValue}
                     duration={1.5}
@@ -1373,7 +1415,7 @@ export default function General() {
                     decimals={2}
                     decimal=","
                     prefix="R$  "
-                    
+
                   />
                 </div>
               </div>
@@ -1406,49 +1448,40 @@ export default function General() {
       />
 
       <Box
-       ref={boxRef}
+        ref={boxRef}
+        className="boxRef"
         sx={{
-          height: "80px",
-         
+          // Deixe a altura automática ou ajuste conforme necessário
+          maxHeight: "70px",       // Ou limite a altura a 80% da altura da janela
+          width: "90%",
           paddingLeft: 2,
-          overflow: "scroll",
-        
-          scrollbarWidth: "none",
+          overflowY: "auto",       // Permite rolagem se o conteúdo exceder a altura
           fontSize: 13,
-        
-         scrollBehavior:"smooth",
-          display:"flex",
-          justifyContent:"center",
-          justifySelf:"center",
-          alignItems:"center",
-          flexDirection:"column",
+          scrollBehavior: "smooth",
+          display: "flex",
           scrollSnapType: "y",
+          flexDirection: "column", // Coloquei flexDirection: "column" para alinhar os logs em coluna
+          alignItems: "flex-start", // Certifique-se de alinhar os itens à esquerda
         }}
       >
-        <Box >
-        {logs?.map((log) => (
-          <div
- 
-            key={log.id}
-            style={{
-              scrollSnapAlign: "center",
-          
-           
-              width:"90%",
-              whiteSpace:"pre-wrap",
-              lineHeight:"2",
-              height: 50,
-              margin:20,
-              display: "flex",
-              justifyContent: "start",
-              alignItems: "center",
-        
-            }}
-          >
-          {log.type == "update"? <span> <FcInfo size={20}/> {log.userLog} atualizou em {format(log.timestamp, "dd-MM-yyyy")} as {format(log.timestamp, "HH:MM")} a linha {log.entityId} de <span>{log.oldValue}</span>  para  <span >{log.newValue}</span> </span>  : <span><FcOk size={20}/> {log.userLog} em {format(log.timestamp, "dd-MM-yyyy")} as {format(log.timestamp, "HH:MM")} cadastrou {log.newValue} </span> }
-      
-          </div>
-        ))}
+        <Box>
+          {logs?.map((log) => (
+            <div
+              key={log.id}
+              style={{
+                scrollSnapAlign: "center",
+                lineHeight: "2",
+                height: "auto",         // Deixe a altura automática para se ajustar ao conteúdo
+                marginBottom: 20,       // Deixe o espaçamento entre os itens de log
+                display: "flex",
+                justifyContent: "flex-start",
+              }}
+
+            >
+              {log.type == "update" ? <span> <FcInfo size={20} /> {log.userLog} atualizou em {format(log.timestamp, "dd-MM-yyyy")} as {format(log.timestamp, "HH:MM")} a linha {log.entityId}  na coluna {log.fieldName} de <span>{log.oldValue}</span>  para  <span >{log.newValue}</span> </span> : <span><FcOk size={20} /> {log.userLog} em {format(log.timestamp, "dd-MM-yyyy")} as {format(log.timestamp, "HH:MM")} cadastrou {log.newValue} </span>}
+
+            </div>
+          ))}
         </Box>
       </Box>
     </Box>

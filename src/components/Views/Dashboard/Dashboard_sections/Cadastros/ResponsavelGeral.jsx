@@ -98,7 +98,7 @@ const ResponsavelGeral = ()=>{
             />
           </Form.Group>
     
-          <Button variant="primary" type="submit">
+          <Button variant="primary" type="submit" disabled>
             Enviar
           </Button>
         </Form>

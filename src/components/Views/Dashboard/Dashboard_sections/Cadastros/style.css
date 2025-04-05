@@ -94,8 +94,9 @@ fieldset {
 }
 .upload-label .upload-icon {
   cursor: pointer;
+}.list-choice{
+  display: flex;
+  list-style: none;
 }
 
 
-.form-pdf-field .file-input {
-}
