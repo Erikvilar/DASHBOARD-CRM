@@ -59,8 +59,7 @@ export default function Dashboard(props) {
         return <CadastrarItems role={role} />;
       case "/cadastro/pessoas":
         return <CadastroGeral role={role} />;
-      case "/cadastro/arquivos":
-        return <Arquivos/>
+ 
 
       case "/gerenciamento/projetos/MFLD":
         return <ProjetosView projectName={"CHARPINF"} />;
@@ -78,9 +77,11 @@ export default function Dashboard(props) {
     }
   };
 
+  const username = localStorage.getItem("user").split(".");
   const [session, setSession] = React.useState({
+ 
     user: {
-      name: localStorage.getItem("user"),
+      name: username[0]+" "+username[1],
       email: `${localStorage.getItem("user")}@ltad.com`,
       image: localStorage.getItem("avatar"),
     },
@@ -115,15 +116,6 @@ export default function Dashboard(props) {
   };
   const authentication = React.useMemo(() => {
     return {
-      signIn: () => {
-        setSession({
-          user: {
-            name: "Bharat Kashyap",
-            email: "bharatkashyap@outlook.com",
-            image: "https://cdn-icons-png.flaticon.com/512/149/149071.png",
-          },
-        });
-      },
       signOut: () => {
     logoutModal();
       },
@@ -176,11 +168,7 @@ export default function Dashboard(props) {
               icon: <AiFillProduct size={24} />,
             },
           
-            {
-              segment: "arquivos",
-              title: "Arquivos",
-              icon: <AiFillProduct size={24} />,
-            },
+          
           ],
         },
 

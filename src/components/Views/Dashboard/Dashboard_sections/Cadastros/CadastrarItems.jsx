@@ -379,10 +379,10 @@ export default function CadastrarItems({ role }) {
         <div style={{ marginTop: 5, marginBottom: 30 }}>
           <strong style={{ paddingLeft: 30, paddingRight: 30 }}>Aviso!</strong>
           <p style={{ paddingLeft: 30, paddingRight: 30 }}>
-            Abaixo deve ser cadastro primariamente os dados do termo de
+            Abaixo deve ser cadastrado primariamente os dados do termo de
             responsabilidade fornecido pelo DIPAT e em seguida deve ser
             fornecido dados dos equipamentos que consta no termo, cada campo
-            deve ser preenchido e será permitido campos nulos.
+            deve ser corretamente preenchido e não será permitido campos nulos ou em branco exceto observação.
           </p>
           <p style={{ paddingLeft: 30, paddingRight: 30 }}>
             <b style={{ color: "red" }}>*</b>E nescessário fornecer imagens para
@@ -662,14 +662,17 @@ export default function CadastrarItems({ role }) {
                   value={item.costCenterId}
                   onChange={(e) => handleInputChange(e, index, "costCenterId")}
                   name={`costCenterId${index}`}
+                  displayEmpty
+                  
                 >
                   <MenuItem value="" disabled>
-                    Selecione um Centro de Custo
+                    SELECTIONE O PROJETO
                   </MenuItem>
                   {projetos?.map((value) => (
                     <MenuItem
                       value={value.id_centro_custo}
                       key={value.id_centro_custo}
+
                     >
                       {value.nome_centro_custo}
                     </MenuItem>
@@ -681,13 +684,19 @@ export default function CadastrarItems({ role }) {
                 style={{ width: "33%" }}
                 as={Col}
                 controlId={`userId${index}`}
+         
               >
-                <Form.Label>Usuario responsavel</Form.Label>
+                <Form.Label>Responsável</Form.Label>
+            
                 <Select
                   value={item.userId}
                   onChange={(e) => handleInputChange(e, index, "userId")}
                   name={`userId${index}`}
+                  displayEmpty
                 >
+                      <MenuItem value="" disabled>
+                    SELECTIONE O RESPONSÁVEL PELO ITEM
+                  </MenuItem>
                   {users?.map((value) => (
                     <MenuItem value={value.id_usuario} key={value.id_usuario}>
                       {value.nome_usuario}
@@ -701,12 +710,16 @@ export default function CadastrarItems({ role }) {
                 as={Col}
                 controlId={`responsibleId${index}`}
               >
-                <Form.Label>Responsável Geral</Form.Label>
+                <Form.Label>Coordenador</Form.Label>
                 <Select
                   value={item.responsibleId}
                   onChange={(e) => handleInputChange(e, index, "responsibleId")}
                   name={`responsibleId${index}`}
+                  displayEmpty
                 >
+                   <MenuItem value="" disabled>
+                  SELECTIONE O COORDENADOR OU SOLICITANTE
+                  </MenuItem>
                   {responsibles?.map((value) => (
                     <MenuItem
                       value={value.id_responsavel_geral}

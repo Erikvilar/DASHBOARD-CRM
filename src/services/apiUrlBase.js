@@ -7,7 +7,7 @@ const apiUrlBase = {
   },
 
   network: {
-    IPconnection: "10.2.129.243",
+    IPconnection: "192.168.100.5",
     PORTconnection: "6680",
   },
 

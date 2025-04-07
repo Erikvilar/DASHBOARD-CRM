@@ -22,7 +22,7 @@ function Login() {
   const sendRequest = async (e) => {
     e.preventDefault();
     const data = {
-      login: request.login.trim(),
+      login: request.login.trim().toLowerCase(),
       password: request.password.trim(),
     };
 
@@ -33,7 +33,7 @@ function Login() {
         Swal.fire({
           title: "Login em progresso",
           text: "Aguarde, estamos te autenticando no sistema...",
-          timer: 3000, // Fecha automaticamente após 3s
+          timer: 3000, 
           timerProgressBar: true,
           allowOutsideClick: false,
           didOpen: () => {
@@ -74,6 +74,19 @@ function Login() {
             Swal.close();
           }
         });
+      }else if(error.response?.status == 401){
+        Swal.fire({
+          title: "Usuario ou senha incorreta",
+          text: "Tente novamente ou peça ao administrador para resetar sua senha.",
+          confirmButtonColor:"grey",
+          confirmButtonText:"Entendido",
+          allowOutsideClick: false,
+          
+        }).then((result)=>{
+          if(result.isConfirmed){
+            Swal.close();
+          }
+        });
       }
 
       console.log(error);
@@ -94,16 +107,19 @@ function Login() {
       navigate("viewer");
     }
   }, [userLogged]);
+
+
   const registerSessionUser = async (data) => {
     const { token, avatar, login, role, isLogged } = data;
-    console.log(data);
+
     localStorage.setItem("JWT", token);
     localStorage.setItem("user", login);
     localStorage.setItem("avatar", avatar);
     localStorage.setItem("role", role);
     localStorage.setItem("isLogged", JSON.stringify(isLogged));
   };
-  console.log(localStorage.getItem("isLogged"));
+
+
 
  
   return (
@@ -141,14 +157,16 @@ function Login() {
 
               <label htmlFor="">Login:</label>
               <input
+                style={{backgroundColor:"white", color:"cornflowerblue"}}
                 type="text"
                 name="login"
                 onChange={handleRequest}
-                placeholder="example"
+                placeholder="John Doe"
                 required
               />
               <label htmlFor="">Senha</label>
               <input
+               style={{backgroundColor:"white", color:"cornflowerblue"}}
                 type="password"
                 name="password"
                 placeholder="********"
@@ -174,6 +192,7 @@ function Login() {
                   />
                 )}
               </button>
+              
             </form>
             <div className={styles.about}>
 

@@ -249,7 +249,7 @@ export default function General() {
 
 
       },
-      editable: role === "MANAGER"
+      editable: role === "SECRETARY"
     },
     ///ID
     {
@@ -1299,7 +1299,7 @@ export default function General() {
         patrimonio: row.codigo_item,
         status: row.status_item,
         marca: row.marca_descricao,
-        coordenador: row.responsavel_geral,
+        coordenador: row.nome_responsavel_geral,
         SDE: row.sde_item,
         responsavel: row.nome_usuario,
         local: row.localizacao_descricao,

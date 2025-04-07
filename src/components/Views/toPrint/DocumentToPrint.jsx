@@ -41,7 +41,7 @@ export default function DocumentToPrint() {
     ultimaModificacao,
     horaUltimaModificacao,
   } = location.state || {};
-
+console.log(coordenador)
   const formatValue = (valor)=>{
   const value= new Intl.NumberFormat("pt-BR", {
     style: "currency",
